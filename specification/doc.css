@@ -1,0 +1,313 @@
+html {
+	--doc-default-gap: 0.85rem;
+	--doc-foreground-color: black;
+	font-family: "Kurinto Text";
+	font-size: 12pt;
+}
+
+body {
+	padding: 1.5em;
+	color: var(--doc-foreground-color);
+}
+
+h1 {
+	text-align: center;
+}
+
+p {
+	text-align: justify;
+}
+
+main, .dp-section-content {
+	counter-reset: dp-section;
+}
+
+section {
+	counter-increment: dp-section;
+}
+
+section > .dp-heading-section > .dp-heading-text::before {
+	content: counters(dp-section, ".") " ";
+}
+
+nav .dp-toc-list {
+	counter-reset: dp-toc-entry;
+}
+
+.dp-toc-entry {
+	counter-increment: dp-toc-entry;
+}
+
+.dp-toc-entry::marker {
+	content: counters(dp-toc-entry, ".") " ";
+}
+
+/* Paragraphs, lists and link containers should have margins … */
+p, ol, ul, .dp-selflink-container, .with-margin {
+	margin-top: var(--doc-default-gap);
+	margin-bottom: var(--doc-default-gap);
+}
+
+/* … except when nested in lists and selflink containers */
+li > p, li > ol, li > ul, li > .dp-selflink-container, .dp-selflink-container > p, .dp-selflink-container > ol, .dp-selflink-container > ul, .dp-selflink-container > .dp-selflink-container {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+/* == Selflink styling == */
+
+.dp-selflink-container {
+	display: flex;
+	flex-direction: row;
+	align-items: baseline;
+	margin-left: -1rem;
+}
+
+.dp-selflink-container > * {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.dp-selflink {
+	font-size: 1rem;
+	width: 1rem;
+	visibility: hidden;
+	flex-shrink: 0;
+}
+
+.dp-selflink-container:hover > .dp-selflink > .dp-selflink-icon, .dp-selflink:hover > .dp-selflink-icon {
+	visibility: visible;
+}
+
+/* == Selflink styling end == */
+
+.bordered-box {
+	display: block;
+	padding: var(--doc-default-gap);
+	border: 1pt solid;
+}
+
+/* == Story boxes == */
+
+.story-box {
+	width: 100%;
+	display: grid;
+	border: 1pt solid;
+	grid-template-columns: 4em auto;
+	grid-row-gap: 2pt;
+}
+
+.story-box > * {
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+	padding-top: 0.1em;
+	padding-bottom: 0.1em;
+}
+
+.story-box-id {
+	grid-row: 1;
+	grid-column: 1;
+	border-bottom: 1pt solid;
+}
+
+.story-box-title {
+	grid-row: 1;
+	grid-column: 2;
+	display: flex;
+	flex-direction: row;
+	border-bottom: 1pt solid;
+	border-left: 1pt solid;
+}
+
+.story-box-title-text {
+	margin-left: 1ex;
+}
+
+.story-box-content {
+	grid-row: 2;
+	grid-column-start: 1;
+	grid-column-end: 3;
+	padding: var(--doc-default-gap);
+	padding-left: calc(2 * var(--doc-default-gap));
+	padding-right: calc(2 * var(--doc-default-gap));
+	border-top: 1pt solid;
+}
+
+.user-story-box .story-box-content {
+	border-bottom: 1pt solid;
+}
+
+.story-box-points {
+	grid-row: 3;
+	grid-column-start: 1;
+	grid-column-end: 3;
+	border-top: 1pt solid;
+}
+
+.centered {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.version-table {
+	border-top: 1pt solid;
+	border-bottom: 1pt solid;
+}
+
+.version-table td, .document-version-info td {
+	padding-left: var(--doc-default-gap);
+	padding-right: var(--doc-default-gap);
+}
+
+.version-table td:not(:first-child), .document-version-info td:not(:first-child) {
+	text-align: right;
+	padding-left: calc(2 * var(--doc-default-gap));
+}
+
+.grading-table {
+	border-collapse: collapse;
+	border: 1pt solid;
+}
+
+.grading-table th {
+	border-bottom: 1pt solid;
+}
+
+.grading-table td, .grading-table th {
+	text-align: center;
+	padding-left: var(--doc-default-gap);
+	padding-right: var(--doc-default-gap);
+}
+
+.fun {
+	margin-top: calc(3 * var(--doc-default-gap));
+	text-align: center;
+}
+
+.doc-figure {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: calc(1.5 * var(--doc-default-gap));
+	margin-bottom: calc(1.5 * var(--doc-default-gap));
+}
+
+.doc-figure > div:not(:last-child) {
+	margin-bottom: var(--doc-default-gap);
+}
+
+h2 {
+	margin-top: calc(2.5 * var(--doc-default-gap)) !important;
+	margin-bottom: calc(--doc-default-gap);
+}
+
+h3, h4, h5, h6 {
+	margin-top: calc(1.75 * var(--doc-default-gap)) !important;
+	margin-bottom: var(--doc-default-gap) !important;
+}
+
+ul, ol {
+	padding-left: 2em;
+}
+
+.story-box-content > ul, .story-box-content > .dp-selflink-container > ul {
+	padding-left: 1em;
+}
+
+hr {
+	border-color: var(--doc-foreground-color);
+}
+
+code, pre {
+	font-family: "Kurinto Mono";
+	font-size: 10pt;
+	border-radius: 2pt;
+	background: lightgray;
+}
+
+code {
+	padding-left: 0.3em;
+	padding-right: 0.3em;
+}
+
+pre > code {
+	border: 0;
+	padding: 0;
+	background: transparent;
+}
+
+pre {
+	padding: var(--doc-default-gap);
+}
+
+/*
+@media(prefers-color-scheme: dark) {
+	html {
+		--doc-foreground-color: white;
+	}
+
+	body {
+		background: black;
+	}
+
+	img.dp-selflink-icon {
+		filter: invert(100%);
+	}
+}
+
+.it {
+	font-style: italic;
+}
+*/
+
+@font-face {
+	font-family: "Kurinto Text";
+	font-weight: normal;
+	font-style: normal;
+	src: url('kurinto/KurintoTextCore-Rg.ttf');
+}
+@font-face {
+	font-family: "Kurinto Text";
+	font-weight: bold;
+	font-style: normal;
+	src: url('kurinto/KurintoTextCore-Bd.ttf');
+}
+@font-face {
+	font-family: "Kurinto Text";
+	font-weight: bold;
+	font-style: italic;
+	src: url('kurinto/KurintoTextCore-BdIt.ttf');
+}
+@font-face {
+	font-family: "Kurinto Text";
+	font-weight: normal;
+	font-style: italic;
+	src: url('kurinto/KurintoTextCore-It.ttf');
+}
+
+
+@font-face {
+	font-family: "Kurinto Mono";
+	font-weight: normal;
+	font-style: normal;
+	src: url('kurinto/KurintoMonoCore-Rg.ttf');
+}
+@font-face {
+	font-family: "Kurinto Mono";
+	font-weight: bold;
+	font-style: normal;
+	src: url('kurinto/KurintoMonoCore-Bd.ttf');
+}
+@font-face {
+	font-family: "Kurinto Mono";
+	font-weight: bold;
+	font-style: italic;
+	src: url('kurinto/KurintoMonoCore-BdIt.ttf');
+}
+@font-face {
+	font-family: "Kurinto Mono";
+	font-weight: normal;
+	font-style: italic;
+	src: url('kurinto/KurintoMonoCore-It.ttf');
+}

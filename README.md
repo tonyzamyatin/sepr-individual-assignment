@@ -11,7 +11,7 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 **Matrikelnummer**: 12223389
 
 
-| Datum | Startzeit | Dauer | Story-ID | Tätigkeit |
-|-------|-----------|-------|----------|-----------|
-| 04.03.2024|           |       |          |           |
-**Gesamtsumme der Zeit**: 0h 
+|    Datum   | Startzeit |   Dauer   | Story-ID |                  Tätigkeit                   |
+|------------|-----------|-----------|----------|----------------------------------------------|
+| 04.03.2024 |   18:00   |  3h 00min |          | Angabe gelesen und Projekt aufgesetzt        |
+**Gesamtsumme der Zeit**: 3h 

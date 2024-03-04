@@ -13,5 +13,5 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 
 | Datum | Startzeit | Dauer | Story-ID | Tätigkeit |
 |-------|-----------|-------|----------|-----------|
-| 04.03.|           |       |          |           |
+| 04.03.2024|           |       |          |           |
 **Gesamtsumme der Zeit**: 0h 

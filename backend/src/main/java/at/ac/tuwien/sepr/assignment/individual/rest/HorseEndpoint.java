@@ -40,7 +40,7 @@ public class HorseEndpoint {
   }
 
   @GetMapping("{id}")
-  public HorseDetailDto getById(@PathVariable long id) {
+  public HorseDetailDto getById(@PathVariable("id") long id) {
     LOG.info("GET " + BASE_PATH + "/{}", id);
     try {
       return service.getById(id);
@@ -53,7 +53,7 @@ public class HorseEndpoint {
 
 
   @PutMapping("{id}")
-  public HorseDetailDto update(@PathVariable long id, @RequestBody HorseDetailDto toUpdate) throws ValidationException, ConflictException {
+  public HorseDetailDto update(@PathVariable("id") long id, @RequestBody HorseDetailDto toUpdate) throws ValidationException, ConflictException {
     LOG.info("PUT " + BASE_PATH + "/{}", toUpdate);
     LOG.debug("Body of request:\n{}", toUpdate);
     try {

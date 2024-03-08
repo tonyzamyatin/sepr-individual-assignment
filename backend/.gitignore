@@ -34,3 +34,7 @@ build/
 
 ### Database ###
 *.db
+
+### Logs ###
+*.log
+*.gz

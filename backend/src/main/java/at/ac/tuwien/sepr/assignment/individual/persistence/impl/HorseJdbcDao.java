@@ -47,6 +47,15 @@ public class HorseJdbcDao implements HorseDao {
       + "  , breed_id = ?"
       + " WHERE id = ?";
 
+  private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME
+          + " VALUES( name = ?"
+          + "  , sex = ?"
+          + "  , date_of_birth = ?"
+          + "  , height = ?"
+          + "  , weight = ?"
+          + "  , breed_id = ?"
+          + ")";
+
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
 
@@ -72,7 +81,7 @@ public class HorseJdbcDao implements HorseDao {
       throw new FatalException("Too many horses with ID %d found".formatted(id));
     }
 
-    return horses.get(0);
+    return horses.getFirst();
   }
 
   @Override
@@ -86,6 +95,34 @@ public class HorseJdbcDao implements HorseDao {
     params.registerSqlType("sex", Types.VARCHAR);
 
     return jdbcNamed.query(query, params, this::mapRow);
+  }
+
+
+  @Override
+  public Horse create(HorseDetailDto horse) {
+    LOG.trace("create({})", horse);
+
+    int created = jdbcTemplate.update(SQL_INSERT,
+            horse.name(),
+            horse.sex().toString(),
+            horse.dateOfBirth(),
+            horse.height(),
+            horse.weight(),
+            horse.breed().id());
+    if (created == 0) {
+      throw new FatalException("Could not insert horse with ID " + horse.id());
+    }
+
+    return new Horse()
+            .setId(horse.id())
+            .setName(horse.name())
+            .setSex(horse.sex())
+            .setDateOfBirth(horse.dateOfBirth())
+            .setHeight(horse.height())
+            .setWeight(horse.weight())
+            .setBreedId(horse.breed().id())
+            ;
+
   }
 
 

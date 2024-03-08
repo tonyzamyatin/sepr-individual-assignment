@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class HorseValidator {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public void validateForUpdate(HorseDetailDto horse) throws ValidationException {
-    LOG.trace("validateForUpdate({})", horse);
+  public void validateForUpdateCreate(HorseDetailDto horse) throws ValidationException {
+    LOG.trace("validateForUpdateCreate({})", horse);
     List<String> validationErrors = new ArrayList<>();
 
     if (horse.id() == null) {

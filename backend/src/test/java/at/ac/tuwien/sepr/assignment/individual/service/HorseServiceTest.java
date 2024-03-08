@@ -58,4 +58,6 @@ public class HorseServiceTest extends TestBase {
             tuple(-32L, "Luna", Sex.FEMALE, LocalDate.of(2018, 10, 10),
                 "Welsh Cob"));
   }
+
+
 }

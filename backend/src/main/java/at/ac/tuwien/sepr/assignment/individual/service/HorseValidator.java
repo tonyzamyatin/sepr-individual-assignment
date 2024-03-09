@@ -20,7 +20,6 @@ public class HorseValidator {
     if (horse.id() == null) {
       validationErrors.add("No ID given");
     }
-
     // TODO this is not complete…
 
     if (!validationErrors.isEmpty()) {

@@ -13,12 +13,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import org.springframework.dao.DataAccessException;
+
 
 @Repository
 public class HorseJdbcDao implements HorseDao {
@@ -47,14 +54,14 @@ public class HorseJdbcDao implements HorseDao {
       + "  , breed_id = ?"
       + " WHERE id = ?";
 
-  private static final String SQL_INSERT = "INSERT INTO " + TABLE_NAME
-          + " VALUES( name = ?"
-          + "  , sex = ?"
-          + "  , date_of_birth = ?"
-          + "  , height = ?"
-          + "  , weight = ?"
-          + "  , breed_id = ?"
-          + ")";
+  private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
+      + " (id, name, sex, date_of_birth, height, weight, breed_id)"
+      + " VALUES(:id, :name, :sex, :dateOfBirth, :height, :weight, :breedId)";
+
+
+  private static final String NAMED_SQL_INSERT_WITHOUT_ID = "INSERT INTO " + TABLE_NAME
+      + " (name, sex, date_of_birth, height, weight, breed_id)"
+      + " VALUES(:name, :sex, :dateOfBirth, :height, :weight, :breedId)";
 
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
@@ -102,33 +109,46 @@ public class HorseJdbcDao implements HorseDao {
   public Horse create(HorseDetailDto horse) {
     LOG.trace("create({})", horse);
 
-    int created = jdbcTemplate.update(SQL_INSERT,
-            horse.name(),
-            horse.sex().toString(),
-            horse.dateOfBirth(),
-            horse.height(),
-            horse.weight(),
-            horse.breed().id());
-    if (created == 0) {
-      throw new FatalException("Could not insert horse with ID " + horse.id());
+    KeyHolder keyHolder = new GeneratedKeyHolder();   // KeyHolder for id of newly crated horse
+
+    String sqlInsert = horse.id() != null ? NAMED_SQL_INSERT_WITH_ID : NAMED_SQL_INSERT_WITHOUT_ID;   // ID optionally provided, e.g. during testing
+
+    MapSqlParameterSource parameterSource = new MapSqlParameterSource()
+        .addValue("id", horse.id())
+        .addValue("name", horse.name())
+        .addValue("sex", horse.sex().toString())
+        .addValue("dateOfBirth", horse.dateOfBirth())
+        .addValue("height", horse.height())
+        .addValue("weight", horse.weight())
+        .addValue("breedId", horse.breed().id()); // Extracting breedId from BreedDto
+
+    try {
+      int rowsAffected = jdbcNamed.update(sqlInsert, parameterSource, keyHolder, new String[]{"id"});
+
+      if (rowsAffected == 0) {
+        throw new FatalException("Insert operation failed, no rows affected.");
+      }
+
+      Long newId = (horse.id() != null) ? horse.id() : Objects.requireNonNull(keyHolder.getKey()).longValue();
+      return new Horse()
+          .setId(newId)
+          .setName(horse.name())
+          .setSex(horse.sex())
+          .setDateOfBirth(horse.dateOfBirth())
+          .setHeight(horse.height())
+          .setWeight(horse.weight())
+          .setBreedId(horse.breed().id())
+          ;
+    } catch (DataAccessException e) {
+      throw new FatalException("Error occurred during the insert operation: " + e.getMessage(), e);
     }
-
-    return new Horse()
-            .setId(horse.id())
-            .setName(horse.name())
-            .setSex(horse.sex())
-            .setDateOfBirth(horse.dateOfBirth())
-            .setHeight(horse.height())
-            .setWeight(horse.weight())
-            .setBreedId(horse.breed().id())
-            ;
-
   }
 
 
   @Override
   public Horse update(HorseDetailDto horse) throws NotFoundException {
     LOG.trace("update({})", horse);
+
     int updated = jdbcTemplate.update(SQL_UPDATE,
         horse.name(),
         horse.sex().toString(),
@@ -153,7 +173,7 @@ public class HorseJdbcDao implements HorseDao {
   }
 
 
-  private Horse mapRow(ResultSet result, int rownum) throws SQLException {
+  private Horse mapRow(ResultSet result, int rowNum) throws SQLException {
     return new Horse()
         .setId(result.getLong("id"))
         .setName(result.getString("name"))

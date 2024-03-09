@@ -1,20 +1,27 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @ActiveProfiles({"test", "datagen"})
-// enable "test" spring profile during test execution in order to pick up configuration from application-test.yml
+// enable "test" spring profile during test execution in order to pick up configuration from
+// application-test.yml
 @SpringBootTest
 public class HorseDaoTest extends TestBase {
 
@@ -57,10 +64,9 @@ public class HorseDaoTest extends TestBase {
 
   @Test
   public void searchByBirthDateBetween2017And2018ReturnsFourHorses() {
-    var searchDto = new HorseSearchDto(null, null,
-        LocalDate.of(2017, 3, 5),
-        LocalDate.of(2018, 10, 10),
-        null, null);
+    var searchDto =
+        new HorseSearchDto(
+            null, null, LocalDate.of(2017, 3, 5), LocalDate.of(2018, 10, 10), null, null);
     var horses = horseDao.search(searchDto);
     assertNotNull(horses);
     assertThat(horses)
@@ -99,5 +105,30 @@ public class HorseDaoTest extends TestBase {
                 .setHeight(1.62f)
                 .setWeight(670)
                 .setBreedId(-19L));
+  }
+
+  @Test
+  public void createHorseWithValidHorseShouldReturnCreatedHorse() {
+    var validHorseDto =
+        new HorseDetailDto(
+            -33L,
+            "Anton",
+            Sex.MALE,
+            LocalDate.of(2004, 3, 24),
+            1.74f,
+            68.5f,
+            new BreedDto(-11L, "Lipizzaner"));
+    var createdHorse = horseDao.create(validHorseDto);
+    assertNotNull(createdHorse);
+    assertInstanceOf(Horse.class, createdHorse);
+    assertAll(
+        "insertedHorse",
+        () -> assertEquals(-33L, createdHorse.getId()),
+        () -> assertEquals("Anton", createdHorse.getName()),
+        () -> assertEquals(Sex.MALE, createdHorse.getSex()),
+        () -> assertEquals(LocalDate.of(2004, 3, 24), createdHorse.getDateOfBirth()),
+        () -> assertEquals(1.74f, createdHorse.getHeight()),
+        () -> assertEquals(68.5f, createdHorse.getWeight()),
+        () -> assertEquals(-11L, createdHorse.getBreedId()));
   }
 }

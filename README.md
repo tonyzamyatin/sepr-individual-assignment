@@ -17,5 +17,6 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 08.03.2024 |   12:30   |  1h 00min |          |    Bugfix bei Projektaufsetzung behoben      |
 | 08.03.2024 |   13:30   |  0h 30min |          |     User- und Tech-Stories durchgelesen      |
 | 08.03.2024 |   20:00   |  3h 00min |     1    | Template nachvollzoge und dann Backend implementiert      |
+| 09.03.2024 |   20:00   |  3h 30min |     1    | Persistence, Service und Endpoint getestest |
 
 **Gesamtsumme der Zeit**: h 

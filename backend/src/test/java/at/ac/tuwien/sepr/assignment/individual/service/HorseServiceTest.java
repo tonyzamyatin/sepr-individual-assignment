@@ -1,18 +1,25 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
-import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ActiveProfiles({"test", "datagen"}) // enable "test" spring profile during test execution in order to pick up configuration from application-test.yml
 @SpringBootTest
@@ -59,5 +66,27 @@ public class HorseServiceTest extends TestBase {
                 "Welsh Cob"));
   }
 
-
+  @Test
+  public void createHorseWithValidHorseShouldReturnCreatedHorse() {
+    var validHorseDto =
+        new HorseDetailDto(
+            -33L,
+            "Anton",
+            Sex.MALE,
+            LocalDate.of(2004, 3, 24),
+            1.74f,
+            68.5f,
+            new BreedDto(-11L, "Lipizzaner"));
+    var createdHorse = assertDoesNotThrow(() -> horseService.create(validHorseDto));
+    assertInstanceOf(HorseDetailDto.class, createdHorse);
+    assertAll(
+        "insertedHorse",
+        () -> assertEquals(-33L, createdHorse.id()),
+        () -> assertEquals("Anton", createdHorse.name()),
+        () -> assertEquals(Sex.MALE, createdHorse.sex()),
+        () -> assertEquals(LocalDate.of(2004, 3, 24), createdHorse.dateOfBirth()),
+        () -> assertEquals(1.74f, createdHorse.height()),
+        () -> assertEquals(68.5f, createdHorse.weight()),
+        () -> assertEquals(-11L, createdHorse.breed().id()));
+  }
 }

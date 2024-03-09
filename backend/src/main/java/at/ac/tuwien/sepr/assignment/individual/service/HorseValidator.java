@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class HorseValidator {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  public void validateForUpdateCreate(HorseDetailDto horse) throws ValidationException {
-    LOG.trace("validateForUpdateCreate({})", horse);
+  public void validateForUpdate(HorseDetailDto horse) throws ValidationException {
+    LOG.trace("validateForUpdate({})", horse);
     List<String> validationErrors = new ArrayList<>();
 
     if (horse.id() == null) {
@@ -24,6 +24,18 @@ public class HorseValidator {
 
     if (!validationErrors.isEmpty()) {
       throw new ValidationException("Validation of horse for update failed", validationErrors);
+    }
+  }
+
+  public void validateForCreate(HorseDetailDto horse) throws ValidationException {
+    LOG.trace("validateForCreate({})", horse);
+    List<String> validationErrors = new ArrayList<>();
+
+    // Ignore whether horse has an ID or not (compromise for testing)
+    // TODO this is not complete…
+
+    if (!validationErrors.isEmpty()) {
+      throw new ValidationException("Validation of horse for create failed", validationErrors);
     }
   }
 

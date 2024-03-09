@@ -58,7 +58,7 @@ export class HorseService {
    */
   create(horse: Horse): Observable<Horse> {
     return this.http.post<Horse>(
-      baseUri,
+      baseUri + "/create",
       horse
     );
   }

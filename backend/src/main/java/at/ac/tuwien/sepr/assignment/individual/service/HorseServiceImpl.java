@@ -9,6 +9,10 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Map;
@@ -17,9 +21,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 @Service
 public class HorseServiceImpl implements HorseService {
@@ -53,24 +54,23 @@ public class HorseServiceImpl implements HorseService {
 
 
   @Override
-  public HorseDetailDto create(HorseDetailDto horse) throws ValidationException {
-    LOG.trace("create({})", horse);
-    validator.validateForUpdateCreate(horse);
-    var createdHorse = dao.create(horse);
-    var breeds = breedMapForSingleHorse(createdHorse);
-    return mapper.entityToDetailDto(createdHorse, breeds);
-  }
-
-
-  @Override
   public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException {
     LOG.trace("update({})", horse);
-    validator.validateForUpdateCreate(horse);
+    validator.validateForUpdate(horse);
     var updatedHorse = dao.update(horse);
     var breeds = breedMapForSingleHorse(updatedHorse);
     return mapper.entityToDetailDto(updatedHorse, breeds);
   }
 
+
+  @Override
+  public HorseDetailDto create(HorseDetailDto horse) throws ValidationException {
+    LOG.trace("create({})", horse);
+    validator.validateForCreate(horse);
+    var createdHorse = dao.create(horse);
+    var breeds = breedMapForSingleHorse(createdHorse);
+    return mapper.entityToDetailDto(createdHorse, breeds);
+  }
 
   @Override
   public HorseDetailDto getById(long id) throws NotFoundException {

@@ -1,17 +1,12 @@
 package at.ac.tuwien.sepr.assignment.individual.rest;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +20,17 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @ActiveProfiles({"test", "datagen"}) // enable "test" spring profile during test execution in order to pick up configuration from application-test.yml
 @SpringBootTest
 @EnableWebMvc
@@ -32,11 +38,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class HorseEndpointTest extends TestBase {
 
   @Autowired
+  ObjectMapper objectMapper;
+  @Autowired
   private WebApplicationContext webAppContext;
   private MockMvc mockMvc;
-
-  @Autowired
-  ObjectMapper objectMapper;
 
   @BeforeEach
   public void setup() {
@@ -131,4 +136,44 @@ public class HorseEndpointTest extends TestBase {
             tuple(-32L, "Luna", Sex.FEMALE, LocalDate.of(2018, 10, 10),
                 "Welsh Cob"));
   }
+
+  @Test
+  public void createHorseWithValidHorseDtoShouldReturnCreatedHorse() throws Exception {
+    var validHorseDto =
+        new HorseDetailDto(
+            -33L,
+            "Anton",
+            Sex.MALE,
+            LocalDate.of(2004, 3, 24),
+            1.74f,
+            68.5f,
+            new BreedDto(-11L, "Lipizzaner"));
+
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());  // needed to serialize LocalData in dateOfBirth field of HorseDetailDto
+    String jsonHorseDto = objectMapper.writeValueAsString(validHorseDto);
+
+    var body = mockMvc
+        .perform(MockMvcRequestBuilders
+            .post("/horses/create")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(jsonHorseDto)
+            .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andReturn().getResponse().getContentAsString();
+
+    var horseResult = objectMapper.readValue(body, HorseDetailDto.class);
+    assertNotNull(horseResult);
+    assertAll("Validating created horse properties",
+        () -> assertEquals(validHorseDto.id(), horseResult.id(), "Horse ID does not match"),
+        () -> assertEquals(validHorseDto.name(), horseResult.name(), "Horse name does not match"),
+        () -> assertEquals(validHorseDto.sex(), horseResult.sex(), "Horse sex does not match"),
+        () -> assertEquals(validHorseDto.dateOfBirth(), horseResult.dateOfBirth(), "Horse date of birth does not match"),
+        () -> assertEquals(validHorseDto.height(), horseResult.height(), "Horse height does not match"),
+        () -> assertEquals(validHorseDto.weight(), horseResult.weight(), "Horse weight does not match"),
+        () -> assertEquals(validHorseDto.breed().id(), horseResult.breed().id(), "Horse breed ID does not match")
+    );
+  }
+
+
 }

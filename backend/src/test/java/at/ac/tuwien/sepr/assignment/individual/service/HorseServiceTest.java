@@ -67,7 +67,7 @@ public class HorseServiceTest extends TestBase {
   }
 
   @Test
-  public void createHorseWithValidHorseShouldReturnCreatedHorse() {
+  public void createHorseWithValidHorseDtoShouldReturnCreatedHorse() {
     var validHorseDto =
         new HorseDetailDto(
             -33L,

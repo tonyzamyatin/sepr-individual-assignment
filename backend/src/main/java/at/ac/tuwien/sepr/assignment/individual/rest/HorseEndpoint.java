@@ -55,7 +55,7 @@ public class HorseEndpoint {
 
   @PutMapping("{id}")
   public HorseDetailDto update(@PathVariable("id") long id, @RequestBody HorseDetailDto toUpdate) throws ValidationException, ConflictException {
-    LOG.info("PUT " + BASE_PATH + "/{}", toUpdate);
+    LOG.info("PUT " + BASE_PATH + "/{}", id);
     LOG.debug("Body of request:\n{}", toUpdate);
     try {
       return service.update(toUpdate.withId(id));
@@ -67,9 +67,9 @@ public class HorseEndpoint {
   }
 
 
-  @PostMapping
+  @PostMapping("create")
   public HorseDetailDto create(@RequestBody HorseDetailDto toCreate) throws ValidationException, ConflictException {
-    LOG.info("POST " + BASE_PATH + "/{}", toCreate);
+    LOG.info("POST " + BASE_PATH + "/create");
     LOG.debug("Body of request:\n{}", toCreate);
     return service.create(toCreate);
   }

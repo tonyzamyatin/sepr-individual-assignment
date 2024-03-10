@@ -35,7 +35,7 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
   dataListId: string;
   inputText = '';
   checkValueNeedsToMatchSuggestion = true;
-  value: T | null = null;
+  value: T | undefined = undefined;
   valueCandidates = new Map<string, T>();
   touched = false;
   disabled = false;
@@ -67,7 +67,7 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
    * and the data list options
    */
   @Input()
-  formatModel = (model: T | null) => (model as any).toString();
+  formatModel = (model: T | undefined) => (model as any).toString();
 
   // Dummy functions for the callback variables, so that we do not need to check,
   // if one was already registered
@@ -82,7 +82,7 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
         switchMap(this.suggestions),
       )
       .subscribe({
-        next: this.onRecieveNewCandidates.bind(this),
+        next: this.onReceiveNewCandidates.bind(this),
         error: err => {
           console.error('Error when getting autocompletion list', err);
         },
@@ -117,7 +117,7 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
   private checkIfInputMatchesCandidate(input: string): void {
     this.markAsTouched();
     if (input === '') {
-      this.setValue(null);
+      this.setValue(undefined);
     } else if (!this.checkValueNeedsToMatchSuggestion) {
       /* Type cast hack. The option `valueNeedsToMatchSuggestion` only makes sense
        * if  the model type parameter `T` actually is meant to be `string` anyway.
@@ -132,13 +132,13 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
     }
   }
 
-  private setValue(newValue: T | null) {
+  private setValue(newValue: T | undefined) {
     this.value = newValue;
     this.inputText = this.formatModel(this.value);
     this.onChange(this.value);
   }
 
-  private onRecieveNewCandidates(result: T[]) {
+  private onReceiveNewCandidates(result: T[]) {
     this.valueCandidates.clear();
     for (const candidate of result) {
       this.valueCandidates.set(this.formatModel(candidate), candidate);

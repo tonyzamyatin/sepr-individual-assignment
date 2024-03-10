@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.assignment.individual.service;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.entity.Breed;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
@@ -50,7 +51,7 @@ public interface HorseService {
   HorseDetailDto getById(long id) throws NotFoundException;
 
   /**
-   * Creates the horse.
+   * Create a horse. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto} is null.
    *
    * @return the newly created horse
    * @throws ValidationException if the update data given for the horse is in itself incorrect (no

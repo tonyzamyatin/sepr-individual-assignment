@@ -32,6 +32,7 @@ public class HorseValidator {
     List<String> validationErrors = new ArrayList<>();
 
     // Ignore whether horse has an ID or not (compromise for testing)
+    // Breed is optional, i.e. allowed to be null
     // TODO this is not complete…
 
     if (!validationErrors.isEmpty()) {

@@ -29,6 +29,7 @@ export class HorseCreateEditComponent implements OnInit {
     dateOfBirth: new Date(), // TODO this is bad
     height: 0, // TODO this is bad
     weight: 0, // TODO this is bad
+    breed: undefined,
   };
 
   private heightSet: boolean = false;

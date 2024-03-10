@@ -113,6 +113,9 @@ public class HorseJdbcDao implements HorseDao {
 
     String sqlInsert = horse.id() != null ? NAMED_SQL_INSERT_WITH_ID : NAMED_SQL_INSERT_WITHOUT_ID;   // ID optionally provided, e.g. during testing
 
+    // Handle optional breedId
+    Long optionalBreedId = horse.breed() != null ? horse.breed().id() : null;
+
     MapSqlParameterSource parameterSource = new MapSqlParameterSource()
         .addValue("id", horse.id())
         .addValue("name", horse.name())
@@ -120,7 +123,7 @@ public class HorseJdbcDao implements HorseDao {
         .addValue("dateOfBirth", horse.dateOfBirth())
         .addValue("height", horse.height())
         .addValue("weight", horse.weight())
-        .addValue("breedId", horse.breed().id()); // Extracting breedId from BreedDto
+        .addValue("breedId", optionalBreedId); // Extracting breedId from BreedDto
 
     try {
       int rowsAffected = jdbcNamed.update(sqlInsert, parameterSource, keyHolder, new String[]{"id"});
@@ -137,7 +140,7 @@ public class HorseJdbcDao implements HorseDao {
           .setDateOfBirth(horse.dateOfBirth())
           .setHeight(horse.height())
           .setWeight(horse.weight())
-          .setBreedId(horse.breed().id())
+          .setBreedId(optionalBreedId)
           ;
     } catch (DataAccessException e) {
       throw new FatalException("Error occurred during the insert operation: " + e.getMessage(), e);
@@ -149,13 +152,16 @@ public class HorseJdbcDao implements HorseDao {
   public Horse update(HorseDetailDto horse) throws NotFoundException {
     LOG.trace("update({})", horse);
 
+    // Handle optional breedId
+    Long optionalBreedId = horse.breed() != null ? horse.breed().id() : null;
+
     int updated = jdbcTemplate.update(SQL_UPDATE,
         horse.name(),
         horse.sex().toString(),
         horse.dateOfBirth(),
         horse.height(),
         horse.weight(),
-        horse.breed().id(),
+        optionalBreedId,
         horse.id());
     if (updated == 0) {
       throw new NotFoundException("Could not update horse with ID " + horse.id() + ", because it does not exist");
@@ -168,7 +174,7 @@ public class HorseJdbcDao implements HorseDao {
         .setDateOfBirth(horse.dateOfBirth())
         .setHeight(horse.height())
         .setWeight(horse.weight())
-        .setBreedId(horse.breed().id())
+        .setBreedId(optionalBreedId)
         ;
   }
 

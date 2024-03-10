@@ -82,12 +82,24 @@ public class HorseServiceImpl implements HorseService {
 
 
   private Map<Long, BreedDto> breedMapForSingleHorse(Horse horse) {
+    if (horse.getBreedId() == null) {
+      return Collections.emptyMap();
+    }
     return breedMapForHorses(Collections.singleton(horse.getBreedId()));
   }
 
 
-  private Map<Long, BreedDto> breedMapForHorses(Set<Long> horse) {
-    return breedService.findBreedsByIds(horse)
+  private Map<Long, BreedDto> breedMapForHorses(Set<Long> horseIds) {
+    // Filter out null values from the set
+    Set<Long> nonNullHorseIds = horseIds.stream()
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
+
+    if (nonNullHorseIds.isEmpty()) {
+      return Collections.emptyMap();
+    }
+
+    return breedService.findBreedsByIds(nonNullHorseIds)
         .collect(Collectors.toUnmodifiableMap(BreedDto::id, Function.identity()));
   }
 }

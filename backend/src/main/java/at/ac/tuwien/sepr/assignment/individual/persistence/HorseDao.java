@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.assignment.individual.persistence;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.entity.Breed;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
@@ -46,7 +47,8 @@ public interface HorseDao {
 
 
   /**
-   * Create a new horse with the data given in {@code horse}
+   * Create a new horse with the data given in {@code horse}. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto}
+   * is null.
    *
    * @param horse the new horse to create
    * @return the newly created horse

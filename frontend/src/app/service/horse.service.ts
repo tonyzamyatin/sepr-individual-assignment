@@ -63,4 +63,27 @@ export class HorseService {
     );
   }
 
+
+  /**
+   * Update existing horse in the system.
+   *
+   * @param horse the data for the horse that should be updated (incl. id)
+   * @return an Observable for the updated horse
+   */
+  update(horse: Horse): Observable<Horse> {
+    return this.http.put<Horse>(
+      `${baseUri}/update/${horse.id}`,
+      horse
+    );
+  }
+
+  /**
+   * Delete the horse with the given id.
+   *
+   * @param horseId the id of the horse to be deleted.
+   * @return an empty Observable
+   */
+  delete(horseId: number): Observable<void> {
+    return this.http.delete<void>(`${baseUri}/delete/${horseId}`)
+  }
 }

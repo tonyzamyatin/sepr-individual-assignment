@@ -13,6 +13,7 @@ import {BreedService} from "../../../service/breed.service";
 export enum HorseCreateEditMode {
   create,
   edit,
+  view
 }
 
 @Component({
@@ -23,18 +24,39 @@ export enum HorseCreateEditMode {
 export class HorseCreateEditComponent implements OnInit {
 
   mode: HorseCreateEditMode = HorseCreateEditMode.create;
+  horseId: number | undefined;
+  initialHorse: Horse | undefined;
   horse: Horse = {
     name: '',
     sex: Sex.female,
     dateOfBirth: new Date(), // TODO this is bad
-    height: 0, // TODO this is bad
-    weight: 0, // TODO this is bad
+    height: 1.50, // TODO this is bad
+    weight: 500, // TODO this is bad
     breed: undefined,
   };
+  sexes = [
+    { value: 'FEMALE', viewValue: 'Female' },
+    { value: 'MALE', viewValue: 'Male' }
+  ];
 
+  private sexSet: boolean = false;
   private heightSet: boolean = false;
   private weightSet: boolean = false;
   private dateOfBirthSet: boolean = false;
+
+  public showConfirmDeleteDialog: boolean = false;
+
+  get sex(): string {
+    return this.sexSet ? this.horse.sex.toString() : '';
+  }
+
+  set sex(value: string) {
+    if (value) {
+      this.sexSet = true;
+      this.horse.sex = value as Sex; // Assuming `value` will be either 'Male' or 'Female'
+    }
+  }
+
 
   get height(): number | null {
     return this.heightSet
@@ -83,15 +105,22 @@ export class HorseCreateEditComponent implements OnInit {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'Create New Horse';
+      case HorseCreateEditMode.edit:
+        return `Edit Horse Details`
+      case HorseCreateEditMode.view:
+        return `Horse Details`
       default:
         return '?';
     }
   }
 
+
   public get submitButtonText(): string {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'Create';
+      case HorseCreateEditMode.edit:
+        return 'Submit'
       default:
         return '?';
     }
@@ -101,28 +130,56 @@ export class HorseCreateEditComponent implements OnInit {
     return this.mode === HorseCreateEditMode.create;
   }
 
+  get modeIsView(): boolean {
+    return this.mode === HorseCreateEditMode.view;
+  }
 
-  get sex(): string {
-    switch (this.horse.sex) {
-      case Sex.male: return 'Male';
-      case Sex.female: return 'Female';
-      default: return '';
-    }
+  get modeIsEdit(): boolean {
+    return this.mode === HorseCreateEditMode.edit;
   }
 
   private get modeActionFinished(): string {
     switch (this.mode) {
       case HorseCreateEditMode.create:
         return 'created';
+      case HorseCreateEditMode.edit:
+        return 'updated';
       default:
         return '?';
     }
   }
 
+  private initializeFormFields(horse: Horse): void {
+    this.initialHorse = {...horse}   // copy
+    this.sex = horse.sex ?? null;
+    this.height = horse.height ?? null;
+    this.weight = horse.weight ?? null;
+    this.dateOfBirth = horse.dateOfBirth ?? new Date();
+
+    // Mark as set to handle logic in your getters and setters
+    this.sexSet = horse.sex != null
+    this.heightSet = horse.height != null;
+    this.weightSet = horse.weight != null;
+    this.dateOfBirthSet = horse.dateOfBirth != null;
+  }
+
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.mode = data.mode;
-    });
+      if (!this.modeIsCreate) {
+        this.horseId = Number(this.route.snapshot.paramMap.get('id'));
+        this.service.getById(this.horseId).subscribe({
+          next: retrievedHorse => {
+          this.horse = retrievedHorse;
+          this.initializeFormFields(retrievedHorse)
+          },
+          error: error => {
+            console.error(`Error getting horse with id ${this.horseId}`, error);
+            // TODO show an error message to the user. Include and sensibly present the info from the backend!
+          }
+        })
+      }
+    })
   }
 
   public dynamicCssClassesForInput(input: NgModel): any {
@@ -139,6 +196,37 @@ export class HorseCreateEditComponent implements OnInit {
     ? of([])
     :  this.breedService.breedsByName(input, 5);
 
+  public hasFormChanges(): boolean {
+    return JSON.stringify(this.initialHorse) !== JSON.stringify(this.horse);
+  }
+
+  public onDeleteButtonClick(): void {
+    this.showConfirmDeleteDialog = true;
+  }
+
+  /**
+   * Only call in states where horse.id is set to a valid and existing id.
+   * @param confirm
+   */
+  onDeleteConfirmed(confirm: boolean): void {
+    if (confirm && this.horse && this.horse.id !== undefined) {
+      // Call the service to delete the horse, then navigate or show a message
+      this.service.delete(this.horse.id).subscribe({
+        next: () => {
+          this.notification.success('Horse successfully deleted.');
+          this.router.navigate(['/horses']);
+        },
+        error: error => {
+          console.error('Error deleting horse', error);
+          this.notification.error('Error deleting horse');
+          // TODO show an error message to the user. Include and sensibly present the info from the backend!
+        }
+      });
+    }
+
+    this.showConfirmDeleteDialog = false; // Hide the dialog
+  }
+
   public onSubmit(form: NgForm): void {
     console.log('is form valid?', form.valid, this.horse);
     if (form.valid) {
@@ -147,6 +235,12 @@ export class HorseCreateEditComponent implements OnInit {
         case HorseCreateEditMode.create:
           observable = this.service.create(this.horse);
           break;
+        case HorseCreateEditMode.edit:
+          if (!this.hasFormChanges()) {
+            console.log('No changes detected.');
+            return;
+          }
+          observable = this.service.update(this.horse);
         default:
           console.error('Unknown HorseCreateEditMode', this.mode);
           return;

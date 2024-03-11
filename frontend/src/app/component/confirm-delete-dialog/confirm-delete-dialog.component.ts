@@ -7,14 +7,26 @@ import {Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angu
 })
 export class ConfirmDeleteDialogComponent implements OnInit {
 
-  @Input() deleteWhat = '?';
-  @Output() confirm = new EventEmitter<void>();
+  @Input() title: string = 'Confirm Action';
+  @Input() message: string = 'Do you want to proceed?';
+  @Input() confirmButtonText: string = 'Yes';
+  @Input() cancelButtonText: string = 'No';
+  @Output() confirm = new EventEmitter<boolean>();
 
   @HostBinding('class') cssClass = 'modal fade';
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
+    console.log("Delete dialog rendered")
+  }
+
+  onConfirm(): void {
+    this.confirm.emit(true);
+  }
+
+  onCancel(): void {
+    this.confirm.emit(false);
   }
 
 }

@@ -20,6 +20,7 @@
                  class="form-control"
                  [class]="dynamicCssClassesForInput(horseNameModel)"
                  [(ngModel)]="horse.name"
+                 [disabled]="modeIsView"
                  #horseNameModel="ngModel"
                  required
                  >
@@ -48,6 +49,7 @@
                  class="form-control"
                  [class]="dynamicCssClassesForInput(horseDateOfBirthModel)"
                  [(ngModel)]="dateOfBirth"
+                 [disabled]="modeIsView"
                  #horseDateOfBirthModel="ngModel"
                  required
                  >
@@ -72,11 +74,13 @@
           <select class="form-select"
                   id="horseSex"
                   name="horseSex"
-                  [(ngModel)]="horse.sex"
+                  [(ngModel)]="sex"
+                  (ngModelChange)="sex = $event"
+                  [disabled]="modeIsView"
                   required
                   >
-            <option value="FEMALE">Female</option>
-            <option value="MALE">Male</option>
+            <option value="" disabled>Select Sex</option>
+            <option *ngFor="let s of sexes" [ngValue]="s.value">{{ s.viewValue }}</option>
           </select>
         </div>
       </div>
@@ -98,6 +102,7 @@
             [(ngModel)]="horse.breed"
             [formatModel]="formatBreedName"
             [suggestions]="breedSuggestions"
+            [disabled]="modeIsView"
             ></app-autocomplete>
         </div>
         <!-- \TEMPLATE EXLCUDE BEGIN\ -->
@@ -123,6 +128,7 @@
                  name="horseHeight"
                  step="0.01"
                  [(ngModel)]="height"
+                 [disabled]="modeIsView"
                  required
                  >
         </div>
@@ -144,6 +150,7 @@
                  name="horseWeight"
                  step="1"
                  [(ngModel)]="weight"
+                 [disabled]="modeIsView"
                  required
                  >
         </div>
@@ -160,17 +167,46 @@
     <button type="button"
             class="btn btn-danger"
             *ngIf="!modeIsCreate"
+            (click)="onDeleteButtonClick()"
             >
       <i class="bi bi-trash"></i>
       Delete
     </button>
+    <app-confirm-delete-dialog *ngIf="showConfirmDeleteDialog"
+                        [title]="'Delete Horse'"
+                        [message]="'Do you really want to delete this horse?'"
+                        [confirmButtonText]="'Yes, delete'"
+                        [cancelButtonText]="'No, stop'"
+                        (confirm)="onDeleteConfirmed($event)">
+    </app-confirm-delete-dialog>
+
+
+    <!--  BEGIN SUBMIT BUTTON (only displayed in create or edit modes) -->
     <span class="flex-grow-1"></span>
     <button type="submit"
             class="btn btn-primary"
+            *ngIf="modeIsCreate"
             [disabled]="!form.valid"
-            type="submit"
             >
       {{submitButtonText}}
     </button>
+    <button type="submit"
+            class="btn btn-primary"
+            *ngIf="modeIsEdit"
+            [disabled]="!form.valid || !hasFormChanges()"
+    >
+      {{submitButtonText}}
+    </button>
+    <!--  END SUBMIT BUTTON  -->
+    <!--  BEGIN EDIT BUTTON (only displayed in view mode)  -->
+    <button type="button"
+            class="btn btn-primary"
+            *ngIf="modeIsView"
+            [routerLink]="['/horses/edit', horse.id]"
+            >
+      <i class="bi bi-pencil"></i>
+      Edit
+    </button>
+    <!--  END EDIT BUTTON  -->
   </div>
 </form>

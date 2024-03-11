@@ -1,10 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import {HorseService} from 'src/app/service/horse.service';
 import {Horse, HorseListDto} from '../../dto/horse';
 import {HorseSearch} from '../../dto/horse';
 import {debounceTime, map, Observable, of, Subject} from 'rxjs';
 import {BreedService} from "../../service/breed.service";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {ConfirmDeleteDialogComponent} from "../confirm-delete-dialog/confirm-delete-dialog.component";
 
 @Component({
   selector: 'app-horse',
@@ -12,18 +14,20 @@ import {BreedService} from "../../service/breed.service";
   styleUrls: ['./horse.component.scss']
 })
 export class HorseComponent implements OnInit {
-  search = false;
+
+  search: boolean = false;
   horses: HorseListDto[] = [];
   bannerError: string | null = null;
   searchParams: HorseSearch = {};
   searchBornEarliest: string | null = null;
   searchBornLatest: string | null = null;
-  horseForDeletion: Horse | undefined;
+  horseForDeletion: HorseListDto | undefined;
   searchChangedObservable = new Subject<void>();
 
   constructor(
     private service: HorseService,
     private breedService: BreedService,
+    private modalService: NgbModal,
     private notification: ToastrService,
   ) { }
 
@@ -71,4 +75,39 @@ export class HorseComponent implements OnInit {
 
   formatBreedName = (name: string) => name; // It is already the breed name, we just have to give a function to the component
 
+  public onDeleteButtonClick(horse: HorseListDto): void {
+    console.log("Delete clicked")
+    this.horseForDeletion = horse;
+    this.showConfirmDeleteDialog()
+  }
+
+  private showConfirmDeleteDialog(): void {
+    const modalRef = this.modalService.open(ConfirmDeleteDialogComponent);
+    modalRef.componentInstance.title = 'Delete Confirmation';
+    modalRef.componentInstance.message = 'Are you sure you want to delete this horse?';
+    modalRef.componentInstance.confirmButtonText = 'Yes, delete'
+    modalRef.componentInstance.cancelButtonText = 'No, stop'
+  }
+
+  onDeleteConfirmed(confirm: boolean): void {
+    if (confirm && this.horseForDeletion && this.horseForDeletion.id !== undefined) {
+      // Call the service to delete the horse, then navigate or show a message
+      this.service.delete(this.horseForDeletion.id).subscribe({
+        next: () => {
+          this.notification.success('Horse successfully deleted.');
+          // Navigate away or update the view as necessary
+        },
+        error: error => {
+          console.error('Error deleting horse', error);
+          this.notification.error('Error occurred while deleting the horse.');
+          // Handle the display of the error to the user
+        }
+      });
+    } else {
+      // Handle the case where the horse or its ID is undefined
+      this.notification.error('Error: No horse selected for deletion.');
+    }
+
+    this.horseForDeletion = undefined;  // Hide dialog
+  }
 }

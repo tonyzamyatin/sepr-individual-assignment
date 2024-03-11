@@ -1,6 +1,6 @@
 <!-- SANITY CHECK BANNER
     This is just for checking, that your setup works.
-    You can – and should – remove this later
+    TODO: You can – and should – remove this later
     -->
 <div class="container mt-3 mb-3" *ngIf="bannerError">
   <div class="alert alert-danger" role="alert">
@@ -18,6 +18,15 @@
   </div>
 </div>
 <!-- END SANITY CHECK BANNER -->
+
+<app-confirm-delete-dialog
+  *ngIf="horseForDeletion"
+  [title]="'Delete Confirmation'"
+  [message]="'Are you sure you want to delete this horse?'"
+  [confirmButtonText]="'Confirm'"
+  [cancelButtonText]="'Cancel'"
+  (confirm)="onDeleteConfirmed($event)">
+</app-confirm-delete-dialog>
 
 <div class="d-flex flex-row w-auto">
   <button class="btn btn-primary mr-1" (click)="reloadHorses()" aria-label="Reload horses">
@@ -125,14 +134,20 @@
         <td>{{horse.breed?.name ?? ""}}</td>
         <td>
           <div class="btn-group">
-            <a class="btn btn-sm responsive-info-button"
+            <button class="btn btn-sm responsive-info-button"
+               [routerLink]="['view', horse.id]"
                aria-label="Show horse details">
               <i class="bi bi-info-lg"></i>
-            </a>
-            <a class="btn btn-sm responsive-warning-button"
+            </button>
+            <button class="btn btn-sm responsive-warning-button"
                [routerLink]="['edit', horse.id]"
                aria-label="Edit horse">
               <i class="bi bi-pencil"></i>
+            </button>
+            <a class="btn btn-sm responsive-danger-button"
+               (click)="onDeleteButtonClick(horse)"
+               aria-label="Edit horse">
+              <i class="bi bi-trash"></i>
             </a>
           </div>
         </td>

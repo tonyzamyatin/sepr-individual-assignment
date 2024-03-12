@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS horse
     height        NUMERIC(4, 2)           NOT NULL,
     weight        NUMERIC(7, 2)           NOT NULL,
     breed_id      BIGINT,
-    FOREIGN KEY (breed_id) REFERENCES breed (id)
+    FOREIGN KEY (breed_id) REFERENCES breed (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS tournament
@@ -23,7 +23,17 @@ CREATE TABLE IF NOT EXISTS tournament
     name       VARCHAR(255) NOT NULL,
     start_date DATE         NOT NULL,
     end_date   DATE         NOT NULL,
-    CONSTRAINT start_before_end_date check (start_date <= end_date)
+    horse1     BIGINT,
+    CHECK (start_date <= end_date)
+);
+
+CREATE TABLE IF NOT EXISTS tournament_participant
+(
+    tournament_id BIGINT,
+    horse_id      BIGINT,
+    PRIMARY KEY (tournament_id, horse_id),
+    FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (horse_id) REFERENCES horse (id) ON UPDATE CASCADE -- participating horses must not be deleted
 );
 
 CREATE TABLE IF NOT EXISTS tournament_match_up
@@ -34,10 +44,10 @@ CREATE TABLE IF NOT EXISTS tournament_match_up
     horse2_id       BIGINT,
     round_number    INT,
     match_number    INT,
-    winner_horse_id BIGINT NULL, -- Can be NULL if the match has not been played yet
-    FOREIGN KEY (tournament_id) REFERENCES tournament (id),
-    FOREIGN KEY (horse1_id) REFERENCES horse (id),
-    FOREIGN KEY (horse2_id) REFERENCES horse (id),
+    winner_horse_id BIGINT NULL,                                     -- Can be NULL if the match has not been played yet
+    FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (horse1_id) REFERENCES horse (id) ON UPDATE CASCADE, -- participating horses must not be deleted
+    FOREIGN KEY (horse2_id) REFERENCES horse (id) ON UPDATE CASCADE, -- participating horses must not be deleted
     CHECK (round_number > 0),
     CHECK (match_number > 0),
     CHECK (

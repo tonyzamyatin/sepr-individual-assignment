@@ -79,7 +79,7 @@ public class HorseEndpoint {
 
 
   @DeleteMapping("{id}")
-  public HorseDetailDto delete(@PathVariable("id") long id) throws ValidationException, ConflictException {
+  public void delete(@PathVariable("id") long id) throws ValidationException, ConflictException {
     LOG.info("DELETE " + BASE_PATH + "/delete/{}", id);
     try {
       // TODO: Implement service

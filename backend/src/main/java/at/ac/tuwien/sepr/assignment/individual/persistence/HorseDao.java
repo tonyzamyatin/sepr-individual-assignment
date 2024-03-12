@@ -24,6 +24,14 @@ public interface HorseDao {
    */
   Collection<Horse> search(HorseSearchDto searchParameters);
 
+  /**
+   * Create a new horse with the data given in {@code horse}. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto}
+   * is null.
+   *
+   * @param horse the new horse to create
+   * @return the newly created horse
+   */
+  Horse create(HorseDetailDto horse);
 
   /**
    * Update the horse with the ID given in {@code horse}
@@ -45,13 +53,12 @@ public interface HorseDao {
    */
   Horse getById(long id) throws NotFoundException;
 
-
   /**
-   * Create a new horse with the data given in {@code horse}. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto}
-   * is null.
+   * Delete a horse by its ID from the persistent data store.
    *
-   * @param horse the new horse to create
-   * @return the newly created horse
+   * @param id the ID of the horse to delete
+   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
    */
-  Horse create(HorseDetailDto horse);
+  void delete(long id) throws NotFoundException;
+
 }

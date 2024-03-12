@@ -1,4 +1,5 @@
 import {Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angular/core';
+import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-confirm-delete-dialog',
@@ -6,27 +7,19 @@ import {Component, EventEmitter, HostBinding, Input, OnInit, Output} from '@angu
   styleUrls: ['./confirm-delete-dialog.component.scss'],
 })
 export class ConfirmDeleteDialogComponent implements OnInit {
-
   @Input() title: string = 'Confirm Action';
   @Input() message: string = 'Do you want to proceed?';
   @Input() confirmButtonText: string = 'Yes';
   @Input() cancelButtonText: string = 'No';
-  @Output() confirm = new EventEmitter<boolean>();
-
   @HostBinding('class') cssClass = 'modal fade';
 
-  constructor() {}
+  constructor(
+    public activeModal: NgbActiveModal
+  ) {}
 
   ngOnInit(): void {
     console.log("Delete dialog rendered")
   }
 
-  onConfirm(): void {
-    this.confirm.emit(true);
-  }
-
-  onCancel(): void {
-    this.confirm.emit(false);
-  }
 
 }

@@ -14,7 +14,7 @@ h1 {
 	text-align: center;
 }
 
-p {
+p, ul {
 	text-align: justify;
 }
 

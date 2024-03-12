@@ -11,9 +11,9 @@
 		
 		<table class="document-version-info with-margin centered">
 			<tbody>
-				<tr><td>Datum</td><td>04.03.2024</td></tr>
-				<tr><td>Zeit</td><td>14:07:09</td></tr>
-				<tr><td>Dokumentrevision</td><td>2</td></tr>
+				<tr><td>Datum</td><td>05.03.2024</td></tr>
+				<tr><td>Zeit</td><td>23:13:47</td></tr>
+				<tr><td>Dokumentrevision</td><td>4</td></tr>
 			</tbody>
 		</table>
 		<div class="bordered-box"><strong>Bitte lesen Sie dieses Dokument aufmerksam und bis zum Ende durch, bevor Sie mit der Arbeit beginnen.
@@ -176,9 +176,11 @@ Die Eingabe entspricht einem Teil des Namens des Pferdes.</li><li>Geschlecht
 Das Geschlecht des Pferdes ist gleich dem Ausgewählten.</li><li>Geburtsdatum
 <br />
 Das Geburtsdatum des Pferdes ist innerhalb einer ausgewählten Zeitspanne.
-Wenn Anfang oder Ende der Zeitspanne nicht ausgewählt sind, gibt es hier keine Einschränkung.</li><li>Rasse
+Keine Eingabe entspricht keiner Einschränkung.
+Ist nur ein Anfangsdatum eingegeben, so gibt es nur eine Schranke für frühere Zeitpunkte;
+ist nur ein Enddatum einegegeben, so gibt es analog nur eine Schranke für spätere Zeitpunkte.</li><li>Rasse
 <br />
-Die Rasse des Pferdes entspricht einem Teil des eingegebenen Rassenamens.
+Die Eingabe entspricht einem Teil des Namens der Rasse des Pferdes.
 Zur Unterstützung soll eine optionale Autovervollständigung zur Verfügung stehen.
 <div class="dp-selflink-container"><a class="dp-selflink" href="#pferdebesitzer_ul-6"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="pferdebesitzer_ul-6"><li>Es sollen maximal 5 Kandidaten angezeigt werden, auch wenn es noch mehr
 passende Kandidaten gibt.</li></ul></div></li></ul></div></li><li>Die gefilterte Liste der Pferde soll folgende Elemente enthalten
@@ -244,18 +246,12 @@ Am Beispiel des Fragmentes <a href="#fig-beispiel-turnierzwischenstand">in der A
 				<img src="images/example_tournament_standings.png" alt="Turnierzwischenstand: In Runde 1 sind Rocky, Wendy und Hugo eingetragen, in Runde 2 als Sieger des ersten Vergleiches Wendy" />
 			</div></div></div>
 
-		<div class="dp-selflink-container"><a class="dp-selflink" href="#us-turnier-erste-runde-automatisch"><span class="dp-selflink-icon">§</span></a><div id="us-turnier-erste-runde-automatisch" class="story-box user-story-box"><div class="story-box-id"><strong>ID: </strong>8</div><div class="story-box-title"><strong>Titel:</strong><span class="story-box-title-text">Als Turnierveranstalter/in möchte ich die erste Runde eines Turniers automatisch besetzen lassen können.</span></div><div class="story-box-content"><div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-12"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-12"><li>Turniere erfolgen im KO-Format mit je 2 Pferden pro Match.</li><li>Die Darstellung des Ergebnistableaus soll im üblichen Format erfolgen (siehe Template).</li><li>Das Siegerpferd soll in einem einzelnen Feld am Ende eingetragen werden (siehe Template).</li><li>Die Konsistenz der Eintragungen soll sichergestellt werden:
-<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-13"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-13"><li>In jedes Feld darf nur ein Pferd eingetragen werden, das am jeweiligen Vorrundenmatch teilgenommen hat.
-Am Beispiel des Fragmentes <a href="#fig-beispiel-turnierzwischenstand">in der Abbildung</a>:<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-14"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-14"><li>Im oberen Feld der zweiten Runde darf entweder Wendy oder Rocky eingetragen werden, nicht aber Hugo</li><li>Im unteren Feld der zweiten Runde dürfte nur Hugo oder das noch nicht ausgefüllte vierte Pferd eingetragen werden.</li></ul></div></li><li>Ein Feld, dessen Vorrundenmatch noch nicht voll eingetragen ist, darf nicht befüllt werden.
-<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-15"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-15"><li>Im unteren Feld der zweiten Runde darf derzeit noch kein Pferd eingetragen werden,
-da das jeweilige Vorrundenmatch noch nicht fertig eingetragen ist.</li></ul></div></li><li>Ein Match darf nicht mehr verändert werden, wenn das Siegerpferd des Matches bereits in der darauffolgenden Runde eingetragen ist.
-<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-16"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-16"><li>Da im oberen Feld der zweiten Runde bereits ein Pferd eingetragen wurde, darf das obere Match der ersten Runde nicht mehr verändert werden.</li><li>Im unteren Feld der zweiten Runde ist noch nichts eingetragen.
-Daher darf die bisherige Eintragung des unteren Matches der ersten Runde noch verändert werden.</li></ul></div></li></ul></div></li><li>Die Eintragungsfelder sollen eine Auswahl der infrage kommenden Pferde zur Verfügung stellen.
-<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-17"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-17"><li>In der ersten Runde die 8 Pferde, die bei der Turniererstellung eingetragen wurden.</li><li>In der späteren Runden die Teilnehmer des jeweiligen Vorrundenmatches.</li></ul></div></li></ul></div><hr /><p><em>
-			Diese Story ist im Frontend bereits teilweise umgesetzt.
-			Verwenden Sie den bestehenden Code.
-			Beachten Sie, dass Sie diesen möglicherweise anpassen beziehungsweise erweitern müssen.
-		</em></p></div><div class="story-box-points"><strong>Storypoints: </strong>12</div></div></div>
+		<div class="dp-selflink-container"><a class="dp-selflink" href="#us-turnier-erste-runde-automatisch"><span class="dp-selflink-icon">§</span></a><div id="us-turnier-erste-runde-automatisch" class="story-box user-story-box"><div class="story-box-id"><strong>ID: </strong>8</div><div class="story-box-title"><strong>Titel:</strong><span class="story-box-title-text">Als Turnierveranstalter/in möchte ich die erste Runde eines Turniers automatisch besetzen lassen können.</span></div><div class="story-box-content"><div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-12"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-12"><li>Das Aufstellung der ersten Runde soll aufgrund der Turnierergebnisse der Pferde in den letzten 12 Monaten vor dem Startdatum erfolgen.
+<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-13"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-13"><li>Eine Reihung basierend auf Punkten soll erstellt werden.
+<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-14"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-14"><li>Für ein Turnier werden wie folgt angenommen:
+<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-15"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-15"><li><strong>5 Punkte</strong> für den Turniersieg</li><li><strong>3 Punkte</strong> für eine Niederlage im Finale</li><li><strong>1 Punkt</strong> für eine Niederlage im Halbfinale</li><li>ansonsten <strong>0 Punkte</strong></li></ul></div></li><li>Ein Pferd ohne Turnierteilnahmen in diesem Zeitbereich wird mit <strong>0 Punkten</strong> bewertet.</li><li>Haben zwei Pferde die gleich viele Punkte werden Sie nach alphabetischer Reihenfolge ihrer Namen geordnet.</li></ul></div></li><li>Basierend auf dieser Reihung soll die erste Runde automatisch besetzt werden.
+<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-16"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-16"><li>Die Paarungen sollen über Kreuz nach der Reihung erstellt werden:
+<div class="dp-selflink-container"><a class="dp-selflink" href="#turnierveranstalter_ul-17"><span class="dp-selflink-icon">§</span></a><ul class="dp-ul" id="turnierveranstalter_ul-17"><li>1 gegen 8</li><li>2 gegen 7</li><li>…</li></ul></div></li><li>Das besser bewertete Pferd soll in den oberen Slot des Matches gesetzt werden.</li></ul></div></li></ul></div></li><li>Die Aufstellung soll mit einem Knopfdruck in der Bearbeitung der Turniertabelle (siehe <a href="#us-turnier-ergebnisse-eintragen">US 7</a>).</li><li>Wenn in der Tabelle bereits Eintragungen vorhanden sind, soll nur eine Warnung angezeigt und nichts getan werden.</li></ul></div></div><div class="story-box-points"><strong>Storypoints: </strong>12</div></div></div>
 	</stories></div></section>
 	</div></section>
 		<section id="techstories"><h3 class="dp-heading dp-heading-section dp-selflink-container"><a class="dp-selflink" href="#techstories"><span class="dp-selflink-icon">§</span></a><span class="dp-heading-text">Techstories</span></h3><div class="dp-content dp-section-content">
@@ -523,7 +519,7 @@ Daher darf die bisherige Eintragung des unteren Matches der ersten Runde noch ve
 					</li>
 					<li>
 						Das Frontend muss mit dem Befehl:<br />
-						<code>npm build</code><br />
+						<code>npm run build</code><br />
 						fehlerfrei gebaut werden können.
 					</li>
 				</ul></div>

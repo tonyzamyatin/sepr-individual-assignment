@@ -5,6 +5,7 @@ import {environment} from 'src/environments/environment';
 import {Horse, HorseListDto} from '../dto/horse';
 import {HorseSearch} from '../dto/horse';
 import {formatIsoDate} from '../util/date-helper';
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
 const baseUri = environment.backendUrl + '/horses';
 

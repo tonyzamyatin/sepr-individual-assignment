@@ -36,7 +36,6 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     FormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
-    // Needed for Toastr
     BrowserAnimationsModule,
     NgbModule
   ],

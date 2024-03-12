@@ -1,12 +1,13 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {ToastrService} from 'ngx-toastr';
 import {HorseService} from 'src/app/service/horse.service';
 import {Horse, HorseListDto} from '../../dto/horse';
 import {HorseSearch} from '../../dto/horse';
 import {debounceTime, map, Observable, of, Subject} from 'rxjs';
 import {BreedService} from "../../service/breed.service";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ConfirmDeleteDialogComponent} from "../confirm-delete-dialog/confirm-delete-dialog.component";
+
 
 @Component({
   selector: 'app-horse',
@@ -87,6 +88,16 @@ export class HorseComponent implements OnInit {
     modalRef.componentInstance.message = 'Are you sure you want to delete this horse?';
     modalRef.componentInstance.confirmButtonText = 'Yes, delete'
     modalRef.componentInstance.cancelButtonText = 'No, stop'
+
+    modalRef.result.then((result) => {
+      if (result) {
+        // Perform the delete operation
+        this.onDeleteConfirmed(true);
+      }
+    }, (reason) => {
+      // Handle modal dismissal
+    });
+
   }
 
   onDeleteConfirmed(confirm: boolean): void {

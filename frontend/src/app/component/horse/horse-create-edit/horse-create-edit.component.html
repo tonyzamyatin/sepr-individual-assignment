@@ -172,13 +172,6 @@
       <i class="bi bi-trash"></i>
       Delete
     </button>
-    <app-confirm-delete-dialog *ngIf="showConfirmDeleteDialog"
-                        [title]="'Delete Horse'"
-                        [message]="'Do you really want to delete this horse?'"
-                        [confirmButtonText]="'Yes, delete'"
-                        [cancelButtonText]="'No, stop'"
-                        (confirm)="onDeleteConfirmed($event)">
-    </app-confirm-delete-dialog>
 
 
     <!--  BEGIN SUBMIT BUTTON (only displayed in create or edit modes) -->

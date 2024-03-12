@@ -45,3 +45,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Storybook
+/.storybook
+/src/stories
+*storybook.log

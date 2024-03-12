@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS tournament_participant
     FOREIGN KEY (horse_id) REFERENCES horse (id) ON UPDATE CASCADE -- participating horses must not be deleted
 );
 
-CREATE TABLE IF NOT EXISTS tournament_match_up
+CREATE TABLE IF NOT EXISTS tournament_match
 (
     match_id        BIGINT AUTO_INCREMENT PRIMARY KEY,
     tournament_id   BIGINT,

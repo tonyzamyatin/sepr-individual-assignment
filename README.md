@@ -21,6 +21,8 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 09.03.2024 |   14:30   |  0h 20min |     1    | Manueller Test und Bug Fix |
 | 10.03.2024 |   20:00   |  1h 30min |     1    | Rassen-Parameter opional gemacht im ganzen Programm |
 | 11.03.2024 |    9:15   |  3h 00min |   2, 3   | Frontend implementiert                      |
-| 12.03.2024 |    9:15   |  1h 30min | 6, 7, 8, |    Definition des relationalen Modells       |
+| 12.03.2024 |    9:15   |  2h 30min |5, 6, 7, 8|    Definition des relationalen Schemas       |
+| 12.03.2024 |    13:00   |  1h 45min | 6 |    Definition of Entities, DAO interfaces, DTOs       |
+
 
 **Gesamtsumme der Zeit**: h 

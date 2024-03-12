@@ -84,10 +84,10 @@
 
 
   <div>
-    <h2>Participant Horses</h2>
     <!-- Begin horse selection block -->
     <div class="row">
       <div class="col-lg-6 mb-2">
+        <h2>Add Horse</h2>
         <app-autocomplete
           name="tournamentParticipantSelection"
           textInputClass="form-control"
@@ -101,10 +101,11 @@
       </div>
 
       <div class="col-lg-6">
+        <h2>Participant Horses</h2>
         <table class="table align-baseline">
           <tbody>
           <tr *ngFor="let participant of participants; index as i">
-            <td>{{i}}:</td>
+            <td>{{i + 1}}:</td>
             <td>{{formatHorse(participant)}}</td>
             <td class="min-width">
               <!-- Make button just hidden, when no participant is present, to keep layout correct -->

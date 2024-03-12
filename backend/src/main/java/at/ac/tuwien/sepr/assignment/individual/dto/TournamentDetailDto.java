@@ -1,12 +1,15 @@
 package at.ac.tuwien.sepr.assignment.individual.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public record TournamentDetailDto(
     Long id,
     String name,
     LocalDate startDate,
-    LocalDate endDate
+    LocalDate endDate,
+
+    List<Long> participants
 
 ) {
 
@@ -15,6 +18,8 @@ public record TournamentDetailDto(
         newId,
         name,
         startDate,
-        endDate);
+        endDate,
+        participants
+    );
   }
 }

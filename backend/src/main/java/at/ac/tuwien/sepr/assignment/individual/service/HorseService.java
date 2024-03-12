@@ -23,8 +23,21 @@ public interface HorseService {
    */
   Stream<HorseListDto> search(HorseSearchDto searchParameters);
 
+
   /**
-   * Updates the horse with the ID given in {@code horse} with the data given in {@code horse} in
+   * Create a horse. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto} is null.
+   *
+   * @param horse the horse to create
+   * @return the created horse
+   * @throws ValidationException if the data given for the horse is in itself incorrect (no
+   *                             name, name too long …)
+   * @throws ConflictException   if the data given for the horse is in conflict with the data
+   *                             currently in the system (breed does not exist, …)
+   */
+  HorseDetailDto create(HorseDetailDto horse) throws ValidationException, ConflictException;
+
+  /**
+   * Update the horse with the ID given in {@code horse} with the data given in {@code horse} in
    * the persistent data store.
    *
    * @param horse the horse to update
@@ -50,14 +63,4 @@ public interface HorseService {
    */
   HorseDetailDto getById(long id) throws NotFoundException;
 
-  /**
-   * Create a horse. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto} is null.
-   *
-   * @return the newly created horse
-   * @throws ValidationException if the update data given for the horse is in itself incorrect (no
-   *                             name, name too long …)
-   * @throws ConflictException   if the update data given for the horse is in conflict with the data
-   *                             currently in the system (breed does not exist, …)
-   */
-  HorseDetailDto create(HorseDetailDto horse) throws ValidationException, ConflictException;
 }

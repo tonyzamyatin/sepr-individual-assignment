@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.assignment.individual.entity;
 /**
  * Represents a match-up in a tournament in the persistent data store.
  */
-public class TournamentMatchUp {
+public class TournamentMatch {
   private Long matchId;
   private Long tournamentId;
   private Long horse1Id;
@@ -16,7 +16,7 @@ public class TournamentMatchUp {
     return matchId;
   }
 
-  public TournamentMatchUp setMatchId(Long matchId) {
+  public TournamentMatch setMatchId(Long matchId) {
     this.matchId = matchId;
     return this;
   }
@@ -25,7 +25,7 @@ public class TournamentMatchUp {
     return tournamentId;
   }
 
-  public TournamentMatchUp setTournamentId(Long tournamentId) {
+  public TournamentMatch setTournamentId(Long tournamentId) {
     this.tournamentId = tournamentId;
     return this;
   }
@@ -34,7 +34,7 @@ public class TournamentMatchUp {
     return horse1Id;
   }
 
-  public TournamentMatchUp setHorse1Id(Long horse1Id) {
+  public TournamentMatch setHorse1Id(Long horse1Id) {
     this.horse1Id = horse1Id;
     return this;
   }
@@ -43,7 +43,7 @@ public class TournamentMatchUp {
     return horse2Id;
   }
 
-  public TournamentMatchUp setHorse2Id(Long horse2Id) {
+  public TournamentMatch setHorse2Id(Long horse2Id) {
     this.horse2Id = horse2Id;
     return this;
   }
@@ -52,7 +52,7 @@ public class TournamentMatchUp {
     return roundNumber;
   }
 
-  public TournamentMatchUp setRoundNumber(Integer roundNumber) {
+  public TournamentMatch setRoundNumber(Integer roundNumber) {
     this.roundNumber = roundNumber;
     return this;
   }
@@ -61,7 +61,7 @@ public class TournamentMatchUp {
     return matchNumber;
   }
 
-  public TournamentMatchUp setMatchNumber(Integer matchNumber) {
+  public TournamentMatch setMatchNumber(Integer matchNumber) {
     this.matchNumber = matchNumber;
     return this;
   }
@@ -70,7 +70,7 @@ public class TournamentMatchUp {
     return winnerHorseId;
   }
 
-  public TournamentMatchUp setWinnerHorseId(Long winnerHorseId) {
+  public TournamentMatch setWinnerHorseId(Long winnerHorseId) {
     this.winnerHorseId = winnerHorseId;
     return this;
   }

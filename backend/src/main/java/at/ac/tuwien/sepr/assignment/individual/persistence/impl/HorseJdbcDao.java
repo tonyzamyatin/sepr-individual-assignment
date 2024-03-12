@@ -3,6 +3,7 @@ package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
@@ -89,6 +90,11 @@ public class HorseJdbcDao implements HorseDao {
     }
 
     return horses.getFirst();
+  }
+
+  @Override
+  public void delete(long id) throws NotFoundException, ConflictException {
+
   }
 
   @Override

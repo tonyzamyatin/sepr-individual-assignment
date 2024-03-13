@@ -40,7 +40,7 @@ public class HorseMapper {
   }
 
   /**
-   * Convert a horse entity object to a {@link HorseListDto}.
+   * Convert a horse entity object to a {@link HorseDetailDto}.
    * The given map of breeds needs to contain the breed of {@code horse}.
    *
    * @param horse the horse to convert

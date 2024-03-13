@@ -31,16 +31,6 @@ public interface TournamentDao {
    */
   Tournament create(TournamentDetailDto tournament);
 
-  /**
-   * Update the tournament with the ID given in {@code tournament}
-   * with the data given in {@code tournament}
-   * in the persistent data store.
-   *
-   * @param tournament the tournament to update
-   * @return the updated tournament
-   * @throws NotFoundException if the Tournament with the given ID does not exist in the persistent data store
-   */
-  Tournament update(TournamentDetailDto tournament) throws NotFoundException;
 
   /**
    * Get a tournament by its ID from the persistent data store.

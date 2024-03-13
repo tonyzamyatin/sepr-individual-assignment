@@ -52,6 +52,14 @@ public class HorseServiceImpl implements HorseService {
         .map(horse -> mapper.entityToListDto(horse, breedsPerId));
   }
 
+  @Override
+  public Stream<HorseDetailDto> findHorsesById(Set<Long> horseIds) {
+    LOG.trace("findHorsesById({})", horseIds);
+    return dao.findHorsesById(horseIds)
+        .stream()
+        .map(horse -> mapper.entityToDetailDto(horse, breedMapForSingleHorse(horse)));
+  }
+
 
   @Override
   public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException {
@@ -89,17 +97,17 @@ public class HorseServiceImpl implements HorseService {
   }
 
 
-  private Map<Long, BreedDto> breedMapForHorses(Set<Long> horseIds) {
+  private Map<Long, BreedDto> breedMapForHorses(Set<Long> breedIds) {
     // Filter out null values from the set
-    Set<Long> nonNullHorseIds = horseIds.stream()
+    Set<Long> nonNullBreedIds = breedIds.stream()
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());
 
-    if (nonNullHorseIds.isEmpty()) {
+    if (nonNullBreedIds.isEmpty()) {
       return Collections.emptyMap();
     }
 
-    return breedService.findBreedsByIds(nonNullHorseIds)
+    return breedService.findBreedsByIds(nonNullBreedIds)
         .collect(Collectors.toUnmodifiableMap(BreedDto::id, Function.identity()));
   }
 }

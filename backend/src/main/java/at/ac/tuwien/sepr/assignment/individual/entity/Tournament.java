@@ -11,6 +11,8 @@ public class Tournament {
   private LocalDate startDate;
   private LocalDate endDate;
 
+  private Long[] participantIds;
+
   public Long getId() {
     return id;
   }
@@ -44,6 +46,15 @@ public class Tournament {
 
   public Tournament setEndDate(LocalDate endDate) {
     this.endDate = endDate;
+    return this;
+  }
+
+  public Long[] getParticipantIds() {
+    return participantIds;
+  }
+
+  public Tournament setParticipantIds(Long[] participantIds) {
+    this.participantIds = participantIds;
     return this;
   }
 

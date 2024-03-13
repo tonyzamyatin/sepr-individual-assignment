@@ -14,7 +14,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,11 @@ public class HorseJdbcDao implements HorseDao {
 
   private static final String TABLE_NAME = "horse";
   private static final String SQL_SELECT_BY_ID = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+
+  private static final String SQL_FIND_BY_IDS =
+      "SELECT * FROM " + TABLE_NAME
+          + " WHERE id IN (:ids)";
+
   private static final String SQL_SELECT_SEARCH = "SELECT  "
           + "    h.id as \"id\", h.name as \"name\", h.sex as \"sex\", h.date_of_birth as \"date_of_birth\""
           + "    , h.height as \"height\", h.weight as \"weight\", h.breed_id as \"breed_id\""
@@ -43,6 +50,7 @@ public class HorseJdbcDao implements HorseDao {
           + "  AND (:bornEarliest IS NULL OR :bornEarliest <= h.date_of_birth)"
           + "  AND (:bornLatest IS NULL OR :bornLatest >= h.date_of_birth)"
           + "  AND (:breed IS NULL OR UPPER(b.name) LIKE UPPER('%'||:breed||'%'))";
+
 
   private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
@@ -92,10 +100,19 @@ public class HorseJdbcDao implements HorseDao {
     return horses.getFirst();
   }
 
-  @Override
-  public void delete(long id) throws NotFoundException, ConflictException {
 
+  @Override
+  public Collection<Horse> findHorsesById(Set<Long> horseIds) {
+    LOG.trace("findHorsesById({})", horseIds);
+    return jdbcNamed.query(SQL_FIND_BY_IDS, Map.of("ids", horseIds), this::mapRow);
   }
+
+
+  @Override
+  public void delete(Long id) throws NotFoundException, ConflictException {
+    // TODO: Implement
+  }
+
 
   @Override
   public Collection<Horse> search(HorseSearchDto searchParameters) {

@@ -8,6 +8,7 @@ import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Data Access Object for horses.
@@ -24,6 +25,15 @@ public interface HorseDao {
    * @return the horses where all given parameters match.
    */
   Collection<Horse> search(HorseSearchDto searchParameters);
+
+
+  /**
+   * Get the horses, that match one of the given IDs.
+   *
+   * @param horseIds the set of IDs to find horses for.
+   * @return the horses with an ID in {@code horseIds}
+   */
+  Collection<Horse> findHorsesById(Set<Long> horseIds);
 
   /**
    * Create a new horse with the data given in {@code horse}. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto}
@@ -62,6 +72,6 @@ public interface HorseDao {
    * @throws ConflictException if the deletion of the horse is in conflict with data currently in the system
    * (horse is participating in a tournament, ...)
    */
-  void delete(long id) throws NotFoundException, ConflictException;
+  void delete(Long id) throws NotFoundException, ConflictException;
 
 }

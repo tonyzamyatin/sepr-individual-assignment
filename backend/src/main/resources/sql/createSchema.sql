@@ -19,11 +19,11 @@ CREATE TABLE IF NOT EXISTS horse
 
 CREATE TABLE IF NOT EXISTS tournament
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    name       VARCHAR(255) NOT NULL,
-    start_date DATE         NOT NULL,
-    end_date   DATE         NOT NULL,
-    horse1     BIGINT,
+    id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name         VARCHAR(255)    NOT NULL,
+    start_date   DATE            NOT NULL,
+    end_date     DATE            NOT NULL,
+    participants BIGINT ARRAY[8] NOT NULL,
     CHECK (start_date <= end_date)
 );
 

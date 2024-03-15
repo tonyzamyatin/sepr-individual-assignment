@@ -70,7 +70,7 @@ public interface HorseDao {
    * @param id the ID of the horse to delete
    * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
    * @throws ConflictException if the deletion of the horse is in conflict with data currently in the system
-   * (horse is participating in a tournament, ...)
+   *                           (horse is participating in a tournament, ...)
    */
   void delete(Long id) throws NotFoundException, ConflictException;
 

@@ -95,7 +95,7 @@ export class HorseComponent implements OnInit {
         this.onDeleteConfirmed(true);
       }
     }, (reason) => {
-      // Handle modal dismissal
+      // TODO: Handle modal dismissal
     });
 
   }
@@ -106,7 +106,7 @@ export class HorseComponent implements OnInit {
       this.service.delete(this.horseForDeletion.id).subscribe({
         next: () => {
           this.notification.success('Horse successfully deleted.');
-          // Navigate away or update the view as necessary
+          // TODO: Navigate away or update the view as necessary
         },
         error: error => {
           console.error('Error deleting horse', error);
@@ -115,7 +115,6 @@ export class HorseComponent implements OnInit {
         }
       });
     } else {
-      // Handle the case where the horse or its ID is undefined
       this.notification.error('Error: No horse selected for deletion.');
     }
 

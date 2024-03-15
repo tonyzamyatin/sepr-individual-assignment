@@ -21,7 +21,7 @@ export interface TournamentCreateDto {
 }
 
 export interface TournamentDetailDto {
-  id: number;
+  id?: number;
   name: string;
   startDate: Date;
   endDate: Date;

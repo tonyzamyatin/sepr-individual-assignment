@@ -108,7 +108,7 @@ public class HorseDaoTest extends TestBase {
   }
 
   @Test
-  public void createHorseWithValidHorseDtoShouldReturnCreatedHorse() {
+  public void createHorseWithValidDtoShouldReturnCreatedHorse() {
     var validHorseDto =
         new HorseDetailDto(
             -33L,
@@ -122,13 +122,13 @@ public class HorseDaoTest extends TestBase {
     assertNotNull(createdHorse);
     assertInstanceOf(Horse.class, createdHorse);
     assertAll(
-        "insertedHorse",
-        () -> assertEquals(-33L, createdHorse.getId()),
-        () -> assertEquals("Anton", createdHorse.getName()),
-        () -> assertEquals(Sex.MALE, createdHorse.getSex()),
-        () -> assertEquals(LocalDate.of(2004, 3, 24), createdHorse.getDateOfBirth()),
-        () -> assertEquals(1.74f, createdHorse.getHeight()),
-        () -> assertEquals(68.5f, createdHorse.getWeight()),
-        () -> assertEquals(-11L, createdHorse.getBreedId()));
+        "createdHorse",
+        () -> assertEquals(validHorseDto.id(), createdHorse.getId()),
+        () -> assertEquals(validHorseDto.name(), createdHorse.getName()),
+        () -> assertEquals(validHorseDto.sex(), createdHorse.getSex()),
+        () -> assertEquals(validHorseDto.dateOfBirth(), createdHorse.getDateOfBirth()),
+        () -> assertEquals(validHorseDto.height(), createdHorse.getHeight()),
+        () -> assertEquals(validHorseDto.weight(), createdHorse.getWeight()),
+        () -> assertEquals(validHorseDto.breed().id(), createdHorse.getBreedId()));
   }
 }

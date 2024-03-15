@@ -13,6 +13,7 @@
         </label>
         <div class="col-md-10 col-lg-8"
              >
+          <!--    TODO: Add character count "___/255" and don't let the user enter more characters than that.     -->
           <input type="text"
                  id="horseName"
                  name="horseName"
@@ -93,6 +94,7 @@
         </label>
         <div class="col-md-10 col-lg-8"
         >
+          <!--    TODO: Allow the user to enter new horse breeds if they're not in the list      -->
           <app-autocomplete
             id="horseBreed"
             name="horseBreed"
@@ -123,6 +125,7 @@
         </label>
         <div class="col-md-10 col-lg-8"
              >
+          <!--    TODO: Add constraint for height to be of format "dd.dd", i.e. number in range (0.0, 9.99)      -->
           <input type="number" class="form-control"
                  id="horseHeight"
                  name="horseHeight"
@@ -145,6 +148,7 @@
         </label>
         <div class="col-md-10 col-lg-8"
              >
+          <!--    TODO: Add constraint for weight to be of format "ddddd.dd", i.e. number in range (0.0, 999.99)      -->
           <input type="number" class="form-control"
                  id="horseWeight"
                  name="horseWeight"
@@ -155,7 +159,7 @@
                  >
         </div>
         <!-- \TEMPLATE EXLCUDE BEGIN\ -->
-        <ng-template #weightDetail>
+        <ng-template weightDetail>
           <span class="col-form-label col-md-10 col-lg-8">{{horse.weight}}</span>
         </ng-template>
         <!-- \TEMPLATE EXLCUDE END\ -->

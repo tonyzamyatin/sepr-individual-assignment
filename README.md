@@ -22,7 +22,10 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 10.03.2024 |   20:00   |  1h 30min |     1    | Rassen-Parameter opional gemacht im ganzen Programm |
 | 11.03.2024 |    9:15   |  3h 00min |   2, 3   | Frontend implementiert                      |
 | 12.03.2024 |    9:15   |  2h 30min |5, 6, 7, 8|    Definition des relationalen Schemas       |
-| 12.03.2024 |    13:00   |  1h 45min | 6 |    Definition of Entities, DAO interfaces, DTOs       |
+| 12.03.2024 |    13:00   |  1h 45min | 6 |    Definition der Entities, DAO Interfaces und DTOs       |
+| 13.03.2024 |    8:15   |  3h 15min | 6 |     Implementatierung der DAO, Service, Valitator, Mapper, und Endpoint Methoden      |
+| 14.03.2024 |    18:00   |  1h 00min | 6 |     Backend getestet und Endpoint verbunden      |
+| 15.03.2024 |    8:45   |  1h 00min | 1, 6 |     Validierung hinzugefügt und manuell Pferde und Tourniererstellung getestet      |
 
 
 **Gesamtsumme der Zeit**: h 

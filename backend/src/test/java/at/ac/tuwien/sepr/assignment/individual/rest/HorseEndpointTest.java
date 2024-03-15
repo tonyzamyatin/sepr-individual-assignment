@@ -27,6 +27,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.tuple;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -150,7 +151,7 @@ public class HorseEndpointTest extends TestBase {
             new BreedDto(-11L, "Lipizzaner"));
 
     ObjectMapper objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());  // needed to serialize LocalData in dateOfBirth field of HorseDetailDto
+    objectMapper.registerModule(new JavaTimeModule());  // needed to serialize LocalDate in dateOfBirth field of HorseDetailDto
     String jsonHorseDto = objectMapper.writeValueAsString(validHorseDto);
 
     var body = mockMvc
@@ -162,7 +163,7 @@ public class HorseEndpointTest extends TestBase {
         .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString();
 
-    var horseResult = objectMapper.readValue(body, HorseDetailDto.class);
+    var horseResult = assertDoesNotThrow(() -> objectMapper.readValue(body, HorseDetailDto.class));
     assertNotNull(horseResult);
     assertAll("Validating created horse properties",
         () -> assertEquals(validHorseDto.id(), horseResult.id(), "Horse ID does not match"),

@@ -28,12 +28,12 @@ public class TournamentValidator {
     List<String> conflictErrors = new ArrayList<>();
 
     // Ignore whether horse has an ID or not (compromise for testing)
-    if (tournament.name() == null) {
+    if (tournament.name() == null || tournament.name().isEmpty()) {
       validationErrors.add("No name given");
-    } else if (tournament.name().length() > 255) {
-      validationErrors.add("Given name is longer than 255 characters");
+    } else if (tournament.name().length() > 100) {
+      validationErrors.add("Given name is longer than 100 characters");
     }
-    if (tournament.startDate().compareTo(tournament.endDate()) < 1) {
+    if (tournament.startDate().isAfter(tournament.endDate())) {
       validationErrors.add("Given end data is before start date");
     }
     if (tournament.participants() == null) {
@@ -41,15 +41,16 @@ public class TournamentValidator {
     } else if (tournament.participants().size() != 8 || tournament.participants().contains(null)) {
       validationErrors.add("Given participant list contains does not contain exactly 8 participants.");
     } else {
-        tournament.participants()
-            .forEach(horseDetailDto -> {
-              try {
-                horseService.getById((horseDetailDto.id()));
-              } catch (NotFoundException e) {
-                conflictErrors.add("Participant horse with id %d does not exist".formatted(horseDetailDto.id()));
-              }
-            });
-      }
+      // Simplified check whether participants exist by checking whether horses with the corresponding id can be found
+      tournament.participants()
+          .forEach(horseDetailDto -> {
+            try {
+              horseService.getById((horseDetailDto.id()));
+            } catch (NotFoundException e) {
+              conflictErrors.add("Participant horse with id %d does not exist".formatted(horseDetailDto.id()));
+            }
+          });
+    }
 
     if (!validationErrors.isEmpty()) {
       throw new ValidationException("Validation of tournament for create failed", validationErrors);

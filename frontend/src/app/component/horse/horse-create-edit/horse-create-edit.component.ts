@@ -8,6 +8,7 @@ import {Sex} from 'src/app/dto/sex';
 import {HorseService} from 'src/app/service/horse.service';
 import {Breed} from "../../../dto/breed";
 import {BreedService} from "../../../service/breed.service";
+import {ErrorFormatterService} from "../../../service/error-formatter.service";
 
 
 export enum HorseCreateEditMode {
@@ -98,6 +99,7 @@ export class HorseCreateEditComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private notification: ToastrService,
+    private errorFormatter: ErrorFormatterService
   ) {
   }
 
@@ -176,6 +178,10 @@ export class HorseCreateEditComponent implements OnInit {
           error: error => {
             console.error(`Error getting horse with id ${this.horseId}`, error);
             // TODO show an error message to the user. Include and sensibly present the info from the backend!
+            this.notification.error(this.errorFormatter.format(error), `Could Not Get Horse With Id ${this.horseId}`, {
+              enableHtml: true,
+              timeOut: 10000,
+            });
           }
         })
       }
@@ -220,6 +226,10 @@ export class HorseCreateEditComponent implements OnInit {
           console.error('Error deleting horse', error);
           this.notification.error('Error deleting horse');
           // TODO show an error message to the user. Include and sensibly present the info from the backend!
+          this.notification.error(this.errorFormatter.format(error), `Could Not Delete Horse With Id ${this.horseId}`, {
+            enableHtml: true,
+            timeOut: 10000,
+          });
         }
       });
     }
@@ -253,6 +263,10 @@ export class HorseCreateEditComponent implements OnInit {
         error: error => {
           console.error('Error creating horse', error);
           // TODO show an error message to the user. Include and sensibly present the info from the backend!
+          this.notification.error(this.errorFormatter.format(error), `Could Not Create Horse`, {
+            enableHtml: true,
+            timeOut: 10000,
+          });
         }
       });
     }

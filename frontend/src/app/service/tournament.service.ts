@@ -4,15 +4,17 @@ import {environment} from '../../environments/environment';
 import {map, Observable, throwError} from 'rxjs';
 import {formatIsoDate} from '../util/date-helper';
 import {
-  TournamentCreateDto, TournamentDetailDto, TournamentDetailParticipantDto,
+  TournamentDetailDto, TournamentCreateDto, TournamentDetailParticipantDto,
   TournamentListDto,
   TournamentSearchParams,
   TournamentStandingsDto, TournamentStandingsTreeDto
 } from "../dto/tournament";
+
 const baseUri = environment.backendUrl + '/tournaments';
 
 class ErrorDto {
-  constructor(public message: String) {}
+  constructor(public message: String) {
+  }
 }
 
 @Injectable({
@@ -26,10 +28,11 @@ export class TournamentService {
 
 
   public create(tournament: TournamentCreateDto): Observable<TournamentDetailDto> {
-    // TODO this is not implemented yet!
-    return throwError(() => ({message: "Not implemented yet"}));
+    return this.http.post<TournamentDetailDto>(
+      `${baseUri}/create`,
+      tournament
+    );
   }
-
 
 
 }

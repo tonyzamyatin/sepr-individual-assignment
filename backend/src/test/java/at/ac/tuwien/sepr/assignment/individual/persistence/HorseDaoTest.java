@@ -15,6 +15,7 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -130,5 +131,10 @@ public class HorseDaoTest extends TestBase {
         () -> assertEquals(validHorseDto.height(), createdHorse.getHeight()),
         () -> assertEquals(validHorseDto.weight(), createdHorse.getWeight()),
         () -> assertEquals(validHorseDto.breed().id(), createdHorse.getBreedId()));
+  }
+
+  @Test
+  public void deleteExistingHorseShouldNotThrowError() {
+    assertDoesNotThrow(() -> horseDao.delete(-32L));
   }
 }

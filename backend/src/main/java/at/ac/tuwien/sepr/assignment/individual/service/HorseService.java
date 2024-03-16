@@ -34,6 +34,17 @@ public interface HorseService {
   Stream<HorseDetailDto> findHorsesById(Set<Long> horseIds);
 
   /**
+   * Get the horse with given ID, with more detail information. This includes the breed of the
+   * horse.
+   *
+   * @param id the ID of the horse to get
+   * @return the horse with ID {@code id}
+   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data
+   *                           store
+   */
+  HorseDetailDto getById(long id) throws NotFoundException;
+
+  /**
    * Create a horse. Horse will be created without specific breed if the {@link Breed} of the {@link HorseDetailDto} is null.
    *
    * @param horse the horse to create
@@ -58,18 +69,16 @@ public interface HorseService {
    * @throws ConflictException   if the update data given for the horse is in conflict with the data
    *                             currently in the system (breed does not exist, …)
    */
-  HorseDetailDto update(HorseDetailDto horse)
-      throws NotFoundException, ValidationException, ConflictException;
+  HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException, ConflictException;
+
 
   /**
-   * Get the horse with given ID, with more detail information. This includes the breed of the
-   * horse.
+   * Delete the horse with given ID.
    *
-   * @param id the ID of the horse to get
-   * @return the horse with ID {@code id}
-   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data
-   *                           store
+   * @param id the ID of the horse to delete
+   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
+   * @throws ConflictException if the deletion of the horse is in conflict with data currently in the system (horse is participating in a tournament, ...)
    */
-  HorseDetailDto getById(long id) throws NotFoundException;
+  void delete(long id) throws NotFoundException, ConflictException;
 
 }

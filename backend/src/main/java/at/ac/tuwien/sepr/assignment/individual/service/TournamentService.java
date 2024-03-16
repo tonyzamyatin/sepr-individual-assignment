@@ -10,6 +10,14 @@ import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 public interface TournamentService {
 
   /**
+   * Checks whether any of the tournaments has a horse with the given ID among its participants.
+   *
+   * @param horseId the ID of the horse to check for
+   * @return {@code true} if the exists at least one such tournament.
+   */
+  boolean isHorseParticipantInAnyTournament(long horseId);
+
+  /**
    * Create a new tournament. The tournament must have exactly 8 horses as participants.
    *
    * @param tournament the tournament to create

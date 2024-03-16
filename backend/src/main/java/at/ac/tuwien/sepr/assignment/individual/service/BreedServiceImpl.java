@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class BreedServiceImpl implements BreedService {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private BreedDao dao;
-  private BreedMapper mapper;
+  private final BreedDao dao;
+  private final BreedMapper mapper;
 
   public BreedServiceImpl(BreedDao dao, BreedMapper mapper) {
     this.dao = dao;

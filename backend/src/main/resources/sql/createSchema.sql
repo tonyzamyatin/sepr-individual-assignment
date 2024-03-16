@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tournament
     name         VARCHAR(255) NOT NULL, -- Stores up to 255 BYTES of characters (only for 8 byte encodings 255 chars)
     start_date   DATE              NOT NULL,
     end_date     DATE              NOT NULL,
-    -- Instead of an Array (H" specific) this could also be done with an additional participants table (and more code)
+    -- Instead of an Array (H2 specific) this could also be done with an additional participants table (and more code)
     participants BIGINT ARRAY[8]   NOT NULL,
     CHECK (start_date <= end_date)
 );
@@ -50,5 +50,3 @@ CREATE TABLE IF NOT EXISTS tournament_match
         ),
     UNIQUE (tournament_id, round_number, match_number)
 );
-
-

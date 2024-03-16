@@ -26,6 +26,7 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 13.03.2024 |    8:15   |  3h 15min | 6 |     Implementatierung der DAO, Service, Valitator, Mapper, und Endpoint Methoden      |
 | 14.03.2024 |    18:00   |  1h 00min | 6 |     Backend getestet und Endpoint verbunden      |
 | 15.03.2024 |    8:45   |  1h 00min | 1, 6 |     Validierung hinzugefügt und manuell Pferde und Tourniererstellung getestet      |
+| 16.03.2024 |    10:21   |  3h 34min | 3 |     Backend vollständig implementiert und alle Schichten getestet      |
 
 
 **Gesamtsumme der Zeit**: h 

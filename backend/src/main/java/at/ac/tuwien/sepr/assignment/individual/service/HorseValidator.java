@@ -1,10 +1,9 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
+import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,15 +12,18 @@ import java.util.stream.Collectors;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 @Component
 public class HorseValidator {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private BreedService breedService;
+  private final BreedService breedService;
+  private final TournamentService tournamentService;
 
-  public HorseValidator(BreedService breedService) {
+  public HorseValidator(@Lazy BreedService breedService, @Lazy TournamentService tournamentService) {
     this.breedService = breedService;
+    this.tournamentService = tournamentService;
   }
 
   public void validateForUpdate(HorseDetailDto horse) throws ValidationException {
@@ -71,7 +73,7 @@ public class HorseValidator {
     }
   }
 
-  public void validateForCreate(HorseDetailDto horse) throws ValidationException {
+  public void validateForCreate(HorseDetailDto horse) throws ValidationException, ConflictException {
     LOG.trace("validateForCreate({})", horse);
     List<String> validationErrors = new ArrayList<>();
     List<String> conflictErrors = new ArrayList<>();
@@ -82,8 +84,20 @@ public class HorseValidator {
       throw new ValidationException("Validation of provided horse data failed", validationErrors);
     }
     if (!conflictErrors.isEmpty()) {
-      throw new ValidationException("Horse data is in conflict with system data", conflictErrors);
+      throw new ConflictException("Horse data is in conflict with system data", conflictErrors);
     }
   }
 
+
+  public void validateForDelete(long id) throws ConflictException {
+    LOG.trace("validateForDelete({})", id);
+    List<String> conflictErrors = new ArrayList<>();
+    if (tournamentService.isHorseParticipantInAnyTournament(id)) {
+      conflictErrors.add("Horse with participates in a tournament");
+    }
+
+    if (!conflictErrors.isEmpty()) {
+      throw new ConflictException("Deletion of horse with id " + id + " is in conflict with system data", conflictErrors);
+    }
+  }
 }

@@ -3,7 +3,6 @@ package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
@@ -28,6 +27,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.dao.DataAccessException;
+
+import static at.ac.tuwien.sepr.assignment.individual.persistence.impl.PersistenceUtil.insertWithKeyHolder;
 
 
 @Repository
@@ -54,6 +55,15 @@ public class HorseJdbcDao implements HorseDao {
 
   private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
+  private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
+      + " (id, name, sex, date_of_birth, height, weight, breed_id)"
+      + " VALUES(:id, :name, :sex, :dateOfBirth, :height, :weight, :breedId)";
+
+
+  private static final String NAMED_SQL_INSERT_WITHOUT_ID = "INSERT INTO " + TABLE_NAME
+      + " (name, sex, date_of_birth, height, weight, breed_id)"
+      + " VALUES(:name, :sex, :dateOfBirth, :height, :weight, :breedId)";
+
   private static final String SQL_UPDATE = "UPDATE " + TABLE_NAME
       + " SET name = ?"
       + "  , sex = ?"
@@ -63,14 +73,7 @@ public class HorseJdbcDao implements HorseDao {
       + "  , breed_id = ?"
       + " WHERE id = ?";
 
-  private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
-      + " (id, name, sex, date_of_birth, height, weight, breed_id)"
-      + " VALUES(:id, :name, :sex, :dateOfBirth, :height, :weight, :breedId)";
-
-
-  private static final String NAMED_SQL_INSERT_WITHOUT_ID = "INSERT INTO " + TABLE_NAME
-      + " (name, sex, date_of_birth, height, weight, breed_id)"
-      + " VALUES(:name, :sex, :dateOfBirth, :height, :weight, :breedId)";
+  private static final String SQL_DELETE = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
 
   private final JdbcTemplate jdbcTemplate;
   private final NamedParameterJdbcTemplate jdbcNamed;
@@ -109,12 +112,6 @@ public class HorseJdbcDao implements HorseDao {
 
 
   @Override
-  public void delete(Long id) throws NotFoundException, ConflictException {
-    // TODO: Implement
-  }
-
-
-  @Override
   public Collection<Horse> search(HorseSearchDto searchParameters) {
     LOG.trace("search({})", searchParameters);
     var query = SQL_SELECT_SEARCH;
@@ -149,12 +146,7 @@ public class HorseJdbcDao implements HorseDao {
         .addValue("breedId", optionalBreedId); // Extracting breedId from BreedDto
 
     try {
-      int rowsAffected = jdbcNamed.update(sqlInsert, parameterSource, keyHolder, new String[]{"id"});
-
-      if (rowsAffected == 0) {
-        throw new FatalException("Insert operation failed, no rows affected.");
-      }
-
+      insertWithKeyHolder(keyHolder, sqlInsert, parameterSource, jdbcNamed, horse.id());
       Long newId = (horse.id() != null) ? horse.id() : Objects.requireNonNull(keyHolder.getKey()).longValue();
       return new Horse()
           .setId(newId)
@@ -169,7 +161,6 @@ public class HorseJdbcDao implements HorseDao {
       throw new FatalException("Error occurred during the insert operation: " + e.getMessage(), e);
     }
   }
-
 
   @Override
   public Horse update(HorseDetailDto horse) throws NotFoundException {
@@ -201,6 +192,15 @@ public class HorseJdbcDao implements HorseDao {
         ;
   }
 
+
+  @Override
+  public void delete(long id) throws NotFoundException {
+    LOG.trace("delete({})", id);
+    int deleted = jdbcTemplate.update(SQL_DELETE, id);
+    if (deleted == 0) {
+      throw new NotFoundException("Could not delete horse with ID " + id + ", because it does not exist");
+    }
+  }
 
   private Horse mapRow(ResultSet result, int rowNum) throws SQLException {
     return new Horse()

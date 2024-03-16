@@ -6,6 +6,7 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
@@ -18,7 +19,7 @@ public class TournamentValidator {
 
   private final HorseService horseService;
 
-  public TournamentValidator(HorseService horseService) {
+  public TournamentValidator(@Lazy HorseService horseService) {
     this.horseService = horseService;
   }
 

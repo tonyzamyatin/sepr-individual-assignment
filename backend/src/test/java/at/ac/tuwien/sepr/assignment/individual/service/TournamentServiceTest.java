@@ -18,9 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles({"test", "datagen"})
 @SpringBootTest
@@ -75,12 +77,12 @@ public class TournamentServiceTest extends TestBase {
   public void createTournamentWithNineHorsesShouldThroughValidationException() {
     var tournamentWithNineHorses = generateValidTournamentDetailDto();
     tournamentWithNineHorses.participants().add(new HorseDetailDto(
-        -9L,
-        "Horse9",
-        Sex.MALE,
-        LocalDate.of(2024, 3, 14),
-        1.74f,
-        500,
+        null,
+        null,
+        null,
+        null,
+        0f,
+        0,
         null
     ));
     assertThrows(ValidationException.class,
@@ -147,5 +149,26 @@ public class TournamentServiceTest extends TestBase {
     );
   }
 
+  @Test
+  public void isHorseParticipantInAnyTournamentHorseParticipatesOnceShouldReturnTrue() {
+    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-2L));
+    assertTrue(res);
+  }
+  @Test
+  public void isHorseParticipantInAnyTournamentHorseParticipatesTwiceShouldReturnTrue() {
+    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-1L));
+    assertTrue(res);
+  }
 
+  @Test
+  public void isHorseParticipantInAnyTournamentHorseIsNotParticipantShouldReturnFalse() {
+    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-32L));
+    assertFalse(res);
+  }
+
+  @Test
+  public void isHorseParticipantInAnyTournamentNonExistentHorseShouldReturnFalse() {
+    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-33L));
+    assertFalse(res);
+  }
 }

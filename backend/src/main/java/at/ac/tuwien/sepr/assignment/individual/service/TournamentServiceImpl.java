@@ -39,6 +39,12 @@ public class TournamentServiceImpl implements TournamentService {
   }
 
   @Override
+  public boolean isHorseParticipantInAnyTournament(long horseId) {
+    LOG.trace("isHorseParticipantInAnyTournament({})", horseId);
+    return tournamentDao.isHorseParticipantInAnyTournament(horseId);
+  }
+
+  @Override
   public TournamentDetailDto create(TournamentDetailDto tournament) throws ValidationException, ConflictException {
     LOG.trace("create({})", tournament);
     validator.validateForCreate(tournament);

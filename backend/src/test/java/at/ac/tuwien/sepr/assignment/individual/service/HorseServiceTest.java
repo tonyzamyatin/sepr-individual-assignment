@@ -5,8 +5,13 @@ import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
+import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -20,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles({"test", "datagen"}) // enable "test" spring profile during test execution in order to pick up configuration from application-test.yml
 @SpringBootTest
@@ -27,6 +34,14 @@ public class HorseServiceTest extends TestBase {
 
   @Autowired
   HorseService horseService;
+
+  @Mock
+  private TournamentService tournamentService;
+
+  @BeforeEach
+  public void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
 
   @Test
   public void searchByBreedWelFindsThreeHorses() {
@@ -88,5 +103,23 @@ public class HorseServiceTest extends TestBase {
         () -> assertEquals(1.74f, createdHorse.height()),
         () -> assertEquals(68.5f, createdHorse.weight()),
         () -> assertEquals(-11L, createdHorse.breed().id()));
+  }
+
+  @Test
+  public void deleteHorseWithExistingId() {
+    assertDoesNotThrow(() -> horseService.delete(-32L));
+  }
+
+  @Test
+  public void deleteHorseWithNonExistentIdShouldThrowNotFoundException() {
+    assertThrows(NotFoundException.class, () -> horseService.delete(-33L));
+  }
+
+  @Test
+  public void deleteHorseParticipatingInTournamentShouldThrowConflictException() {
+    long horseId = -1L;
+    // Mock TournamentService method used by validator in Horse.service.delete(id) method
+    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
+    assertThrows(ConflictException.class, () -> horseService.delete(horseId));
   }
 }

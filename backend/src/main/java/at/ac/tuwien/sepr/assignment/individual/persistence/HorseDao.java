@@ -4,7 +4,6 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Breed;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
-import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
 import java.util.Collection;
@@ -69,9 +68,7 @@ public interface HorseDao {
    *
    * @param id the ID of the horse to delete
    * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
-   * @throws ConflictException if the deletion of the horse is in conflict with data currently in the system
-   *                           (horse is participating in a tournament, ...)
    */
-  void delete(Long id) throws NotFoundException, ConflictException;
+  void delete(long id) throws NotFoundException;
 
 }

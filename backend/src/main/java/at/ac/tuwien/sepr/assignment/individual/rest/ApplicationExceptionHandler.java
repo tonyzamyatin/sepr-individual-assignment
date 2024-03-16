@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepr.assignment.individual.rest;
 
+import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
@@ -17,8 +18,16 @@ public class ApplicationExceptionHandler {
   @ExceptionHandler
   @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
   @ResponseBody
-  public ValidationErrorRestDto handleValidationException(ValidationException e) {
+  public ListErrorRestDto handleValidationException(ValidationException e) {
     LOG.warn("Terminating request processing with status 422 due to {}: {}", e.getClass().getSimpleName(), e.getMessage());
-    return new ValidationErrorRestDto(e.summary(), e.errors());
+    return new ListErrorRestDto(e.summary(), e.errors());
+  }
+
+  @ExceptionHandler
+  @ResponseStatus(HttpStatus.CONFLICT)
+  @ResponseBody
+  public ListErrorRestDto handleConflictException(ConflictException e) {
+    LOG.warn("Terminating request processing with status 409 due to {}: {}", e.getClass().getSimpleName(), e.getMessage());
+    return new ListErrorRestDto(e.summary(), e.errors());
   }
 }

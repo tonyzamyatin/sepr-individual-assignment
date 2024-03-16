@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Objects;
 
+import static at.ac.tuwien.sepr.assignment.individual.persistence.impl.PersistenceUtil.insertWithKeyHolder;
+
 @Repository
 public class TournamentJdbcDao implements TournamentDao {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -30,6 +32,8 @@ public class TournamentJdbcDao implements TournamentDao {
   private final NamedParameterJdbcTemplate jdbcNamed;
 
   private static final String TABLE_NAME = "tournament";
+
+  private static final String SQL_COUNT_THAT_CONTAIN_PARTICIPANT = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ARRAY_CONTAINS(participants, :horseId)";
 
   private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
       + " (id, name, start_date, end_date, participants)"
@@ -47,9 +51,19 @@ public class TournamentJdbcDao implements TournamentDao {
     this.jdbcNamed = jdbcNamed;
     this.jdbcTemplate = jdbcTemplate;
   }
+
   @Override
   public Collection<Tournament> search(TournamentSearchDto searchParameters) {
     return null;
+  }
+
+  @Override
+  public boolean isHorseParticipantInAnyTournament(long horseId) {
+    LOG.trace("isHorseParticipantInAnyTournament({})", horseId);
+    MapSqlParameterSource params = new MapSqlParameterSource()
+        .addValue("horseId", horseId);
+    Integer count = jdbcNamed.queryForObject(SQL_COUNT_THAT_CONTAIN_PARTICIPANT, params, Integer.class);
+    return count != null && count > 0;
   }
 
   @Override
@@ -72,12 +86,7 @@ public class TournamentJdbcDao implements TournamentDao {
         .addValue("participants", participantIds);
 
     try {
-      int rowsAffected = jdbcNamed.update(sqlInsert, parameterSource, keyHolder, new String[]{"id"});
-
-      if (rowsAffected == 0) {
-        throw new FatalException("Insert operation failed, no rows affected.");
-      }
-
+      insertWithKeyHolder(keyHolder, sqlInsert, parameterSource, jdbcNamed, tournament.id());
       Long newId = (tournament.id() != null) ? tournament.id() : Objects.requireNonNull(keyHolder.getKey()).longValue();
       return new Tournament()
           .setId(newId)
@@ -93,12 +102,13 @@ public class TournamentJdbcDao implements TournamentDao {
 
   @Override
   public Tournament getById(long id) throws NotFoundException {
+    // TODO: Implement
     return null;
   }
 
   @Override
   public void delete(long id) throws NotFoundException {
-
+    // TODO: Implement
   }
 
   private Tournament mapRow(ResultSet result, int rowNum) throws SQLException {

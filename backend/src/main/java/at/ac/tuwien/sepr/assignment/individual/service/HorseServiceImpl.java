@@ -5,6 +5,7 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
+import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.HorseMapper;
@@ -60,6 +61,23 @@ public class HorseServiceImpl implements HorseService {
         .map(horse -> mapper.entityToDetailDto(horse, breedMapForSingleHorse(horse)));
   }
 
+  @Override
+  public HorseDetailDto getById(long id) throws NotFoundException {
+    LOG.trace("details({})", id);
+    Horse horse = dao.getById(id);
+    var breeds = breedMapForSingleHorse(horse);
+    return mapper.entityToDetailDto(horse, breeds);
+  }
+
+  @Override
+  public HorseDetailDto create(HorseDetailDto horse) throws ValidationException, ConflictException {
+    LOG.trace("create({})", horse);
+    validator.validateForCreate(horse);
+    var createdHorse = dao.create(horse);
+    var breeds = breedMapForSingleHorse(createdHorse);
+    return mapper.entityToDetailDto(createdHorse, breeds);
+  }
+
 
   @Override
   public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException {
@@ -72,20 +90,10 @@ public class HorseServiceImpl implements HorseService {
 
 
   @Override
-  public HorseDetailDto create(HorseDetailDto horse) throws ValidationException {
-    LOG.trace("create({})", horse);
-    validator.validateForCreate(horse);
-    var createdHorse = dao.create(horse);
-    var breeds = breedMapForSingleHorse(createdHorse);
-    return mapper.entityToDetailDto(createdHorse, breeds);
-  }
-
-  @Override
-  public HorseDetailDto getById(long id) throws NotFoundException {
-    LOG.trace("details({})", id);
-    Horse horse = dao.getById(id);
-    var breeds = breedMapForSingleHorse(horse);
-    return mapper.entityToDetailDto(horse, breeds);
+  public void delete(long id) throws NotFoundException, ConflictException {
+    LOG.trace("delete({})", id);
+    validator.validateForDelete(id);
+    dao.delete(id);
   }
 
 

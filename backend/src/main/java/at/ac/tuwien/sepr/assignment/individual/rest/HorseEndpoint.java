@@ -79,11 +79,10 @@ public class HorseEndpoint {
 
 
   @DeleteMapping("{id}")
-  public void delete(@PathVariable("id") long id) throws ValidationException, ConflictException {
+  public void delete(@PathVariable("id") long id) throws ConflictException {
     LOG.info("DELETE " + BASE_PATH + "/delete/{}", id);
     try {
-      // TODO: Implement service
-      throw new NotFoundException("Service not implemented");
+      service.delete(id);
     } catch (NotFoundException e) {
       HttpStatus status = HttpStatus.NOT_FOUND;
       logClientError(status, "Horse to delete not found", e);

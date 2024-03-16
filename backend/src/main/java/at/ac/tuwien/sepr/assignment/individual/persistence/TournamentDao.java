@@ -23,6 +23,15 @@ public interface TournamentDao {
    */
   Collection<Tournament> search(TournamentSearchDto searchParameters);
 
+
+  /**
+   * Checks whether there exists a tournament containing a horse specified by the given ID among its participants.
+   *
+   * @param horseId the ID of the horse to check for
+   * @return {@code true} if the given ID is found among the participants in at least one tournament.
+   */
+  boolean isHorseParticipantInAnyTournament(long horseId);
+
   /**
    * Create a new tournament with the data given in {@code tournament}.
    *

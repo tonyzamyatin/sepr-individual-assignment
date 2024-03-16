@@ -26,7 +26,7 @@ public class TestUtil {
     }
 
     return new TournamentDetailDto(
-        -1L,
+        -10L,
         "Test Tournament 1",
         LocalDate.of(2024, 3, 12),
         LocalDate.of(2024, 3, 13),

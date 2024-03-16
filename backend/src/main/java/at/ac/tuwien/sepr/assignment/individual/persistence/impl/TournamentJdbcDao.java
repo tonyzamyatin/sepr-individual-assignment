@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -33,6 +34,14 @@ public class TournamentJdbcDao implements TournamentDao {
 
   private static final String TABLE_NAME = "tournament";
 
+  private static final String SQL_SELECT_SEARCH =  "SELECT * "
+      + " FROM " + TABLE_NAME
+      + " WHERE (:name IS NULL OR UPPER(name) LIKE UPPER('%'||:name||'%'))"
+      + "  AND (:start_date IS NULL OR :start_date <= end_date)"
+      + "  AND (:end_date IS NULL OR :end_date >= start_date)";
+
+  private static final String SQL_LIMIT_CLAUSE = SQL_SELECT_SEARCH + " LIMIT :limit";
+
   private static final String SQL_COUNT_THAT_CONTAIN_PARTICIPANT = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ARRAY_CONTAINS(participants, :horseId)";
 
   private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
@@ -54,7 +63,13 @@ public class TournamentJdbcDao implements TournamentDao {
 
   @Override
   public Collection<Tournament> search(TournamentSearchDto searchParameters) {
-    return null;
+    LOG.trace("search({})", searchParameters);
+    var query = SQL_SELECT_SEARCH;
+    if (searchParameters.limit() != null) {
+      query += SQL_LIMIT_CLAUSE;
+    }
+    var params = new BeanPropertySqlParameterSource(searchParameters);
+    return jdbcNamed.query(query, params, this::mapRow);
   }
 
   @Override

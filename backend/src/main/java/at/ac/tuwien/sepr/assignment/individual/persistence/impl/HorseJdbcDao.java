@@ -136,7 +136,7 @@ public class HorseJdbcDao implements HorseDao {
     // Handle optional breedId
     Long optionalBreedId = horse.breed() != null ? horse.breed().id() : null;
 
-    MapSqlParameterSource parameterSource = new MapSqlParameterSource()
+    var params = new MapSqlParameterSource()
         .addValue("id", horse.id())
         .addValue("name", horse.name())
         .addValue("sex", horse.sex().toString())
@@ -146,7 +146,7 @@ public class HorseJdbcDao implements HorseDao {
         .addValue("breedId", optionalBreedId); // Extracting breedId from BreedDto
 
     try {
-      insertWithKeyHolder(keyHolder, sqlInsert, parameterSource, jdbcNamed, horse.id());
+      insertWithKeyHolder(keyHolder, sqlInsert, params, jdbcNamed, horse.id());
       Long newId = (horse.id() != null) ? horse.id() : Objects.requireNonNull(keyHolder.getKey()).longValue();
       return new Horse()
           .setId(newId)

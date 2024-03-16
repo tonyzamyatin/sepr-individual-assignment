@@ -2,6 +2,8 @@ package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.TournamentMapper;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TournamentServiceImpl implements TournamentService {
@@ -42,6 +45,12 @@ public class TournamentServiceImpl implements TournamentService {
   public boolean isHorseParticipantInAnyTournament(long horseId) {
     LOG.trace("isHorseParticipantInAnyTournament({})", horseId);
     return tournamentDao.isHorseParticipantInAnyTournament(horseId);
+  }
+
+  @Override
+  public Stream<TournamentListDto> search(TournamentSearchDto searchParameters) {
+    var tournaments = tournamentDao.search(searchParameters);
+    return tournaments.stream().map(mapper::entitiyToListDto);
   }
 
   @Override

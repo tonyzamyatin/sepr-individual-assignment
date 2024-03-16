@@ -2,6 +2,7 @@ package at.ac.tuwien.sepr.assignment.individual.mapper;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import org.slf4j.Logger;
@@ -18,6 +19,20 @@ import java.util.Optional;
 public class TournamentMapper {
 
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+  public TournamentListDto entitiyToListDto(Tournament tournament) {
+    LOG.trace("entityToListDto({})", tournament);
+    if (tournament == null) {
+      return null;
+    }
+
+    return new TournamentListDto(
+        tournament.getId(),
+        tournament.getName(),
+        tournament.getStartDate(),
+        tournament.getEndDate()
+    );
+  }
 
   /**
    * Convert a tournament entity object to a {@link TournamentDetailDto}.

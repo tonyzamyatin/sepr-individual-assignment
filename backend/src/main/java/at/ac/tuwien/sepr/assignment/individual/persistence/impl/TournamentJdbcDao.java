@@ -19,10 +19,15 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.lang.invoke.MethodHandles;
+import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.ToLongFunction;
+import java.util.stream.Stream;
 
 import static at.ac.tuwien.sepr.assignment.individual.persistence.impl.PersistenceUtil.insertWithKeyHolder;
 
@@ -37,21 +42,21 @@ public class TournamentJdbcDao implements TournamentDao {
   private static final String SQL_SELECT_SEARCH =  "SELECT * "
       + " FROM " + TABLE_NAME
       + " WHERE (:name IS NULL OR UPPER(name) LIKE UPPER('%'||:name||'%'))"
-      + "  AND (:start_date IS NULL OR :start_date <= end_date)"
-      + "  AND (:end_date IS NULL OR :end_date >= start_date)";
+      + "  AND (:intervalStart IS NULL OR :intervalStart <= end_date)"
+      + "  AND (:intervalEnd IS NULL OR :intervalEnd >= start_date)";
 
-  private static final String SQL_LIMIT_CLAUSE = SQL_SELECT_SEARCH + " LIMIT :limit";
+  private static final String SQL_LIMIT_CLAUSE = " LIMIT :limit";
 
   private static final String SQL_COUNT_THAT_CONTAIN_PARTICIPANT = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ARRAY_CONTAINS(participants, :horseId)";
 
   private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
       + " (id, name, start_date, end_date, participants)"
-      + " VALUES(:id, :name, :startData, :endDate, :participants)";
+      + " VALUES(:id, :name, :startDate, :endDate, :participants)";
 
 
   private static final String NAMED_SQL_INSERT_WITHOUT_ID = "INSERT INTO " + TABLE_NAME
       + " (name, start_date, end_date, participants)"
-      + " VALUES(:name, :startData, :endDate, :participants)";
+      + " VALUES(:name, :startDate, :endDate, :participants)";
 
   public TournamentJdbcDao(
       NamedParameterJdbcTemplate jdbcNamed,
@@ -96,7 +101,7 @@ public class TournamentJdbcDao implements TournamentDao {
     MapSqlParameterSource parameterSource = new MapSqlParameterSource()
         .addValue("id", tournament.id())
         .addValue("name", tournament.name())
-        .addValue("startData", tournament.startDate())
+        .addValue("startDate", tournament.startDate())
         .addValue("endDate", tournament.endDate())
         .addValue("participants", participantIds);
 
@@ -127,14 +132,21 @@ public class TournamentJdbcDao implements TournamentDao {
   }
 
   private Tournament mapRow(ResultSet result, int rowNum) throws SQLException {
-    Long[] participantArray = (Long[]) result.getArray("participants").getArray();
+    Array sqlArray = result.getArray("participants");
+    try {
+      Object[] array = (Object[]) sqlArray.getArray();
+      Long[] participantIds = Arrays.stream(array)
+          .map(element -> element instanceof Number ? ((Number) element).longValue() : null)
+          .toArray(Long[]::new);
 
-    return new Tournament()
-        .setId(result.getLong("id"))
-        .setName(result.getString("name"))
-        .setStartDate(result.getDate("start_date").toLocalDate())
-        .setEndDate(result.getDate("end_data").toLocalDate())
-        .setParticipantIds(participantArray)
-        ;
+      return new Tournament()
+          .setId(result.getLong("id"))
+          .setName(result.getString("name"))
+          .setStartDate(result.getDate("start_date").toLocalDate())
+          .setEndDate(result.getDate("end_date").toLocalDate())
+          .setParticipantIds(participantIds);
+    } catch (NullPointerException e) {
+      throw new FatalException("Error occurred during mapping of row from tournament table to Tournament entity: " + e.getMessage(), e);
+    }
   }
 }

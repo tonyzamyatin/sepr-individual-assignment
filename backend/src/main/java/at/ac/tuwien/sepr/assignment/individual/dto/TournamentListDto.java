@@ -8,6 +8,7 @@ import java.time.LocalDate;
 public record TournamentListDto(
     Long id,
     String name,
-    LocalDate start_date,
-    LocalDate end_date
-    ) { }
+    LocalDate startDate,
+    LocalDate endDate
+) {
+}

@@ -73,5 +73,6 @@ VALUES (-1, 'Wendy', 'FEMALE', '2019-08-05', 1.40, 380, -15),
        (-32, 'Luna', 'FEMALE', '2018-10-10', 1.62, 670, -19);
 
 INSERT INTO tournament (id, name, start_date, end_date, participants)
-VALUES (-1, 'Test Tournament 1', '2024-03-15', '2024-03-16', ARRAY [-1, -2, -3, -4, -5, -6, -7, -8]),
-       (-2, 'Test Tournament 2', '2022-04-15', '2022-04-19', ARRAY [-1, -9, -10, -11, -12, -13, -14, -15]);
+VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-6', '2024-03-17', ARRAY [-1, -2, -3, -4, -5, -6, -7, -8]),
+       (-2, 'Miami Open presented by Itau', '2024-03-20', '2024-03-31', ARRAY [-1, -9, -10, -11, -12, -13, -14, -15]),
+       (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14', ARRAY [-3, -4, -5, -6, -7, -8, -9, -10]);

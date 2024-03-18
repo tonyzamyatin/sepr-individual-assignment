@@ -25,6 +25,7 @@
 | 16.03.2024 |    16:50   |  0h 30min | 5 |    Backend vollständig implementiert |
 | 16.03.2024 |    17:25   |  1h 15min | 5 |    DAO Schicht extensiv getestet und Bugfix |
 | 18.03.2024 |    17:30   |  1h 30min | 3 |    Frontend implementiert, manuell getestet und Bugfix |
+| 18.03.2024 |    19:30   |  1h 00min | 3 |    Frontend implementiert und manuell getestet |
 
 
 **Gesamtsumme der Zeit**: h 

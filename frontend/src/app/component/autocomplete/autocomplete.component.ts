@@ -133,10 +133,13 @@ export class AutocompleteComponent<T> implements OnInit, ControlValueAccessor {
   }
 
   private setValue(newValue: T | undefined) {
-    this.value = newValue;
-    this.inputText = this.formatModel(this.value);
-    this.onChange(this.value);
+    if (this.value != newValue) {
+      this.value = newValue;
+      this.inputText = this.formatModel(this.value);
+      this.onChange(this.value);
+    }
   }
+
 
   private onReceiveNewCandidates(result: T[]) {
     this.valueCandidates.clear();

@@ -204,7 +204,7 @@ export class HorseCreateEditComponent implements OnInit {
     return JSON.stringify(this.initialHorse) !== JSON.stringify(this.horse);
   }
 
-  onDeleteConfirmed(): void {
+  confirmDelete(): void {
     if (this.horse && this.horse.id !== undefined) {
       // Call the service to delete the horse, then navigate or show a message
       this.service.delete(this.horse.id).subscribe({
@@ -225,7 +225,7 @@ export class HorseCreateEditComponent implements OnInit {
     }
   }
 
-  public onSubmit(form: NgForm): void {
+  public submit(form: NgForm): void {
     console.log('is form valid?', form.valid, this.horse);
     if (form.valid) {
       let observable: Observable<Horse>;

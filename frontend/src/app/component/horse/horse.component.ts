@@ -16,7 +16,6 @@ import {ConfirmDeleteDialogComponent} from "../confirm-delete-dialog/confirm-del
 })
 export class HorseComponent implements OnInit {
 
-  search: boolean = false;
   horses: HorseListDto[] = [];
   bannerError: string | null = null;
   searchParams: HorseSearch = {};

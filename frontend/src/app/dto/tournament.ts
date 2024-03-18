@@ -2,8 +2,9 @@ import {HorseSelection} from "./horse";
 
 export interface TournamentSearchParams {
   name?: string;
-  startDate?: Date;
-  endDate?: Date;
+  intervalStart?: Date;
+  intervalEnd?: Date;
+  limit?: number;
 }
 
 export interface TournamentListDto {

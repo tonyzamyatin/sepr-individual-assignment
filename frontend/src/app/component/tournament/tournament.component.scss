@@ -1,0 +1,23 @@
+@use "sass:map";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+.min-width {
+  /* Used to get the actions column in the table to be not wider than necessary */
+  width: 0;
+}
+
+.center-td > td {
+  vertical-align: middle;
+}
+
+.responsive-info-button {
+  @include button-variant($light, $light);
+}
+
+
+tr:hover .responsive-info-button {
+  $value: map.get($theme-colors, info);
+  @include button-variant($value, $value);
+}

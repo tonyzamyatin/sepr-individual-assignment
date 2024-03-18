@@ -5,13 +5,13 @@
   id="confirm-delete-dialog"
   tabindex="-1"
   aria-labelledby="DeleteModal"
-  (confirm)="onDeleteConfirmed()"
+  (confirm)="confirmDelete()"
 ></app-confirm-delete-dialog>
 
 <h1 class="display-1">{{heading}}</h1>
 
 
-<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="onSubmit(form)">
+<form #form="ngForm" [class.was-validated]="form.submitted" (ngSubmit)="submit(form)">
   <div class="row">
     <!-- Start name and date of birth row -->
     <div class="mb-2 col-lg-6">

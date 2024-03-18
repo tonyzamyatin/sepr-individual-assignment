@@ -170,7 +170,7 @@ public class TournamentDaoTest extends TestBase {
                 .setName("Rolex Monte-Carlo Masters")
                 .setStartDate(LocalDate.of(2024, 4, 7))
                 .setEndDate(LocalDate.of(2024, 4, 14))
-                .setParticipantIds(new Long[] {-3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L})c
+                .setParticipantIds(new Long[] {-3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L})
         );
   }
 

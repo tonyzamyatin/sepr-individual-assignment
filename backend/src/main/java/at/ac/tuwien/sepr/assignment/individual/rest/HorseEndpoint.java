@@ -64,7 +64,7 @@ public class HorseEndpoint {
   }
 
 
-  @PutMapping("{id}")
+  @PutMapping("update/{id}")
   public HorseDetailDto update(@PathVariable("id") long id, @RequestBody HorseDetailDto toUpdate) throws ValidationException, ConflictException {
     LOG.info("PUT " + BASE_PATH + "/update/{}", id);
     LOG.debug("Body of request:\n{}", toUpdate);
@@ -78,7 +78,7 @@ public class HorseEndpoint {
   }
 
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("delete/{id}")
   public void delete(@PathVariable("id") long id) throws ConflictException {
     LOG.info("DELETE " + BASE_PATH + "/delete/{}", id);
     try {

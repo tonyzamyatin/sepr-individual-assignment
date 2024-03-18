@@ -27,6 +27,9 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 14.03.2024 |    18:00   |  1h 00min | 6 |     Backend getestet und Endpoint verbunden      |
 | 15.03.2024 |    8:45   |  1h 00min | 1, 6 |     Validierung hinzugefügt und manuell Pferde und Tourniererstellung getestet      |
 | 16.03.2024 |    10:21   |  4h 00min | 3 |     Backend vollständig implementiert, alle Schichten getestet und debugggt     |
+| 16.03.2024 |    16:50   |  0h 30min | 5 |       |   Backend vollständig implementiert |
+| 16.03.2024 |    17:25   |  1h 15min | 5 |       |   DAO Schicht extensiv getestet und Bugfix |
+| 18.03.2024 |    17:30   |  1h 30min | 3 |       |   Frontend implementiert, manuell getestet und Bugfix |
 
 
 **Gesamtsumme der Zeit**: h 

@@ -140,7 +140,7 @@ public class HorseEndpointTest extends TestBase {
     long horseId = -32L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isOk()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isOk()));
   }
 
   @Test
@@ -148,7 +148,7 @@ public class HorseEndpointTest extends TestBase {
     long horseId = -33L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isNotFound()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isNotFound()));
   }
 
 
@@ -157,6 +157,6 @@ public class HorseEndpointTest extends TestBase {
     long horseId = -1L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isConflict()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isConflict()));
   }
 }

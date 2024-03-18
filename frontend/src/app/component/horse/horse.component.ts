@@ -28,7 +28,6 @@ export class HorseComponent implements OnInit {
   constructor(
     private service: HorseService,
     private breedService: BreedService,
-    private modalService: NgbModal,
     private notification: ToastrService,
   ) { }
 
@@ -77,34 +76,15 @@ export class HorseComponent implements OnInit {
   formatBreedName = (name: string) => name; // It is already the breed name, we just have to give a function to the component
 
   public onDeleteButtonClick(horse: HorseListDto): void {
-    console.log("Delete clicked")
     this.horseForDeletion = horse;
-    this.showConfirmDeleteDialog()
   }
 
-  private showConfirmDeleteDialog(): void {
-    const modalRef = this.modalService.open(ConfirmDeleteDialogComponent);
-    modalRef.componentInstance.title = 'Delete Confirmation';
-    modalRef.componentInstance.message = 'Are you sure you want to delete this horse?';
-    modalRef.componentInstance.confirmButtonText = 'Yes, delete'
-    modalRef.componentInstance.cancelButtonText = 'No, stop'
-
-    modalRef.result.then((result) => {
-      if (result) {
-        // Perform the delete operation
-        this.onDeleteConfirmed(true);
-      }
-    }, (reason) => {
-      // TODO: Handle modal dismissal
-    });
-
-  }
-
-  onDeleteConfirmed(confirm: boolean): void {
-    if (confirm && this.horseForDeletion && this.horseForDeletion.id !== undefined) {
+  onDeleteConfirmed(): void {
+    if (this.horseForDeletion && this.horseForDeletion.id !== undefined) {
       // Call the service to delete the horse, then navigate or show a message
       this.service.delete(this.horseForDeletion.id).subscribe({
         next: () => {
+          this.reloadHorses();
           this.notification.success('Horse successfully deleted.');
           // TODO: Navigate away or update the view as necessary
         },
@@ -117,7 +97,6 @@ export class HorseComponent implements OnInit {
     } else {
       this.notification.error('Error: No horse selected for deletion.');
     }
-
-    this.horseForDeletion = undefined;  // Hide dialog
+    this.horseForDeletion = undefined;  // reset variable
   }
 }

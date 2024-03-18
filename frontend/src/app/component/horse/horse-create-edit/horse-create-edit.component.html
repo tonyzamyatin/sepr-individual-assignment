@@ -1,3 +1,12 @@
+<app-confirm-delete-dialog
+  entityType="Horse"
+  entityName="{{ horse.name }}"
+  class="modal fade"
+  id="confirm-delete-dialog"
+  tabindex="-1"
+  aria-labelledby="DeleteModal"
+  (confirm)="onDeleteConfirmed()"
+></app-confirm-delete-dialog>
 
 <h1 class="display-1">{{heading}}</h1>
 
@@ -171,8 +180,9 @@
     <button type="button"
             class="btn btn-danger"
             *ngIf="!modeIsCreate"
-            (click)="onDeleteButtonClick()"
-            >
+            aria-label="Delete horse"
+            data-bs-target="#confirm-delete-dialog"
+            data-bs-toggle="modal">
       <i class="bi bi-trash"></i>
       Delete
     </button>

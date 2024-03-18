@@ -16,7 +16,7 @@ import {ConfirmDeleteDialogComponent} from './component/confirm-delete-dialog/co
 import {TournamentCreateComponent} from './component/tournament/tournament-create/tournament-create.component';
 import {TournamentStandingsComponent} from './component/tournament/tournament-standings/tournament-standings.component';
 import {TournamentStandingsBranchComponent} from './component/tournament/tournament-standings/tournament-standings-branch/tournament-standings-branch.component';
-import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+// import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   declarations: [
@@ -37,7 +37,7 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     HttpClientModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
-    NgbModule
+    // NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

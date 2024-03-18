@@ -45,8 +45,6 @@ export class HorseCreateEditComponent implements OnInit {
   private weightSet: boolean = false;
   private dateOfBirthSet: boolean = false;
 
-  public showConfirmDeleteDialog: boolean = false;
-
   get sex(): string {
     return this.sexSet ? this.horse.sex.toString() : '';
   }
@@ -206,21 +204,13 @@ export class HorseCreateEditComponent implements OnInit {
     return JSON.stringify(this.initialHorse) !== JSON.stringify(this.horse);
   }
 
-  public onDeleteButtonClick(): void {
-    this.showConfirmDeleteDialog = true;
-  }
-
-  /**
-   * Only call in states where horse.id is set to a valid and existing id.
-   * @param confirm
-   */
-  onDeleteConfirmed(confirm: boolean): void {
-    if (confirm && this.horse && this.horse.id !== undefined) {
+  onDeleteConfirmed(): void {
+    if (this.horse && this.horse.id !== undefined) {
       // Call the service to delete the horse, then navigate or show a message
       this.service.delete(this.horse.id).subscribe({
         next: () => {
-          this.notification.success('Horse successfully deleted.');
           this.router.navigate(['/horses']);
+          this.notification.success('Horse successfully deleted.');
         },
         error: error => {
           console.error('Error deleting horse', error);
@@ -233,8 +223,6 @@ export class HorseCreateEditComponent implements OnInit {
         }
       });
     }
-
-    this.showConfirmDeleteDialog = false; // Hide the dialog
   }
 
   public onSubmit(form: NgForm): void {

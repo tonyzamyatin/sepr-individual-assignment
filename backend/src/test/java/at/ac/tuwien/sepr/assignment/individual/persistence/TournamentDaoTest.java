@@ -41,14 +41,12 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-1L)
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
-                .setEndDate(LocalDate.of(2024, 3, 17))
-                .setParticipantIds(new Long[] {-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L}),
+                .setEndDate(LocalDate.of(2024, 3, 17)),
             (new Tournament())
                 .setId(-2L)
                 .setName("Miami Open presented by Itau")
                 .setStartDate(LocalDate.of(2024, 3, 20))
                 .setEndDate(LocalDate.of(2024, 3, 31))
-                .setParticipantIds(new Long[] {-1L, -9L, -10L, -11L, -12L, -13L, -14L, -15L})
         );
   }
 
@@ -64,14 +62,12 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-2L)
                 .setName("Miami Open presented by Itau")
                 .setStartDate(LocalDate.of(2024, 3, 20))
-                .setEndDate(LocalDate.of(2024, 3, 31))
-                .setParticipantIds(new Long[] {-1L, -9L, -10L, -11L, -12L, -13L, -14L, -15L})),
+                .setEndDate(LocalDate.of(2024, 3, 31))),
             (new Tournament())
                 .setId(-3L)
                 .setName("Rolex Monte-Carlo Masters")
                 .setStartDate(LocalDate.of(2024, 4, 7))
                 .setEndDate(LocalDate.of(2024, 4, 14))
-                .setParticipantIds(new Long[] {-3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L})
         );
   }
 
@@ -87,14 +83,12 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-1L)
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
-                .setEndDate(LocalDate.of(2024, 3, 17))
-                .setParticipantIds(new Long[] {-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L}),
+                .setEndDate(LocalDate.of(2024, 3, 17)),
             (new Tournament())
                 .setId(-2L)
                 .setName("Miami Open presented by Itau")
                 .setStartDate(LocalDate.of(2024, 3, 20))
                 .setEndDate(LocalDate.of(2024, 3, 31))
-                .setParticipantIds(new Long[] {-1L, -9L, -10L, -11L, -12L, -13L, -14L, -15L})
         );
   }
 
@@ -111,20 +105,17 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-1L)
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
-                .setEndDate(LocalDate.of(2024, 3, 17))
-                .setParticipantIds(new Long[] {-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L}),
+                .setEndDate(LocalDate.of(2024, 3, 17)),
             (new Tournament())
                 .setId(-2L)
                 .setName("Miami Open presented by Itau")
                 .setStartDate(LocalDate.of(2024, 3, 20))
-                .setEndDate(LocalDate.of(2024, 3, 31))
-                .setParticipantIds(new Long[] {-1L, -9L, -10L, -11L, -12L, -13L, -14L, -15L}),
+                .setEndDate(LocalDate.of(2024, 3, 31)),
             (new Tournament())
                 .setId(-3L)
                 .setName("Rolex Monte-Carlo Masters")
                 .setStartDate(LocalDate.of(2024, 4, 7))
                 .setEndDate(LocalDate.of(2024, 4, 14))
-                .setParticipantIds(new Long[] {-3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L})
         );
   }
 
@@ -141,7 +132,6 @@ public class TournamentDaoTest extends TestBase {
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
                 .setEndDate(LocalDate.of(2024, 3, 17))
-                .setParticipantIds(new Long[] {-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L})
         );
   }
 
@@ -157,20 +147,17 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-1L)
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
-                .setEndDate(LocalDate.of(2024, 3, 17))
-                .setParticipantIds(new Long[] {-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L}),
-            (new Tournament()
+                .setEndDate(LocalDate.of(2024, 3, 17)),
+            (new Tournament())
                 .setId(-2L)
                 .setName("Miami Open presented by Itau")
                 .setStartDate(LocalDate.of(2024, 3, 20))
-                .setEndDate(LocalDate.of(2024, 3, 31))
-                .setParticipantIds(new Long[] {-1L, -9L, -10L, -11L, -12L, -13L, -14L, -15L})),
+                .setEndDate(LocalDate.of(2024, 3, 31)),
             (new Tournament())
                 .setId(-3L)
                 .setName("Rolex Monte-Carlo Masters")
                 .setStartDate(LocalDate.of(2024, 4, 7))
                 .setEndDate(LocalDate.of(2024, 4, 14))
-                .setParticipantIds(new Long[] {-3L, -4L, -5L, -6L, -7L, -8L, -9L, -10L})
         );
   }
 
@@ -204,8 +191,7 @@ public class TournamentDaoTest extends TestBase {
         () -> assertEquals(validTournamentDto.id(), createdTournament.getId()),
         () -> assertEquals(validTournamentDto.name(), createdTournament.getName()),
         () -> assertEquals(validTournamentDto.startDate(), createdTournament.getStartDate()),
-        () -> assertEquals(validTournamentDto.endDate(), createdTournament.getEndDate()),
-        () -> assertArrayEquals(validTournamentDto.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new), createdTournament.getParticipantIds())
+        () -> assertEquals(validTournamentDto.endDate(), createdTournament.getEndDate())
     );
   }
 }

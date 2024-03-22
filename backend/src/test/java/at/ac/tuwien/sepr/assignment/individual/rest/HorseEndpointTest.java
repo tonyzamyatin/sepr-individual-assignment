@@ -121,7 +121,7 @@ public class HorseEndpointTest extends TestBase {
 
     var body = assertDoesNotThrow(() -> mockMvc.perform(
             MockMvcRequestBuilders.post("/horses/create").contentType(MediaType.APPLICATION_JSON).content(jsonHorseDto).accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
 
     var horseResult = assertDoesNotThrow(() -> objectMapper.readValue(body, HorseDetailDto.class));
     assertNotNull(horseResult);

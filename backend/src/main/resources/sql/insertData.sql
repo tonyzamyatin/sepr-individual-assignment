@@ -3,6 +3,16 @@
 -- negative IDs are used to not interfere with user-entered data and allow clean deletion of test data
 
 DELETE
+FROM participant
+WHERE tournament_id < 0
+   OR horse_id < 0;
+
+DELETE
+FROM tournament
+WHERE id < 0;
+
+
+DELETE
 FROM horse
 WHERE id < 0
    OR breed_id < 0;
@@ -11,9 +21,7 @@ DELETE
 FROM breed
 WHERE id < 0;
 
-DELETE
-FROM tournament
-WHERE id < 0;
+
 
 INSERT INTO breed (id, name)
 VALUES (-1, 'Andalusian'),
@@ -72,7 +80,34 @@ VALUES (-1, 'Wendy', 'FEMALE', '2019-08-05', 1.40, 380, -15),
        (-31, 'Leo', 'MALE', '2017-03-05', 1.70, 720, -8),
        (-32, 'Luna', 'FEMALE', '2018-10-10', 1.62, 670, -19);
 
-INSERT INTO tournament (id, name, start_date, end_date, participants)
-VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-6', '2024-03-17', ARRAY [-1, -2, -3, -4, -5, -6, -7, -8]),
-       (-2, 'Miami Open presented by Itau', '2024-03-20', '2024-03-31', ARRAY [-1, -9, -10, -11, -12, -13, -14, -15]),
-       (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14', ARRAY [-3, -4, -5, -6, -7, -8, -9, -10]);
+INSERT INTO tournament (id, name, start_date, end_date)
+VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-6', '2024-03-17'),
+       (-2, 'Miami Open presented by Itau', '2024-03-20', '2024-03-31'),
+       (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14');
+
+INSERT INTO participant (tournament_id, horse_id)
+VALUES
+    (-1, -1),
+    (-1, -2),
+    (-1, -3),
+    (-1, -4),
+    (-1, -5),
+    (-1, -6),
+    (-1, -7),
+    (-1, -8),
+    (-2, -1),
+    (-2, -9),
+    (-2, -10),
+    (-2, -11),
+    (-2, -12),
+    (-2, -13),
+    (-2, -14),
+    (-2, -15),
+    (-3, -3),
+    (-3, -4),
+    (-3, -5),
+    (-3, -6),
+    (-3, -7),
+    (-3, -8),
+    (-3, -9),
+    (-3, -10);

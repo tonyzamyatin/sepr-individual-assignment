@@ -39,23 +39,4 @@ public interface TournamentDao {
    * @return the newly created tournament
    */
   Tournament create(TournamentDetailDto tournament);
-
-
-  /**
-   * Get a tournament by its ID from the persistent data store.
-   *
-   * @param id the ID of the tournament to get
-   * @return the tournament
-   * @throws NotFoundException if the Tournament with the given ID does not exist in the persistent data store
-   */
-  Tournament getById(long id) throws NotFoundException;
-
-  /**
-   * Delete a tournament by its ID from the persistent data store.
-   *
-   * @param id the ID of the tournament to delete
-   * @throws NotFoundException if the tournament with the given ID does not exist in the persistent data store
-   */
-  void delete(long id) throws NotFoundException;
-
 }

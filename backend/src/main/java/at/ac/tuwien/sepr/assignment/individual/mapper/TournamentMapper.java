@@ -51,15 +51,11 @@ public class TournamentMapper {
         tournament.getName(),
         tournament.getStartDate(),
         tournament.getEndDate(),
-        horseListFromMap(tournament, horses)
+        horseListFromMap(horses)
     );
   }
 
-  private List<HorseDetailDto> horseListFromMap(Tournament tournament, Map<Long, HorseDetailDto> map) {
-    return Arrays.stream(tournament.getParticipantIds())
-        .map(id -> Optional.ofNullable(map.get(id))
-            .orElseThrow(() -> new FatalException(
-                "Saved tournament " + tournament.getId() + " refers to non-existing horse with id " + id)))
-        .toList();
+  private List<HorseDetailDto> horseListFromMap(Map<Long, HorseDetailDto> map) {
+    return map.values().stream().toList();
   }
 }

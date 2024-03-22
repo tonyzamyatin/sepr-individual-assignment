@@ -50,13 +50,13 @@ public class TournamentJdbcDao implements TournamentDao {
   private static final String SQL_COUNT_THAT_CONTAIN_PARTICIPANT = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE ARRAY_CONTAINS(participants, :horseId)";
 
   private static final String NAMED_SQL_INSERT_WITH_ID = "INSERT INTO " + TABLE_NAME
-      + " (id, name, start_date, end_date, participants)"
-      + " VALUES(:id, :name, :startDate, :endDate, :participants)";
+      + " (id, name, start_date, end_date)"
+      + " VALUES(:id, :name, :startDate, :endDate)";
 
 
   private static final String NAMED_SQL_INSERT_WITHOUT_ID = "INSERT INTO " + TABLE_NAME
-      + " (name, start_date, end_date, participants)"
-      + " VALUES(:name, :startDate, :endDate, :participants)";
+      + " (name, start_date, end_date)"
+      + " VALUES(:name, :startDate, :endDate)";
 
   public TournamentJdbcDao(
       NamedParameterJdbcTemplate jdbcNamed,
@@ -102,8 +102,7 @@ public class TournamentJdbcDao implements TournamentDao {
         .addValue("id", tournament.id())
         .addValue("name", tournament.name())
         .addValue("startDate", tournament.startDate())
-        .addValue("endDate", tournament.endDate())
-        .addValue("participants", participantIds);
+        .addValue("endDate", tournament.endDate());
 
     try {
       insertWithKeyHolder(keyHolder, sqlInsert, parameterSource, jdbcNamed, tournament.id());
@@ -113,38 +112,19 @@ public class TournamentJdbcDao implements TournamentDao {
           .setName(tournament.name())
           .setStartDate(tournament.startDate())
           .setEndDate(tournament.endDate())
-          .setParticipantIds(participantIds)
           ;
     } catch (DataAccessException e) {
       throw new FatalException("Error occurred during the insert operation: " + e.getMessage(), e);
     }
   }
 
-  @Override
-  public Tournament getById(long id) throws NotFoundException {
-    // TODO: Implement
-    return null;
-  }
-
-  @Override
-  public void delete(long id) throws NotFoundException {
-    // TODO: Implement
-  }
-
   private Tournament mapRow(ResultSet result, int rowNum) throws SQLException {
-    Array sqlArray = result.getArray("participants");
     try {
-      Object[] array = (Object[]) sqlArray.getArray();
-      Long[] participantIds = Arrays.stream(array)
-          .map(element -> element instanceof Number ? ((Number) element).longValue() : null)
-          .toArray(Long[]::new);
-
       return new Tournament()
-          .setId(result.getLong("id"))
-          .setName(result.getString("name"))
-          .setStartDate(result.getDate("start_date").toLocalDate())
-          .setEndDate(result.getDate("end_date").toLocalDate())
-          .setParticipantIds(participantIds);
+            .setId(result.getLong("id"))
+            .setName(result.getString("name"))
+            .setStartDate(result.getDate("start_date").toLocalDate())
+            .setEndDate(result.getDate("end_date").toLocalDate());
     } catch (NullPointerException e) {
       throw new FatalException("Error occurred during mapping of row from tournament table to Tournament entity: " + e.getMessage(), e);
     }

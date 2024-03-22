@@ -11,7 +11,6 @@ public class Tournament {
   private LocalDate startDate;
   private LocalDate endDate;
 
-  private Long[] participantIds;
 
   public Long getId() {
     return id;
@@ -49,14 +48,6 @@ public class Tournament {
     return this;
   }
 
-  public Long[] getParticipantIds() {
-    return participantIds;
-  }
-
-  public Tournament setParticipantIds(Long[] participantIds) {
-    this.participantIds = participantIds;
-    return this;
-  }
 
   @Override
   public String toString() {

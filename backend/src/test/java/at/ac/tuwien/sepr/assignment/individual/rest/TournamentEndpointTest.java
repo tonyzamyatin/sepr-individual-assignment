@@ -19,7 +19,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.stream.Collectors;
+
 import static at.ac.tuwien.sepr.assignment.individual.TestUtil.generateValidTournamentDetailDto;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -66,7 +70,7 @@ public class TournamentEndpointTest extends TestBase {
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonTournamentDto)
             .accept(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
+        .andExpect(status().isCreated())
         .andReturn().getResponse().getContentAsString();
 
     var tournamentResult = assertDoesNotThrow(() -> objectMapper.readValue(body, TournamentDetailDto.class));
@@ -77,8 +81,9 @@ public class TournamentEndpointTest extends TestBase {
         () -> assertEquals(validTournamentDto.name(), tournamentResult.name()),
         () -> assertEquals(validTournamentDto.startDate(), tournamentResult.startDate()),
         () -> assertEquals(validTournamentDto.endDate(), tournamentResult.endDate()),
-        () -> assertArrayEquals(validTournamentDto.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new),
-            tournamentResult.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new))
+        () -> assertThat("The participants list should contain the same elements, no matter the order",
+            tournamentResult.participants().stream().map(HorseDetailDto::id).collect(Collectors.toList()),
+            containsInAnyOrder(validTournamentDto.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new)))
     );
   }
 }

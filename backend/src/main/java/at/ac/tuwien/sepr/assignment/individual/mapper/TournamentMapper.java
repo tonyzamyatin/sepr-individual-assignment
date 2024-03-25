@@ -4,6 +4,7 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import org.slf4j.Logger;
@@ -58,7 +59,7 @@ public class TournamentMapper {
     List<TournamentParticipantDetailDto> sortedParticipants = participants.stream()
         .map(participant -> participantMapper.entityToDetailDto(participant, horseMap))
         .sorted(Comparator.comparingInt(TournamentParticipantDetailDto::entryNumber))
-        .collect(Collectors.toList());
+        .toList();
 
     return new TournamentDetailDto(
         tournament.getId(),

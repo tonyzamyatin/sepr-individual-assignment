@@ -3,34 +3,45 @@ package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
+import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentParticipantDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.lang.invoke.MethodHandles;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collection;
 
 @Repository
 public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private final JdbcTemplate jdbcTemplate;
-  private final NamedParameterJdbcTemplate jdbcNamed;
-
   private static final String TABLE_NAME = "participant";
-
+  private static final String SQL_PARTICIPANT_BY_TOURNAMENT_ID = "SELECT * FROM " + TABLE_NAME + " WHERE tournament_id = ?";
   private static final String SQL_COUNT_PARTICIPANT_BY_HORSE_ID = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE horse_id = ?";
-
   private static final String NAMED_SQL_INSERT = "INSERT INTO " + TABLE_NAME
       + " (tournament_id, horse_id, entry_number, round_reached)"
       + " VALUES(:tournamentId, :horseId, :entryNumber, :roundReached)";
+  private static final String SQL_UPDATE = "UPDATE " + TABLE_NAME
+      + " SET entry_number = ?"
+      + " , round_reached = ?"
+      + " WHERE tournament_id = ? AND horse_id = ?";
+  private final JdbcTemplate jdbcTemplate;
+  private final NamedParameterJdbcTemplate jdbcNamed;
 
   public TournamentParticipantJdbcDao(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate jdbcNamed) {
     this.jdbcTemplate = jdbcTemplate;
     this.jdbcNamed = jdbcNamed;
+  }
+
+  @Override
+  public Collection<Participant> findParticipantsByTournamentId(long tournamentId) {
+    LOG.trace("findParticipantsByTournamentId({})", tournamentId);
+    return jdbcTemplate.query(SQL_PARTICIPANT_BY_TOURNAMENT_ID, this::mapRow, tournamentId);
   }
 
   @Override
@@ -59,6 +70,32 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
         .setHorseId(participant.horseId())
         .setEntryNumber(participant.entryNumber())
         .setRoundReached(participant.roundReached());
+  }
+
+  @Override
+  public Participant update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException {
+    int updated = jdbcTemplate.update(SQL_UPDATE,
+        participant.entryNumber(),
+        participant.roundReached(),
+        tournamentId,
+        participant.horseId());
+    if (updated == 0) {
+      throw new NotFoundException(
+          "Could not update participant with tournament ID " + tournamentId + " and horse ID " + participant.horseId() + ", because it does not exist");
+    }
+    return new Participant()
+        .setTournamentId(tournamentId)
+        .setHorseId(participant.horseId())
+        .setEntryNumber(participant.entryNumber())
+        .setRoundReached(participant.roundReached());
+  }
+
+  private Participant mapRow(ResultSet result, int rowNumber) throws SQLException {
+    return new Participant()
+        .setTournamentId(result.getLong("tournament_id"))
+        .setHorseId(result.getLong("horse_id"))
+        .setEntryNumber(result.getInt("entry_number"))
+        .setRoundReached(result.getInt("round_reached"));
   }
 
 }

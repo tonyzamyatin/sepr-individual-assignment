@@ -25,11 +25,35 @@ export class TournamentStandingsComponent implements OnInit {
   }
 
   public ngOnInit() {
-    // TODO to be implemented.
+    const routeParams = this.route.snapshot.paramMap;
+    const id = Number(routeParams.get('id'));
+    this.service.getStandings(id)
+      .subscribe({
+        next: data => {
+          this.standings = data;
+        },
+        error: error => {
+          console.error('Error fetching tournament standings', error);
+          this.notification.error(error.message.message, 'Could Not Fetch Tournament Standings');
+        }
+      })
   }
 
   public submit(form: NgForm) {
-    // TODO to be implemented.
+    const routeParams = this.route.snapshot.paramMap;
+    const id = Number(routeParams.get('id'));
+    if (this.standings !== undefined) {
+      this.service.updateStandings(id, this.standings)
+        .subscribe({
+          next: data => {
+            this.standings = data;
+          },
+          error: error => {
+            console.error('Error updating tournament standings', error);
+            this.notification.error(error.message.message, 'Could Not Update Tournament Standings');
+          }
+        })
+    }
   }
 
   public generateFirstRound() {

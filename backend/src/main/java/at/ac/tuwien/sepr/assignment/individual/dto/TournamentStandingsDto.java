@@ -1,4 +1,10 @@
 package at.ac.tuwien.sepr.assignment.individual.dto;
 
-public class TournamentStandingsDto {
-}
+import java.util.List;
+
+public record TournamentStandingsDto(
+    Long id,
+    String name,
+    List<TournamentParticipantDetailDto> participants,
+    TournamentStandingsTreeDto tree
+) {}

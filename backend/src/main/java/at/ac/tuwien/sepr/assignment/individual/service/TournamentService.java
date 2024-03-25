@@ -1,11 +1,12 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
+import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
+import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 
 import java.util.stream.Stream;
@@ -14,6 +15,16 @@ import java.util.stream.Stream;
  * Service for working with tournaments
  */
 public interface TournamentService {
+
+  /**
+   * Get the tournament with given ID, with more detail information, including a list of the participants.
+   *
+   * @param id the ID of the tournament to get
+   * @return the tournament with ID {@code id}
+   * @throws NotFoundException if the tournament with the given ID does not exist in the persistent data
+   *                           store
+   */
+  TournamentDetailDto getById(long id) throws NotFoundException;
 
   /**
    * Checks whether any of the tournaments has a horse with the given ID among its participants.
@@ -43,4 +54,22 @@ public interface TournamentService {
    * @throws ConflictException   if the data given is in conflict with the data currently in the system (horses do not exist, ...)
    */
   TournamentDetailDto create(TournamentDetailDto tournament) throws ValidationException, ConflictException;
+
+  /**
+   * Retrieves the standings of the tournament with the given id from the persistent data store.
+   *
+   * @param id the id of the tournament
+   * @return the standings of the tournament
+   * @throws NotFoundException if the tournament with the specified id does not exist.
+   */
+  TournamentStandingsDto getStandings(long id) throws NotFoundException;
+
+  /**
+   * Update the standings of the tournament with the given id.
+   *
+   * @param id the id of the tournament
+   * @return the updated standings of the tournament
+   * @throws ConflictException if the tournament with the specified id does not exist.
+   */
+  TournamentStandingsDto updateStandings(long id, TournamentStandingsDto tournamentStandings) throws ConflictException, ValidationException, NotFoundException;
 }

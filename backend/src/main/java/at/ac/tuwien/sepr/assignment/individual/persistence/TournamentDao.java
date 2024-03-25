@@ -14,6 +14,16 @@ import java.util.Collection;
 public interface TournamentDao {
 
   /**
+   * Get the tournament with given ID, with more detail information, including a list of the participants.
+   *
+   * @param id the ID of the tournament to get
+   * @return the tournament with ID {@code id}
+   * @throws NotFoundException if the tournament with the given ID does not exist in the persistent data
+   *                           store
+   */
+  Tournament getById(long id) throws NotFoundException;
+
+  /**
    * Get the tournaments that match the given search parameters.
    * Parameters that are {@code null} are ignored.
    * The name is considered a match, if the given parameter is a substring of the field in tournament.

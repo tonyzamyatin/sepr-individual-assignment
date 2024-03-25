@@ -57,5 +57,18 @@ export class TournamentService {
     );
   }
 
+  getStandings(id: number): Observable<TournamentStandingsDto> {
+    return this.http.get<TournamentStandingsDto>(
+      `${baseUri}/standings/${id}`
+    )
+  }
+
+  updateStandings(id: number, standings: TournamentStandingsDto): Observable<TournamentStandingsDto> {
+    return this.http.put<TournamentStandingsDto>(
+      `${baseUri}/standings/${id}`,
+      standings
+    )
+  }
+
 
 }

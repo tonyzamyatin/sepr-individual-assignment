@@ -1,4 +1,9 @@
-# SEPR Einzelbeispiel "Wendy's Tournament Management"
+# SE PR Projekttemplate
+
+Bitte fügen Sie diese Datei, inklusive der beiliegenden `.gitlab-ci.yml` und den beiden Verzeichnissen `frontend` und `backend` zum Wurzelverzeichnis ihres Git-Repositories hinzu.
+Im folgenden befindet sich ein Template für die Stundenliste; bitte verwenden Sie es so, dass im GitLab-Projekt ihre Stundenliste als Tabelle sichtbar ist.
+
+Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 
 ## Stundenliste
 
@@ -21,11 +26,14 @@
 | 13.03.2024 |    8:15   |  3h 15min | 6 |     Implementatierung der DAO, Service, Valitator, Mapper, und Endpoint Methoden      |
 | 14.03.2024 |    18:00   |  1h 00min | 6 |     Backend getestet und Endpoint verbunden      |
 | 15.03.2024 |    8:45   |  1h 00min | 1, 6 |     Validierung hinzugefügt und manuell Pferde und Tourniererstellung getestet      |
-| 16.03.2024 |    10:21   |  4h 00min | 3 |    Backend vollständig implementiert, alle Schichten getestet und debugggt     |
+| 16.03.2024 |    10:21   |  4h 00min | 3 |   Backend vollständig implementiert, alle Schichten getestet und debugggt     |
 | 16.03.2024 |    16:50   |  0h 30min | 5 |    Backend vollständig implementiert |
-| 16.03.2024 |    17:25   |  1h 15min | 5 |    DAO Schicht extensiv getestet und Bugfix |
+| 16.03.2024 |    17:25   |  1h 15min | 5 |   DAO Schicht extensiv getestet und Bugfix |
 | 18.03.2024 |    17:30   |  1h 30min | 3 |    Frontend implementiert, manuell getestet und Bugfix |
-| 18.03.2024 |    19:30   |  1h 00min | 3 |    Frontend implementiert und manuell getestet |
+| 18.03.2024 |    19:50   |  1h 00min | 5 |    Frontend implementiert und manuell getestet |
+| 21.03.2024 |    10:00   |  2h 30min | 28 |    Participants-Spalte in Tournament-Tabelle in eigene Tabelle umgewandelt (für 3. NF)  |
+| 23.03.2024 |    10:00   |  1h 00min | 28 |   Changes vom 21.03. debuggt   |
+| 25.03.2024 |    15:45   |  3h 30min | 7 |   Backend und Frontend implementiert   |
 
 
 **Gesamtsumme der Zeit**: h 

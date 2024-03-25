@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS participant
 (
     tournament_id BIGINT NOT NULL,
     horse_id BIGINT NOT NULL,
+    entry_number INT NOT NULL,
+    round_reached INT NOT NULL,
     PRIMARY KEY (tournament_id, horse_id),
     FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY (horse_id) REFERENCES horse (id) ON UPDATE CASCADE ON DELETE CASCADE

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.TestUtil;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
@@ -11,7 +12,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
-import static at.ac.tuwien.sepr.assignment.individual.TestUtil.generateValidTournamentDetailDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -28,6 +28,8 @@ public class TournamentDaoTest extends TestBase {
 
   @Autowired
   HorseDao horseDao;
+  @Autowired
+  TestUtil testUtil;
 
   @Test
   public void searchByNameIaFindTwoTournaments() {
@@ -181,7 +183,7 @@ public class TournamentDaoTest extends TestBase {
   @Test
   public void createdTournamentWithValidDtoShouldReturnCreatedTournament() {
 
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
 
     var createdTournament = tournamentDao.create(validTournamentDto);
     assertNotNull(createdTournament);

@@ -156,7 +156,7 @@ public class HorseEndpointTest extends TestBase {
   public void deleteExistingHorseParticipatingInTournamentShouldReturnConflict409() {
     long horseId = -1L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
-    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
+    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
     assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isConflict()));
   }
 }

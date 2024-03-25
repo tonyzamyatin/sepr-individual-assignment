@@ -1,11 +1,11 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.TestUtil;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
-import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,9 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
-import static at.ac.tuwien.sepr.assignment.individual.TestUtil.generateValidTournamentDetailDto;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,9 +29,12 @@ public class TournamentServiceTest extends TestBase {
   @Autowired
   TournamentService tournamentService;
 
+  @Autowired
+  TestUtil testUtil;
+
   @Test
   public void createdTournamentWithValidDtoShouldReturnCreatedTournament() {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
 
     var createdTournament = assertDoesNotThrow(() -> tournamentService.create(validTournamentDto));
     assertNotNull(createdTournament);
@@ -44,14 +45,14 @@ public class TournamentServiceTest extends TestBase {
         () -> assertEquals(validTournamentDto.name(), createdTournament.name()),
         () -> assertEquals(validTournamentDto.startDate(), createdTournament.startDate()),
         () -> assertEquals(validTournamentDto.endDate(), createdTournament.endDate()),
-        () -> assertArrayEquals(validTournamentDto.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new),
-            createdTournament.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new))
+        // assert that both lists contain the same elements in the same order
+        () -> assertEquals(validTournamentDto.participants(), createdTournament.participants())
     );
   }
 
   @Test
   public void createTournamentWithNullAsNameShouldThrowValidationException() {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
     var tournamentWithNameNull = validTournamentDto.withName(null);
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentWithNameNull));
@@ -59,7 +60,7 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWithEmptyStringAsNameShouldThrowValidationException() {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
     var tournamentWithNameNull = validTournamentDto.withName("");
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentWithNameNull));
@@ -67,7 +68,7 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWithSevenHorsesShouldThroughValidationException() {
-    var tournamentWithSevenHorses = generateValidTournamentDetailDto();
+    var tournamentWithSevenHorses = testUtil.generateValidTournamentDetailDto();
     tournamentWithSevenHorses.participants().removeLast();
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentWithSevenHorses));
@@ -75,14 +76,12 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWithNineHorsesShouldThroughValidationException() {
-    var tournamentWithNineHorses = generateValidTournamentDetailDto();
-    tournamentWithNineHorses.participants().add(new HorseDetailDto(
+    var tournamentWithNineHorses = testUtil.generateValidTournamentDetailDto();
+    tournamentWithNineHorses.participants().add(new TournamentParticipantDetailDto(
         null,
         null,
         null,
         null,
-        0f,
-        0,
         null
     ));
     assertThrows(ValidationException.class,
@@ -91,7 +90,7 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWhereOneHorseIsNullShouldThroughValidationException() {
-    var tournamentWithNullHorses = generateValidTournamentDetailDto();
+    var tournamentWithNullHorses = testUtil.generateValidTournamentDetailDto();
     tournamentWithNullHorses.participants().removeLast();
     tournamentWithNullHorses.participants().add(null);
     assertThrows(ValidationException.class,
@@ -100,23 +99,22 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWhereParticipantsListIsNullShouldThroughValidationException() {
-    var tournamentWithNullParticipants = generateValidTournamentDetailDto().withParticipants(null);
+    var tournamentWithNullParticipants = testUtil.generateValidTournamentDetailDto().withParticipants(null);
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentWithNullParticipants));
   }
 
   @Test
   public void createTournamentWhereOneHorseIsNotInDbShouldThroughConflictException() {
-    var tournamentNotFoundHorse = generateValidTournamentDetailDto();
+    var tournamentNotFoundHorse = testUtil.generateValidTournamentDetailDto();
     tournamentNotFoundHorse.participants().removeLast();
-    tournamentNotFoundHorse.participants().add(new HorseDetailDto(
-        -500L,
+    tournamentNotFoundHorse.participants().add(new TournamentParticipantDetailDto(
+        -38L,
         "HorseNotFound",
-        Sex.MALE,
         LocalDate.of(2024, 3, 14),
-        1.74f,
-        500,
-        null
+        1,
+        2
+        
     ));
     assertThrows(ConflictException.class,
         () -> tournamentService.create(tournamentNotFoundHorse));
@@ -125,7 +123,7 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWithStartDateAfterEndDataShouldThrowValidationException() {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
     var tournamentStartAfterEnd = validTournamentDto.withStartDate(2024, 3, 14).withEndDate(2024, 3, 13);
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentStartAfterEnd));
@@ -133,9 +131,9 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void createTournamentWithStartDateEqualEndDataShouldReturnCreatedTournament() {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
     var tournamentStartEqualEnd = validTournamentDto.withStartDate(2024, 3, 14).withEndDate(2024, 3, 14);
-    var createdTournament = assertDoesNotThrow(() -> tournamentService.create(tournamentStartEqualEnd));
+    var createdTournament = assertDoesNotThrow(() -> tournamentService.create(tournamentStartEqualEnd), "Tournament creation should not throw any exceptions");
     assertNotNull(createdTournament);
     assertInstanceOf(TournamentDetailDto.class, createdTournament);
     assertAll(
@@ -144,8 +142,8 @@ public class TournamentServiceTest extends TestBase {
         () -> assertEquals(tournamentStartEqualEnd.name(), createdTournament.name()),
         () -> assertEquals(tournamentStartEqualEnd.startDate(), createdTournament.startDate()),
         () -> assertEquals(tournamentStartEqualEnd.endDate(), createdTournament.endDate()),
-        () -> assertArrayEquals(tournamentStartEqualEnd.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new),
-            createdTournament.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new))
+        // assert that both lists contain the same elements in the same order
+        () -> assertEquals(validTournamentDto.participants(), createdTournament.participants())
     );
   }
 
@@ -156,7 +154,7 @@ public class TournamentServiceTest extends TestBase {
   }
   @Test
   public void isHorseParticipantInAnyTournamentHorseParticipatesTwiceShouldReturnTrue() {
-    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-1L));
+    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-8L));
     assertTrue(res);
   }
 

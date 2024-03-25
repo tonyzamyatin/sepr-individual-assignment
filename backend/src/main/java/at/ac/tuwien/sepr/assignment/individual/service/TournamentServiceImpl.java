@@ -1,10 +1,10 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.TournamentMapper;
@@ -13,19 +13,17 @@ import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentMatchDao;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentParticipantDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 @Service
 public class TournamentServiceImpl implements TournamentService {
@@ -56,20 +54,25 @@ public class TournamentServiceImpl implements TournamentService {
   @Override
   public Stream<TournamentListDto> search(TournamentSearchDto searchParameters) {
     var tournaments = tournamentDao.search(searchParameters);
-    return tournaments.stream().map(mapper::entitiyToListDto);
+    return tournaments.stream().map(mapper::entityToListDto);
   }
 
   @Override
   public TournamentDetailDto create(TournamentDetailDto tournament) throws ValidationException, ConflictException {
     LOG.trace("create({})", tournament);
     validator.validateForCreate(tournament);
+    // Create tournament
     var createdTournament = tournamentDao.create(tournament);
-    var participantIds = tournament.participants()
+    // Create participants
+    List<Participant> participants = tournament.participants()
         .stream()
-        .map(horseDetailDto -> participantDao.create(new ParticipantDto(tournament.id(), horseDetailDto.id())).getHorseId())
+        .map(participantDetailDto -> participantDao.create(tournament.id(), participantDetailDto))
+        .toList();
+    Set<Long> participantIds = participants.stream()
+        .map(Participant::getHorseId)
         .collect(Collectors.toSet());
-    var horses = horseMapForTournament(participantIds);
-    return mapper.entityToDetailDto(createdTournament, horses);
+    var horseMap = horseMapForTournament(participantIds);
+    return mapper.entityToDetailDto(createdTournament, participants, horseMap);
   }
 
   private Map<Long, HorseDetailDto> horseMapForTournament(Set<Long> participantIds) {

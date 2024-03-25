@@ -50,3 +50,7 @@ Thumbs.db
 /.storybook
 /src/stories
 *storybook.log
+
+
+# shell scipts
+*.sh

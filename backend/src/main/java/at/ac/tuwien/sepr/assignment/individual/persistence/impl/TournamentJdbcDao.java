@@ -94,10 +94,6 @@ public class TournamentJdbcDao implements TournamentDao {
 
     String sqlInsert = tournament.id() != null ? NAMED_SQL_INSERT_WITH_ID : NAMED_SQL_INSERT_WITHOUT_ID;   // ID optionally provided, e.g. during testing
 
-    Long[] participantIds = tournament.participants().stream()
-        .map(HorseDetailDto::id)
-        .toArray(Long[]::new);
-
     MapSqlParameterSource parameterSource = new MapSqlParameterSource()
         .addValue("id", tournament.id())
         .addValue("name", tournament.name())

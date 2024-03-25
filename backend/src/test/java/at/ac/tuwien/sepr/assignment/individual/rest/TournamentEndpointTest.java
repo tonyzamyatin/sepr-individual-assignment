@@ -2,8 +2,10 @@ package at.ac.tuwien.sepr.assignment.individual.rest;
 
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
+import at.ac.tuwien.sepr.assignment.individual.TestUtil;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +23,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.stream.Collectors;
 
-import static at.ac.tuwien.sepr.assignment.individual.TestUtil.generateValidTournamentDetailDto;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -37,6 +38,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TournamentEndpointTest extends TestBase {
 
+  @Autowired
+  TestUtil testUtil;
   @Autowired
   ObjectMapper objectMapper;
   @Autowired
@@ -58,7 +61,7 @@ public class TournamentEndpointTest extends TestBase {
 
   @Test
   public void createTournamentWithValidDtoShouldReturnCreatedTournament() throws Exception {
-    var validTournamentDto = generateValidTournamentDetailDto();
+    var validTournamentDto = testUtil.generateValidTournamentDetailDto();
 
     ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());  // needed to serialize LocalDate
@@ -81,9 +84,8 @@ public class TournamentEndpointTest extends TestBase {
         () -> assertEquals(validTournamentDto.name(), tournamentResult.name()),
         () -> assertEquals(validTournamentDto.startDate(), tournamentResult.startDate()),
         () -> assertEquals(validTournamentDto.endDate(), tournamentResult.endDate()),
-        () -> assertThat("The participants list should contain the same elements, no matter the order",
-            tournamentResult.participants().stream().map(HorseDetailDto::id).collect(Collectors.toList()),
-            containsInAnyOrder(validTournamentDto.participants().stream().map(HorseDetailDto::id).toArray(Long[]::new)))
+        // assert that both lists contain the same elements in the same order
+        () -> assertEquals(validTournamentDto.participants(), tournamentResult.participants())
     );
   }
 }

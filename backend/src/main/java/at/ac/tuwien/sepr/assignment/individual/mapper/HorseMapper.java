@@ -65,12 +65,12 @@ public class HorseMapper {
 
   private BreedDto breedFromMap(Horse horse, Map<Long, BreedDto> map) {
     var breedId = horse.getBreedId();
-    if (breedId == null) {
+    if (breedId == null) {  // Breed is optional
       return null;
     } else {
       return Optional.ofNullable(map.get(breedId))
           .orElseThrow(() -> new FatalException(
-              "Saved horse with id " + horse.getId() + " refers to non-existing breed with id " + breedId));
+              "Horse with id " + horse.getId() + " refers to non-existing breed with id " + breedId));
     }
   }
 }

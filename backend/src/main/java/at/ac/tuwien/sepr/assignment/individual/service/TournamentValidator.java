@@ -44,11 +44,21 @@ public class TournamentValidator {
     } else {
       // Simplified check whether participants exist by checking whether horses with the corresponding id can be found
       tournament.participants()
-          .forEach(horseDetailDto -> {
+          .forEach(participantDetailDto -> {
+            // TODO: Validate entryNumber and roundReached of participants
             try {
-              horseService.getById((horseDetailDto.id()));
+              var horse = horseService.getById((participantDetailDto.horseId()));
+              if (!horse.dateOfBirth().equals(participantDetailDto.dateOfBirth())) {
+                conflictErrors.add(
+                    "Participant's date of birth with horse id " + participantDetailDto.horseId() + " does not match the date of birth of horse; actual: "
+                        + participantDetailDto.dateOfBirth() + " , expected: " + horse.dateOfBirth());
+              }
+              if (!horse.name().equals(participantDetailDto.name())) {
+                conflictErrors.add("Participant's name with horse id " + participantDetailDto.horseId() + " does not match the name of horse; actual: "
+                    + participantDetailDto.name() + " , expected: " + horse.name());
+              }
             } catch (NotFoundException e) {
-              conflictErrors.add("Participant horse with id %d does not exist".formatted(horseDetailDto.id()));
+              conflictErrors.add("Participant horse with id %d does not exist".formatted(participantDetailDto.horseId()));
             }
           });
     }

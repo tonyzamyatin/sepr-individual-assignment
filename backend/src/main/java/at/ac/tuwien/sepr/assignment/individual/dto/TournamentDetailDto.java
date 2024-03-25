@@ -9,7 +9,7 @@ public record TournamentDetailDto(
     String name,
     LocalDate startDate,
     LocalDate endDate,
-    List<HorseDetailDto> participants
+    List<TournamentParticipantDetailDto> participants
 
 ) {
 
@@ -61,7 +61,7 @@ public record TournamentDetailDto(
     );
   }
 
-  public TournamentDetailDto withParticipants(List<HorseDetailDto> newParticipants) {
+  public TournamentDetailDto withParticipants(List<TournamentParticipantDetailDto> newParticipants) {
     return new TournamentDetailDto(
         id,
         name,

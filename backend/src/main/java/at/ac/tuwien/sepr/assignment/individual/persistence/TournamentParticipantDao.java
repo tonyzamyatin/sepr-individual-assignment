@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
-import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 
 public interface TournamentParticipantDao {
   /**
@@ -17,8 +15,9 @@ public interface TournamentParticipantDao {
   /**
    * Creates a new participant in a tournament.
    *
-   * @param participant the participant to be created, containing the ids of the tournament and horse.
+   * @param tournamentId the id of the tournament of participation.
+   * @param participant the participant to be created containing the id of the horse.
    * @return the newly created participant
    */
-  Participant create(ParticipantDto participant);
+  Participant create(long tournamentId, TournamentParticipantDetailDto participant);
 }

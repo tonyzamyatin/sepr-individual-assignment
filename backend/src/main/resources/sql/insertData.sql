@@ -45,6 +45,7 @@ VALUES (-1, 'Andalusian'),
        (-19, 'Welsh Cob'),
        (-20, 'Welsh Pony');
 
+
 -- Füge Pferdedaten hinzu
 INSERT INTO horse (id, name, sex, date_of_birth, height, weight, breed_id)
 VALUES (-1, 'Wendy', 'FEMALE', '2019-08-05', 1.40, 380, -15),
@@ -80,34 +81,37 @@ VALUES (-1, 'Wendy', 'FEMALE', '2019-08-05', 1.40, 380, -15),
        (-31, 'Leo', 'MALE', '2017-03-05', 1.70, 720, -8),
        (-32, 'Luna', 'FEMALE', '2018-10-10', 1.62, 670, -19);
 
+
 INSERT INTO tournament (id, name, start_date, end_date)
 VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-6', '2024-03-17'),
        (-2, 'Miami Open presented by Itau', '2024-03-20', '2024-03-31'),
        (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14');
 
-INSERT INTO participant (tournament_id, horse_id)
-VALUES
-    (-1, -1),
-    (-1, -2),
-    (-1, -3),
-    (-1, -4),
-    (-1, -5),
-    (-1, -6),
-    (-1, -7),
-    (-1, -8),
-    (-2, -1),
-    (-2, -9),
-    (-2, -10),
-    (-2, -11),
-    (-2, -12),
-    (-2, -13),
-    (-2, -14),
-    (-2, -15),
-    (-3, -3),
-    (-3, -4),
-    (-3, -5),
-    (-3, -6),
-    (-3, -7),
-    (-3, -8),
-    (-3, -9),
-    (-3, -10);
+
+INSERT INTO participant (tournament_id, horse_id, entry_number, round_reached)
+VALUES (-1, -1, 1, 1),
+       (-1, -2, 2, 1),
+       (-1, -3, 3, 1),
+       (-1, -4, 4, 1),
+       (-1, -5, 5, 1),
+       (-1, -6, 6, 1),
+       (-1, -7, 7, 1),
+       (-1, -8, 8, 1),
+
+       (-2, -9, 1, 1),
+       (-2, -10, 2, 1),
+       (-2, -11, 3, 1),
+       (-2, -12, 4, 1),
+       (-2, -13, 5, 1),
+       (-2, -14, 6, 1),
+       (-2, -15, 7, 1),
+       (-2, -16, 8, 1),
+
+       (-3, -17, 1, 1),
+       (-3, -18, 2, 1),
+       (-3, -19, 3, 1),
+       (-3, -20, 4, 1),
+       (-3, -21, 5, 1),
+       (-3, -22, 6, 1),
+       (-3, -23, 7, 1),
+       (-3, -24, 8, 1);

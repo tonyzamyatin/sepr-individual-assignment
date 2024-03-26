@@ -15,12 +15,13 @@ import org.springframework.stereotype.Repository;
 import java.lang.invoke.MethodHandles;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
+import java.util.List;
 
 @Repository
 public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String TABLE_NAME = "participant";
+  private static final String SQL_SELECT_PARTICIPANT = "SELECT 1 FROM " + TABLE_NAME + " WHERE tournament_id = ? AND horse_id = ?";
   private static final String SQL_PARTICIPANT_BY_TOURNAMENT_ID = "SELECT * FROM " + TABLE_NAME + " WHERE tournament_id = ?";
   private static final String SQL_COUNT_PARTICIPANT_BY_HORSE_ID = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE horse_id = ?";
   private static final String NAMED_SQL_INSERT = "INSERT INTO " + TABLE_NAME
@@ -39,9 +40,19 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   }
 
   @Override
-  public Collection<Participant> findParticipantsByTournamentId(long tournamentId) {
+  public List<Participant> findParticipantsByTournamentId(long tournamentId) {
     LOG.trace("findParticipantsByTournamentId({})", tournamentId);
     return jdbcTemplate.query(SQL_PARTICIPANT_BY_TOURNAMENT_ID, this::mapRow, tournamentId);
+  }
+
+  @Override
+  public Participant getParticipant(long tournamentId, long horseId) throws NotFoundException {
+    LOG.trace("getParticipant({}, {})", tournamentId, horseId);
+    List<Participant> participants = jdbcTemplate.query(SQL_SELECT_PARTICIPANT, this::mapRow, tournamentId, horseId);
+    if (participants.isEmpty()) {
+      throw new NotFoundException("Participant with tournament ID " + tournamentId + " and horse ID " + horseId + " does not exist");
+    }
+    return participants.getFirst();
   }
 
   @Override

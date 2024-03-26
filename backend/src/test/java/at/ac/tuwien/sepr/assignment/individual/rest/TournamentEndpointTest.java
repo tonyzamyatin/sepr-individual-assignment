@@ -2,10 +2,8 @@ package at.ac.tuwien.sepr.assignment.individual.rest;
 
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.TestUtil;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.TestUtility;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.stream.Collectors;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -39,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TournamentEndpointTest extends TestBase {
 
   @Autowired
-  TestUtil testUtil;
+  TestUtility testUtil;
   @Autowired
   ObjectMapper objectMapper;
   @Autowired

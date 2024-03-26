@@ -4,7 +4,7 @@ import at.ac.tuwien.sepr.assignment.individual.TestBase;
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
-import at.ac.tuwien.sepr.assignment.individual.service.TournamentService;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentParticipantService;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,7 @@ public class HorseEndpointTest extends TestBase {
   private MockMvc mockMvc;
 
   @Mock
-  private TournamentService tournamentService;
+  private TournamentParticipantService participantService;
 
 
 
@@ -139,7 +139,7 @@ public class HorseEndpointTest extends TestBase {
   public void deleteExistingHorseNotParticipatingInTournamentShouldReturnOk200() {
     long horseId = -32L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
-    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
+    when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
     assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isOk()));
   }
 
@@ -147,7 +147,7 @@ public class HorseEndpointTest extends TestBase {
   public void deleteNonExistingHorseShouldReturnNotFound404() {
     long horseId = -33L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
-    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
+    when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
     assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isNotFound()));
   }
 
@@ -156,7 +156,7 @@ public class HorseEndpointTest extends TestBase {
   public void deleteExistingHorseParticipatingInTournamentShouldReturnConflict409() {
     long horseId = -1L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
-    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
+    when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
     assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isConflict()));
   }
 }

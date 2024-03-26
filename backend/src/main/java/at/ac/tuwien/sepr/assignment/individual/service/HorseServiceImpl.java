@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.lang.invoke.MethodHandles;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -72,7 +74,13 @@ public class HorseServiceImpl implements HorseService {
   @Override
   public HorseDetailDto create(HorseDetailDto horse) throws ValidationException, ConflictException {
     LOG.trace("create({})", horse);
+
+    // Validate provided data for required fields, correct formats and correct ranges
     validator.validateForCreate(horse);
+
+    // Check whether provided data is consistent with system data
+    checkForDataConsistency(horse);
+
     var createdHorse = dao.create(horse);
     var breeds = breedMapForSingleHorse(createdHorse);
     return mapper.entityToDetailDto(createdHorse, breeds);
@@ -80,12 +88,31 @@ public class HorseServiceImpl implements HorseService {
 
 
   @Override
-  public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException {
+  public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException, ConflictException {
     LOG.trace("update({})", horse);
+
+    // Validate provided data for required fields, correct formats and correct ranges
     validator.validateForUpdate(horse);
+
+    // Check whether provided data is consistent with system data
+    checkForDataConsistency(horse);
+
     var updatedHorse = dao.update(horse);
     var breeds = breedMapForSingleHorse(updatedHorse);
     return mapper.entityToDetailDto(updatedHorse, breeds);
+  }
+
+  private void checkForDataConsistency(HorseDetailDto horse) throws ConflictException {
+    List<String> conflictErrors = new ArrayList<>();
+    if (horse.breed() != null) {
+      List<BreedDto> foundBreeds = breedService.findBreedsByIds(Collections.singleton(horse.breed().id())).toList();
+      if (foundBreeds.isEmpty()) {
+        conflictErrors.add("Breed with id %d does not exist".formatted(horse.breed().id()));
+      }
+    }
+    if (!conflictErrors.isEmpty()) {
+      throw new ConflictException("Horse data is in conflict with system data", conflictErrors);
+    }
   }
 
 

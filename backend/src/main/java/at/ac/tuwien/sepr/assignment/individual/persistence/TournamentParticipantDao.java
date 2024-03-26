@@ -4,7 +4,7 @@ import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDt
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface TournamentParticipantDao {
 
@@ -12,9 +12,19 @@ public interface TournamentParticipantDao {
    * Get all participants participating in the tournament with the given ID.
    *
    * @param tournamentId the ID of the tournament participation
-   * @return the participants participating part in the tournament
+   * @return List of the participants participating part in the tournament, empty if no participants are found.
    */
-  Collection<Participant> findParticipantsByTournamentId(long tournamentId);
+  List<Participant> findParticipantsByTournamentId(long tournamentId);
+
+  /**
+   * Retrieve the participant with the given horse ID participating in the tournament with the given tournament ID from the persistent data store.
+   *
+   * @param tournamentId the ID of the tournament
+   * @param horseId  the ID of the horse
+   * @return the participant with the given IDs
+   * @throws NotFoundException if no participant with the given combination of IDs exists in the persistent data store.
+   */
+  Participant getParticipant(long tournamentId, long horseId) throws NotFoundException;
 
   /**
    * Checks whether the horse with the given id participates in any tournaments.
@@ -40,6 +50,7 @@ public interface TournamentParticipantDao {
    * @param tournamentId the ID of the tournament of participation.
    * @param participant  the participant to be updated containing the ID of the horse.
    * @return the updated created participant
+   * @throws NotFoundException if no participant exists for the given tournament and horse IDs
    */
   Participant update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException;
 }

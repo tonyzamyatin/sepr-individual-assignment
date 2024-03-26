@@ -1,8 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.TestUtil;
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.TestUtility;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,6 @@ import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -29,7 +27,7 @@ public class TournamentDaoTest extends TestBase {
   @Autowired
   HorseDao horseDao;
   @Autowired
-  TestUtil testUtil;
+  TestUtility testUtil;
 
   @Test
   public void searchByNameIaFindTwoTournaments() {

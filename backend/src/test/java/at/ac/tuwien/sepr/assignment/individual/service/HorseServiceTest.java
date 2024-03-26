@@ -36,7 +36,7 @@ public class HorseServiceTest extends TestBase {
   HorseService horseService;
 
   @Mock
-  private TournamentService tournamentService;
+  private TournamentParticipantService participantService;
 
   @BeforeEach
   public void setUp() {
@@ -119,7 +119,7 @@ public class HorseServiceTest extends TestBase {
   public void deleteHorseParticipatingInTournamentShouldThrowConflictException() {
     long horseId = -1L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
-    when(tournamentService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
+    when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
     assertThrows(ConflictException.class, () -> horseService.delete(horseId));
   }
 }

@@ -2,6 +2,9 @@ package at.ac.tuwien.sepr.assignment.individual.entity;
 
 /**
  * Represents a horse in the persistent data store.
+ * The entry number is a value within the range of 1 to 8.
+ * The round reached is the round reached by the horse, where 0 is the very first match
+ * and 3 represents a tournament win.
  */
 public class Participant {
   private Long tournamentId;

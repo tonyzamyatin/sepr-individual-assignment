@@ -4,7 +4,6 @@ import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
-import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
@@ -24,15 +23,15 @@ public interface TournamentService {
    * @throws NotFoundException if the tournament with the given ID does not exist in the persistent data
    *                           store
    */
-  TournamentDetailDto getById(long id) throws NotFoundException;
+  TournamentDetailDto getTournament(long id) throws NotFoundException;
 
   /**
-   * Checks whether any of the tournaments has a horse with the given ID among its participants.
+   * Checks whether a tournament with the given ID exists in the persistent data store.
    *
-   * @param horseId the ID of the horse to check for
-   * @return {@code true} if the exists at least one such tournament.
+   * @param id the tournament ID of the tournament in question
+   * @return true if the tournament exists, else false
    */
-  boolean isHorseParticipantInAnyTournament(long horseId);
+  boolean doesTournamentExist(long id);
 
   /**
    * Search for tournaments in the persistent data store matching all provided fields. The tournament name is

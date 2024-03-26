@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class TestUtil {
+public class TestUtility {
 
   @Autowired
   HorseService horseService;

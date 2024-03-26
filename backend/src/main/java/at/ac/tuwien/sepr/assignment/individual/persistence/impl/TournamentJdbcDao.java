@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
-import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -20,17 +18,11 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.lang.invoke.MethodHandles;
-import java.sql.Array;
 import java.sql.ResultSet;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.ToLongFunction;
-import java.util.stream.Stream;
 
 import static at.ac.tuwien.sepr.assignment.individual.persistence.impl.PersistenceUtil.insertWithKeyHolder;
 
@@ -73,7 +65,7 @@ public class TournamentJdbcDao implements TournamentDao {
 
   @Override
   public Tournament getById(long id) throws NotFoundException {
-    LOG.trace("getById({})", id);
+    LOG.trace("getTournament({})", id);
     List<Tournament> tournaments;
     tournaments = jdbcTemplate.query(SQL_SELECT_BY_ID, this::mapRow, id);
 

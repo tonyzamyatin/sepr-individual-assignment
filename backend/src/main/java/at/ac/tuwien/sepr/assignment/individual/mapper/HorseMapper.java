@@ -5,12 +5,13 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseListDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Horse;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
-import java.lang.invoke.MethodHandles;
-import java.util.Map;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.lang.invoke.MethodHandles;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class HorseMapper {
@@ -20,7 +21,7 @@ public class HorseMapper {
    * Convert a horse entity object to a {@link HorseListDto}.
    * The given map of breeds needs to contain the breed of {@code horse}.
    *
-   * @param horse the horse to convert
+   * @param horse  the horse to convert
    * @param breeds a map of breeds identified by their id, required for mapping horses
    * @return the converted {@link HorseListDto}
    */
@@ -63,12 +64,13 @@ public class HorseMapper {
     );
   }
 
+
   private BreedDto breedFromMap(Horse horse, Map<Long, BreedDto> map) {
     var breedId = horse.getBreedId();
     if (breedId == null) {  // Breed is optional
       return null;
     } else {
-      return Optional.ofNullable(map.get(breedId))
+      return Optional.ofNullable(map.get(breedId))  // should never be null
           .orElseThrow(() -> new FatalException(
               "Horse with id " + horse.getId() + " refers to non-existing breed with id " + breedId));
     }

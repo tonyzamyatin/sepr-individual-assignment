@@ -1,17 +1,19 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
-import at.ac.tuwien.sepr.assignment.individual.TestUtil;
+import at.ac.tuwien.sepr.assignment.individual.TestUtility;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
+import at.ac.tuwien.sepr.assignment.individual.mapper.ParticipantMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -30,7 +32,13 @@ public class TournamentServiceTest extends TestBase {
   TournamentService tournamentService;
 
   @Autowired
-  TestUtil testUtil;
+  TournamentParticipantService participantService;
+
+  @Autowired
+  ParticipantMapper participantMapper;
+
+  @Autowired
+  TestUtility testUtil;
 
   @Test
   public void createdTournamentWithValidDtoShouldReturnCreatedTournament() {
@@ -67,7 +75,7 @@ public class TournamentServiceTest extends TestBase {
   }
 
   @Test
-  public void createTournamentWithSevenHorsesShouldThroughValidationException() {
+  public void createTournamentWithSevenHorsesShouldThrowValidationException() {
     var tournamentWithSevenHorses = testUtil.generateValidTournamentDetailDto();
     tournamentWithSevenHorses.participants().removeLast();
     assertThrows(ValidationException.class,
@@ -75,7 +83,7 @@ public class TournamentServiceTest extends TestBase {
   }
 
   @Test
-  public void createTournamentWithNineHorsesShouldThroughValidationException() {
+  public void createTournamentWithNineHorsesShouldThrowValidationException() {
     var tournamentWithNineHorses = testUtil.generateValidTournamentDetailDto();
     tournamentWithNineHorses.participants().add(new TournamentParticipantDetailDto(
         null,
@@ -89,7 +97,7 @@ public class TournamentServiceTest extends TestBase {
   }
 
   @Test
-  public void createTournamentWhereOneHorseIsNullShouldThroughValidationException() {
+  public void createTournamentWhereOneHorseIsNullShouldThrowValidationException() {
     var tournamentWithNullHorses = testUtil.generateValidTournamentDetailDto();
     tournamentWithNullHorses.participants().removeLast();
     tournamentWithNullHorses.participants().add(null);
@@ -98,14 +106,14 @@ public class TournamentServiceTest extends TestBase {
   }
 
   @Test
-  public void createTournamentWhereParticipantsListIsNullShouldThroughValidationException() {
+  public void createTournamentWhereParticipantsListIsNullShouldThrowValidationException() {
     var tournamentWithNullParticipants = testUtil.generateValidTournamentDetailDto().withParticipants(null);
     assertThrows(ValidationException.class,
         () -> tournamentService.create(tournamentWithNullParticipants));
   }
 
   @Test
-  public void createTournamentWhereOneHorseIsNotInDbShouldThroughConflictException() {
+  public void createTournamentWhereOneHorseIsNotInDbShouldThrowConflictException() {
     var tournamentNotFoundHorse = testUtil.generateValidTournamentDetailDto();
     tournamentNotFoundHorse.participants().removeLast();
     tournamentNotFoundHorse.participants().add(new TournamentParticipantDetailDto(
@@ -149,24 +157,32 @@ public class TournamentServiceTest extends TestBase {
 
   @Test
   public void isHorseParticipantInAnyTournamentHorseParticipatesOnceShouldReturnTrue() {
-    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-2L));
+    boolean res = assertDoesNotThrow(() -> participantService.isHorseParticipantInAnyTournament(-2L));
     assertTrue(res);
   }
   @Test
   public void isHorseParticipantInAnyTournamentHorseParticipatesTwiceShouldReturnTrue() {
-    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-8L));
+    boolean res = assertDoesNotThrow(() -> participantService.isHorseParticipantInAnyTournament(-8L));
     assertTrue(res);
   }
 
   @Test
   public void isHorseParticipantInAnyTournamentHorseIsNotParticipantShouldReturnFalse() {
-    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-32L));
+    boolean res = assertDoesNotThrow(() -> participantService.isHorseParticipantInAnyTournament(-32L));
     assertFalse(res);
   }
 
   @Test
   public void isHorseParticipantInAnyTournamentNonExistentHorseShouldReturnFalse() {
-    boolean res = assertDoesNotThrow(() -> tournamentService.isHorseParticipantInAnyTournament(-33L));
+    boolean res = assertDoesNotThrow(() -> participantService.isHorseParticipantInAnyTournament(-33L));
     assertFalse(res);
+  }
+
+  @Test
+  public void updateStandingsValidFullStandingsTreeShouldReturnUpdatedStandings() {
+    long tournamentId = -1;
+    String tournamentName = "BNP Paribas Open, Indian Wells";
+    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(tournamentId);
+    // TODO: write test
   }
 }

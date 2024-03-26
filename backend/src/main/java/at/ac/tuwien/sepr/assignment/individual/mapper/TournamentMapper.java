@@ -4,20 +4,14 @@ import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
-import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 public class TournamentMapper {
@@ -49,15 +43,15 @@ public class TournamentMapper {
    * The given map of horses needs to map the ids of the participant horses to their respective {@link HorseDetailDto}.
    *
    * @param tournament the tournament to convert
+   * @param participants a list of the tournaments participants
    * @return the converted {@link TournamentDetailDto}
    */
-  public TournamentDetailDto entityToDetailDto(Tournament tournament, List<Participant> participants, Map<Long, HorseDetailDto> horseMap) {
+  public TournamentDetailDto entityToDetailDto(Tournament tournament, List<TournamentParticipantDetailDto> participants) {
     LOG.trace("entityToDto({})", tournament);
     if (tournament == null) {
       return null;
     }
     List<TournamentParticipantDetailDto> sortedParticipants = participants.stream()
-        .map(participant -> participantMapper.entityToDetailDto(participant, horseMap))
         .sorted(Comparator.comparingInt(TournamentParticipantDetailDto::entryNumber))
         .toList();
 

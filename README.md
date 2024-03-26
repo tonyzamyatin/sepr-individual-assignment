@@ -34,6 +34,7 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 21.03.2024 |    10:00   |  2h 30min | 28 |    Participants-Spalte in Tournament-Tabelle in eigene Tabelle umgewandelt (für 3. NF)  |
 | 23.03.2024 |    10:00   |  1h 00min | 28 |   Changes vom 21.03. debuggt   |
 | 25.03.2024 |    15:45   |  3h 30min | 7 |   Backend und Frontend implementiert   |
+| 26.03.2024 |    12:35   |  3h 45min | 22, 25 |   Backend für bessere Testabilität und höheren Klassenzusammenhalt umgeschrieben   |
 
 
 **Gesamtsumme der Zeit**: h 

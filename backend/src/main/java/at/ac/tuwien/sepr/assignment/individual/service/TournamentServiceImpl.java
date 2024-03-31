@@ -13,6 +13,7 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.TournamentMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentDao;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -108,14 +109,14 @@ public class TournamentServiceImpl implements TournamentService {
   }
 
   @Override
-  public TournamentStandingsDto updateStandings(long id, TournamentStandingsDto tournamentStandings)
+  public TournamentStandingsDto updateStandings(TournamentStandingsDto tournamentStandings)
       throws ConflictException, ValidationException, NotFoundException {
-    LOG.trace("updateStandings({}, {})", id, tournamentStandings);
-    validator.validateForStandingsUpdate(id, tournamentStandings);
+    LOG.trace("updateStandings({})", tournamentStandings);
+    validator.validateForStandingsUpdate(tournamentStandings);
     List<String> conflictErrors = new ArrayList<>();
 
     // Check if tournament exists (throws NotFoundException)
-    getTournament(id);
+    getTournament(tournamentStandings.id());
 
     // Encode the standings tree into a map of the participants' horse IDs and the rounds they reached
     Map<Long, Integer> roundReachedMap = new HashMap<>();
@@ -123,7 +124,8 @@ public class TournamentServiceImpl implements TournamentService {
 
     // Update participant data
     List<TournamentParticipantDetailDto> participants =
-        tournamentStandings.participants().stream().map(participantDetailDto -> updateRoundReachedOfParticipant(id, participantDetailDto, roundReachedMap))
+        tournamentStandings.participants().stream()
+            .map(participantDetailDto -> updateRoundReachedOfParticipant(tournamentStandings.id(), participantDetailDto, roundReachedMap))
             .peek(participant -> {
               if (participant == null) {
                 conflictErrors.add("Tournament standings in conflict with system data");
@@ -136,14 +138,29 @@ public class TournamentServiceImpl implements TournamentService {
     return new TournamentStandingsDto(tournamentStandings.id(), tournamentStandings.name(), participants, buildStandingsTree(participants, 3));
   }
 
+  /**
+   * Encode the standings tree into a map of the participants' horse IDs and the rounds they reached. This method works recursively in a top-down approach.
+   *
+   * @param roundsReachedMap the map to encode the standings tree into
+   * @param standingsTree    the standings tree to encode
+   * @param maxRounds        the maximum number of rounds in a tournament where the first draft is round 0
+   * @param depth            the current depth of the tree
+   */
   private void encodeStandingsTreeIntoMap(Map<Long, Integer> roundsReachedMap, TournamentStandingsTreeDto standingsTree, int maxRounds, int depth) {
-    if (maxRounds - depth < 0) {  // or branches == null as break criterion
+    if (maxRounds - depth < 0 || standingsTree.branches() == null || standingsTree.branches().length == 0) {
+      // Add the participant of the leaf node to the map before returning
+      var participant = standingsTree.thisParticipant();
+      if (participant != null && !roundsReachedMap.containsKey(participant.horseId())) {
+        roundsReachedMap.put(participant.horseId(), maxRounds - depth);
+      }
       return;
     }
+    // Add participant of the branch to the map
     var participant = standingsTree.thisParticipant();
     if (participant != null && !roundsReachedMap.containsKey(participant.horseId())) {
       roundsReachedMap.put(participant.horseId(), maxRounds - depth);
     }
+    // Recursion over the two sub-branches of this branch
     encodeStandingsTreeIntoMap(roundsReachedMap, standingsTree.branches()[0], maxRounds, depth + 1);
     encodeStandingsTreeIntoMap(roundsReachedMap, standingsTree.branches()[1], maxRounds, depth + 1);
   }
@@ -161,15 +178,46 @@ public class TournamentServiceImpl implements TournamentService {
     return buildTreeRecursively(leafs, maxRounds, 0);
   }
 
+  /**
+   * Build standings tree recursively from the list of leafs.
+   *
+   * @param leafs     the list of leafs, where each leaf is a TournamentStandingsTreeDto with no branches and a participant.
+   * @param maxRounds the maximum number of rounds in a tournament where the first draft is round 0.
+   * @param depth     the current depth of the tree.
+   * @return the tournament standings tree.
+   */
   private TournamentStandingsTreeDto buildTreeRecursively(List<TournamentStandingsTreeDto> leafs, int maxRounds, int depth) {
     if (maxRounds == depth) {
       return leafs.getFirst();
     } else {
       TournamentStandingsTreeDto upper = buildTreeRecursively(leafs.subList(0, leafs.size() / 2), maxRounds, depth + 1);
       TournamentStandingsTreeDto lower = buildTreeRecursively(leafs.subList(leafs.size() / 2, leafs.size()), maxRounds, depth + 1);
-      return new TournamentStandingsTreeDto(new TournamentStandingsTreeDto[] {upper, lower},
-          upper.thisParticipant().roundReached() > lower.thisParticipant().roundReached() ? upper.thisParticipant() : lower.thisParticipant());
+      TournamentParticipantDetailDto winner = computeBranchWinner(upper, lower);
+      return new TournamentStandingsTreeDto(
+          new TournamentStandingsTreeDto[] {upper, lower},
+          winner
+      );
     }
+  }
+
+  @Nullable
+  private TournamentParticipantDetailDto computeBranchWinner(TournamentStandingsTreeDto upper, TournamentStandingsTreeDto lower) {
+    TournamentParticipantDetailDto winner;
+    if (upper.thisParticipant() != null && lower.thisParticipant() != null) {
+      int comparisonResult = upper.thisParticipant().compareTo(lower.thisParticipant());
+      if (comparisonResult > 0) {
+        winner = upper.thisParticipant();
+      } else if (comparisonResult < 0) {
+        winner = lower.thisParticipant();
+      } else {
+        // upper.thisParticipant().compareTo(lower.thisParticipant()) == 0
+        winner = null;
+      }
+    } else {
+      // both upper.thisParticipant() and lower.thisParticipant() are null
+      winner = null;
+    }
+    return winner;
   }
 
   /**

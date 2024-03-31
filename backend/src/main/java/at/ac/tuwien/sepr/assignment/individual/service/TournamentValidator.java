@@ -41,26 +41,49 @@ public class TournamentValidator {
     }
   }
 
-  public void validateForStandingsUpdate(long id, TournamentStandingsDto tournamentStandings) throws ValidationException {
+  public void validateForStandingsUpdate(TournamentStandingsDto tournamentStandings) throws ValidationException {
     LOG.trace("validateForStandingsUpdate({})", tournamentStandings);
     List<String> validationErrors = new ArrayList<>();
-    if (id != tournamentStandings.id()) {
-      validationErrors.add(
-          "Tournament ID of requested resource standings/" + id + " and tournament id " + tournamentStandings.id() + " from DTO do not match.");
+    if (tournamentStandings.name() == null) {
+      validationErrors.add("No name given");
+    } else if (tournamentStandings.name().isEmpty()) {
+      validationErrors.add("Given name is empty");
+    } else if (tournamentStandings.name().length() > 100) {
+      validationErrors.add("Given name is longer than 100 characters");
     }
-
-    // Validate that all branches in the standings tree split into exactly two subtrees.
-    TournamentStandingsTreeDto standingsTree = tournamentStandings.tree();
-    Stack<TournamentStandingsTreeDto> branches = new Stack<>();
-    branches.add(standingsTree);
-    while (!branches.isEmpty()) {
-      TournamentStandingsTreeDto branch = branches.pop();
-      if (branch.branches().length != 2) {
-        validationErrors.add("Every branch of the standings tree (with the exception of the leaf nodes) must split exactly into two subtrees.");
-        break;
-      } else {
-        branches.add(branch.branches()[0]);
-        branches.add(branch.branches()[1]);
+    if (tournamentStandings.participants() == null) {
+      validationErrors.add("No participant list given");
+    } else if (tournamentStandings.participants().size() != 8 || tournamentStandings.participants().contains(null)) {
+      validationErrors.add("Given participant list does not contain exactly 8 participants.");
+    }
+    if (tournamentStandings.tree() == null) {
+      validationErrors.add("No standings tree given");
+    } else {
+      // Validate that all branches in the standings tree split into exactly two subtrees and that the whole tree
+      // has 8 leaf nodes with thisParticipant != null and branches == null.
+      TournamentStandingsTreeDto standingsTree = tournamentStandings.tree();
+      Stack<TournamentStandingsTreeDto> branches = new Stack<>();
+      branches.add(standingsTree);
+      int leafNodesCount = 0;
+      while (!branches.isEmpty()) {
+        TournamentStandingsTreeDto branch = branches.pop();
+        if (branch != null) {
+          if (branch.branches() == null || branch.branches().length == 0) {
+            leafNodesCount++;
+            if (branch.thisParticipant() == null) {
+              validationErrors.add("Leaf node without participant found.");
+            }
+          } else if (branch.branches().length != 2) {
+            validationErrors.add("Every branch of the standings tree (with the exception of the leaf nodes) must split exactly into two subtrees.");
+            break;
+          } else {
+            branches.add(branch.branches()[0]);
+            branches.add(branch.branches()[1]);
+          }
+        }
+      }
+      if (leafNodesCount != 8) {
+        validationErrors.add("Standings tree should end in exactly 8 leaf nodes.");
       }
     }
 

@@ -64,11 +64,11 @@ public interface TournamentService {
   TournamentStandingsDto getStandings(long id) throws NotFoundException;
 
   /**
-   * Update the standings of the tournament with the given id.
+   * Update the standings of the tournament with ID given in {@code tournamentStandings}.
    *
-   * @param id the id of the tournament
+   * @param tournamentStandings the tournament standings to update, containing tournament ID, name, participants, and standings tree.
    * @return the updated standings of the tournament
    * @throws ConflictException if the tournament with the specified id does not exist.
    */
-  TournamentStandingsDto updateStandings(long id, TournamentStandingsDto tournamentStandings) throws ConflictException, ValidationException, NotFoundException;
+  TournamentStandingsDto updateStandings(TournamentStandingsDto tournamentStandings) throws ConflictException, ValidationException, NotFoundException;
 }

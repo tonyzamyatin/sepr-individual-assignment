@@ -1,6 +1,8 @@
 logging:
   level:
     root: INFO
+    org.springframework.web: DEBUG
+    com.fasterxml.jackson: DEBUG
   file:
     name: ./log/wendys-tournament-management.log
   pattern:

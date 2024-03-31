@@ -239,6 +239,7 @@ export class HorseCreateEditComponent implements OnInit {
             return;
           }
           observable = this.service.update(this.horse);
+          break;
         default:
           console.error('Unknown HorseCreateEditMode', this.mode);
           return;

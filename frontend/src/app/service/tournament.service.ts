@@ -60,15 +60,45 @@ export class TournamentService {
   getStandings(id: number): Observable<TournamentStandingsDto> {
     return this.http.get<TournamentStandingsDto>(
       `${baseUri}/standings/${id}`
-    )
+    ).pipe(
+      map(data => {
+        // Convert dateOfBirth for each participant in the list
+        data.participants.forEach(participant => {
+          participant.dateOfBirth = new Date(participant.dateOfBirth);
+        });
+
+        // Convert dateOfBirth for each participant in the tree
+        this.convertTreeDates(data.tree);
+        return data;
+      })
+    );
   }
 
-  updateStandings(id: number, standings: TournamentStandingsDto): Observable<TournamentStandingsDto> {
+  updateStandings(standings: TournamentStandingsDto): Observable<TournamentStandingsDto> {
+    console.log(standings);
     return this.http.put<TournamentStandingsDto>(
-      `${baseUri}/standings/${id}`,
+      `${baseUri}/standings`,
       standings
-    )
+    ).pipe(
+      map(data => {
+        // Convert dateOfBirth for each participant in the list
+        data.participants.forEach(participant => {
+          participant.dateOfBirth = new Date(participant.dateOfBirth);
+        });
+
+        // Convert dateOfBirth for each participant in the tree
+        this.convertTreeDates(data.tree);
+        return data;
+      })
+    );
   }
 
-
+  private convertTreeDates(tree: TournamentStandingsTreeDto) {
+    if (tree.thisParticipant) {
+      tree.thisParticipant.dateOfBirth = new Date(tree.thisParticipant.dateOfBirth);
+    }
+    if (tree.branches) {
+      tree.branches.forEach(branch => this.convertTreeDates(branch));
+    }
+  }
 }

@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {TournamentStandingsDto} from "../../../dto/tournament";
+import {TournamentStandingsDto, TournamentStandingsTreeDto} from "../../../dto/tournament";
 import {TournamentService} from "../../../service/tournament.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {NgForm} from "@angular/forms";
 import {Location} from "@angular/common";
 import {ToastrService} from "ngx-toastr";
@@ -18,6 +18,7 @@ export class TournamentStandingsComponent implements OnInit {
   public constructor(
     private service: TournamentService,
     private errorFormatter: ErrorFormatterService,
+    private router: Router,
     private route: ActivatedRoute,
     private notification: ToastrService,
     private location: Location,
@@ -40,13 +41,13 @@ export class TournamentStandingsComponent implements OnInit {
   }
 
   public submit(form: NgForm) {
-    const routeParams = this.route.snapshot.paramMap;
-    const id = Number(routeParams.get('id'));
     if (this.standings !== undefined) {
-      this.service.updateStandings(id, this.standings)
+      this.service.updateStandings(this.standings)
         .subscribe({
           next: data => {
             this.standings = data;
+            this.notification.success( `Tournament standings of ${this.standings.name} successfully updated`);
+            this.router.navigate(['/tournaments']);
           },
           error: error => {
             console.error('Error updating tournament standings', error);

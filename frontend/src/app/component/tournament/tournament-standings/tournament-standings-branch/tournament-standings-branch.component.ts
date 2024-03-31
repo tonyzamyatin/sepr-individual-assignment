@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {TournamentDetailParticipantDto, TournamentStandingsTreeDto} from "../../../../dto/tournament";
 import {of} from "rxjs";
 
@@ -37,17 +37,19 @@ export class TournamentStandingsBranchComponent {
     const allCandidates =
       this.treeBranch?.branches?.map(b => b.thisParticipant)
       ?? this.allParticipants;
+    const escapedInput = input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escapes special characters
     const results = allCandidates
-        .filter(x => !!x)
-        .map(x => <TournamentDetailParticipantDto><unknown>x)
-        .filter((x) =>
-            x.name.toUpperCase().match(new RegExp(`.*${input.toUpperCase()}.*`)));
+      .filter(x => !!x)
+      .map(x => <TournamentDetailParticipantDto><unknown>x)
+      .filter((x) =>
+        x.name.toUpperCase().match(new RegExp(`.*${escapedInput.toUpperCase()}.*`)));
     return of(results);
   };
 
   public formatParticipant(participant: TournamentDetailParticipantDto | null): string {
     return participant
-        ? `${participant.name} (${participant.dateOfBirth.toLocaleDateString()})`
-        : "";
+      ? `${participant.name} (${participant.dateOfBirth.toLocaleDateString()})`
+      : "";
   }
+
 }

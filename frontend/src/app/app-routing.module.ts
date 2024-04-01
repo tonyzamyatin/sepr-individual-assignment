@@ -15,15 +15,15 @@ const ROUTES: Routes = [
     path: 'horses', children: [
       {path: '', component: HorseComponent},
       {path: 'create', component: HorseCreateEditComponent, data: {mode: HorseCreateEditMode.create}},
-      {path: 'edit/:id', component: HorseCreateEditComponent, data: {mode: HorseCreateEditMode.edit}},
-      {path: 'view/:id', component: HorseCreateEditComponent, data: {mode: HorseCreateEditMode.view}}
+      {path: ':id/edit', component: HorseCreateEditComponent, data: {mode: HorseCreateEditMode.edit}},
+      {path: ':id/view', component: HorseCreateEditComponent, data: {mode: HorseCreateEditMode.view}}
     ]
   },
   {
     path: 'tournaments', children: [
       {path: '', component: TournamentComponent},
       {path: 'create', component: TournamentCreateComponent},
-      {path: 'standings/:id', component: TournamentStandingsComponent}
+      {path: ':id/standings', component: TournamentStandingsComponent}
     ]
   },
   {path: '**', redirectTo: 'horses'},

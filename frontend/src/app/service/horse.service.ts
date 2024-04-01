@@ -59,7 +59,7 @@ export class HorseService {
    */
   create(horse: Horse): Observable<Horse> {
     return this.http.post<Horse>(
-      baseUri + "/create",
+      baseUri,
       horse
     );
   }
@@ -73,7 +73,7 @@ export class HorseService {
    */
   update(horse: Horse): Observable<Horse> {
     return this.http.put<Horse>(
-      `${baseUri}/update/${horse.id}`,
+      `${baseUri}/${horse.id}`,
       horse
     );
   }
@@ -85,6 +85,6 @@ export class HorseService {
    * @return an empty Observable
    */
   delete(horseId: number): Observable<void> {
-    return this.http.delete<void>(`${baseUri}/delete/${horseId}`)
+    return this.http.delete<void>(`${baseUri}/${horseId}`)
   }
 }

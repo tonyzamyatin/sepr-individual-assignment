@@ -37,6 +37,7 @@ Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
 | 26.03.2024 |    12:35   |  3h 45min | 22, 25 |   Backend für bessere Testabilität und höheren Klassenzusammenhalt umgeschrieben   |
 | 27.03.2024 |    11:35   |  1h 30min | 7 |   Debuggen von updateStandings() im TournamentEndpoint   |
 | 31.03.2024 |    9:35   |  4h 15min | 7 |   Debuggen, Testen und Fix von updateStandings() im TournamentEndpoint   |
+| 01.04.2024 |    22:00   |  1h 30min | 9, 27 |   Logging vereinheitlicht, weitere Entities in Tournament eingefügt   |
 
 
 **Gesamtsumme der Zeit**: h 

@@ -52,7 +52,7 @@ export class TournamentService {
 
   create(tournament: TournamentCreateDto): Observable<TournamentDetailDto> {
     return this.http.post<TournamentDetailDto>(
-      `${baseUri}/create`,
+      `${baseUri}`,
       tournament
     );
   }

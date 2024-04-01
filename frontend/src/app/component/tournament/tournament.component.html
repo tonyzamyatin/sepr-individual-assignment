@@ -18,7 +18,7 @@
     Reload
   </button>
   <span style="flex: 1"></span>
-  <a class="btn btn-secondary" routerLink="create" aria-label="New horse">
+  <a class="btn btn-secondary" routerLink="create" aria-label="New Tournament">
     <i class="bi bi-plus-lg"></i>
     New Tournament
   </a>
@@ -90,7 +90,7 @@
       <td>
         <div class="d-flex justify-content-center">
           <button class="btn btn-sm responsive-info-button"
-                  [routerLink]="['standings', tournament.id]"
+                  [routerLink]="[ tournament.id, 'standings']"
                   aria-label="Show tournament standings">
             <i class="bi bi-info-lg"></i>
           </button>

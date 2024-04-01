@@ -30,7 +30,7 @@ public class TestUtility {
    * @return the generated valid tournament detail DTO.
    */
   public TournamentDetailDto generateValidTournamentDetailDto() {
-    Long tournamentId = -10L;
+    Long tournamentId = -11L;
     List<TournamentParticipantDetailDto> testParticipantDto = new ArrayList<>();
     for (int i = 1; i <= 8; i++) {
       HorseDetailDto horse = null;

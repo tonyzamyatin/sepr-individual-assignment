@@ -120,7 +120,7 @@ public class HorseEndpointTest extends TestBase {
     String jsonHorseDto = objectMapper.writeValueAsString(validHorseDto);
 
     var body = assertDoesNotThrow(() -> mockMvc.perform(
-            MockMvcRequestBuilders.post("/horses/create").contentType(MediaType.APPLICATION_JSON).content(jsonHorseDto).accept(MediaType.APPLICATION_JSON))
+            MockMvcRequestBuilders.post("/horses").contentType(MediaType.APPLICATION_JSON).content(jsonHorseDto).accept(MediaType.APPLICATION_JSON))
         .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
 
     var horseResult = assertDoesNotThrow(() -> objectMapper.readValue(body, HorseDetailDto.class));
@@ -140,15 +140,15 @@ public class HorseEndpointTest extends TestBase {
     long horseId = -32L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isOk()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isOk()));
   }
 
   @Test
-  public void deleteNonExistingHorseShouldReturnNotFound404() {
+  public void deleteNonExistingHorseShouldReturnOk200() {
     long horseId = -33L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(false);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isNotFound()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isOk()));
   }
 
 
@@ -157,6 +157,6 @@ public class HorseEndpointTest extends TestBase {
     long horseId = -1L;
     // Mock TournamentService method used by validator in Horse.service.delete(id) method
     when(participantService.isHorseParticipantInAnyTournament(horseId)).thenReturn(true);
-    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/delete/" + horseId)).andExpect(status().isConflict()));
+    assertDoesNotThrow(() -> mockMvc.perform(MockMvcRequestBuilders.delete("/horses/" + horseId)).andExpect(status().isConflict()));
   }
 }

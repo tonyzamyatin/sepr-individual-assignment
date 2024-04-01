@@ -50,9 +50,8 @@ public interface HorseDao {
    *
    * @param horse the horse to update
    * @return the updated horse
-   * @throws NotFoundException if the Horse with the given ID does not exist in the persistent data store
    */
-  Horse update(HorseDetailDto horse) throws NotFoundException;
+  Horse update(HorseDetailDto horse);
 
   /**
    * Get a horse by its ID from the persistent data store.
@@ -67,8 +66,7 @@ public interface HorseDao {
    * Delete a horse by its ID from the persistent data store.
    *
    * @param id the ID of the horse to delete
-   * @throws NotFoundException if the horse with the given ID does not exist in the persistent data store
    */
-  void delete(long id) throws NotFoundException;
+  void delete(long id);
 
 }

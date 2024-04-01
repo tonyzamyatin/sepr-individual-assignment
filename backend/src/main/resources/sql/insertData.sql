@@ -83,9 +83,16 @@ VALUES (-1, 'Wendy', 'FEMALE', '2019-08-05', 1.40, 380, -15),
 
 
 INSERT INTO tournament (id, name, start_date, end_date)
-VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-6', '2024-03-17'),
+VALUES (-1, 'BNP Paribas Open, Indian Wells', '2024-03-06', '2024-03-17'),
        (-2, 'Miami Open presented by Itau', '2024-03-20', '2024-03-31'),
-       (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14');
+       (-3, 'Rolex Monte-Carlo Masters', '2024-04-07', '2024-04-14'),
+       (-4, 'Barcelona Open Banc Sabadell', '2024-04-15', '2024-04-21'),
+       (-5, 'Mutua Madrid Open', '2024-04-24', '2024-05-05'),
+       (-6, 'Internazionali BNL d''Italia', '2024-05-08', '2024-05-19'),
+       (-7, 'Roland Garros', '2024-05-26', '2024-06-19'),
+       (-8, 'Wimbledon', '2024-07-01', '2024-07-14'),
+       (-9, 'Hamburg Open', '2024-07-15', '2024-07-21'),
+       (-10, 'Generali Open', '2024-07-21', '2024-07-27');
 
 
 INSERT INTO participant (tournament_id, horse_id, entry_number, round_reached)

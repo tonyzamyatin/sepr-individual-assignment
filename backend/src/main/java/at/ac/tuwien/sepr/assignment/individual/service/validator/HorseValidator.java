@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.service;
+package at.ac.tuwien.sepr.assignment.individual.service.validator;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
@@ -7,6 +7,8 @@ import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.sepr.assignment.individual.service.BreedService;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentParticipantService;
 import at.ac.tuwien.sepr.assignment.individual.type.Sex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

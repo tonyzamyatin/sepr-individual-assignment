@@ -16,13 +16,7 @@ import java.util.List;
 @Component
 public class TournamentMapper {
 
-  private final ParticipantMapper participantMapper;
-
   private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
-  public TournamentMapper(ParticipantMapper participantMapper) {
-    this.participantMapper = participantMapper;
-  }
 
   public TournamentListDto entityToListDto(Tournament tournament) {
     LOG.trace("entityToListDto({})", tournament);

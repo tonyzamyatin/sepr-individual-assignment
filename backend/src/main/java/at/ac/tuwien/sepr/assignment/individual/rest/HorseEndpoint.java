@@ -50,7 +50,7 @@ public class HorseEndpoint {
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping("create")
+  @PostMapping()
   public HorseDetailDto create(@RequestBody HorseDetailDto toCreate) throws ValidationException, ConflictException {
     LOG.info("POST " + BASE_PATH + "/create");
     LOG.debug("Body of request:\n{}", toCreate);
@@ -58,7 +58,7 @@ public class HorseEndpoint {
   }
 
 
-  @PutMapping("update/{id}")
+  @PutMapping("{id}")
   public HorseDetailDto update(@PathVariable("id") long id, @RequestBody HorseDetailDto toUpdate)
       throws ValidationException, ConflictException, NotFoundException {
     LOG.info("PUT " + BASE_PATH + "/update/{}", id);
@@ -66,14 +66,9 @@ public class HorseEndpoint {
     return service.update(toUpdate.withId(id));
   }
 
-  @DeleteMapping("delete/{id}")
+  @DeleteMapping("{id}")
   public void delete(@PathVariable("id") long id) throws ConflictException, NotFoundException {
     LOG.info("DELETE " + BASE_PATH + "/delete/{}", id);
     service.delete(id);
-  }
-
-
-  private void logClientError(HttpStatus status, String message, Exception e) {
-    LOG.warn("{} {}: {}: {}", status.value(), message, e.getClass().getSimpleName(), e.getMessage());
   }
 }

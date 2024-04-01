@@ -42,7 +42,7 @@ public class TournamentEndpoint {
   }
 
   @ResponseStatus(HttpStatus.CREATED)
-  @PostMapping("create")
+  @PostMapping()
   public TournamentDetailDto create(@RequestBody TournamentDetailDto toCreate) throws ValidationException, ConflictException {
     LOG.info("POST " + BASE_PATH + "/create");
     LOG.debug("Body of request:\n{}", toCreate);
@@ -59,7 +59,7 @@ public class TournamentEndpoint {
   public TournamentStandingsDto updateStandings(@RequestBody TournamentStandingsDto tournamentStandings)
       throws ConflictException, ValidationException, NotFoundException {
     LOG.info("PUT " + BASE_PATH + "/standings");
-    LOG.info("Body of request:\n{}", tournamentStandings);
+    LOG.debug("Body of request:\n{}", tournamentStandings);
     return service.updateStandings(tournamentStandings);
   }
 }

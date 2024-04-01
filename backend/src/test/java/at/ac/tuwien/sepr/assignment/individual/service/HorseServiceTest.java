@@ -106,13 +106,13 @@ public class HorseServiceTest extends TestBase {
   }
 
   @Test
-  public void deleteHorseWithExistingId() {
+  public void deleteHorseWithExistingIdShouldNotThrowAnyException() {
     assertDoesNotThrow(() -> horseService.delete(-32L));
   }
 
   @Test
-  public void deleteHorseWithNonExistentIdShouldThrowNotFoundException() {
-    assertThrows(NotFoundException.class, () -> horseService.delete(-33L));
+  public void deleteHorseWithNonExistentIdShouldNotThrowAnyException() {
+    assertDoesNotThrow(() -> horseService.delete(-33L));
   }
 
   @Test

@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.service;
+package at.ac.tuwien.sepr.assignment.individual.service.validator;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
@@ -37,6 +37,7 @@ public class TournamentValidator {
     }
 
     if (!validationErrors.isEmpty()) {
+      LOG.warn("Validation of tournament for create failed: {}", validationErrors);
       throw new ValidationException("Validation of tournament for create failed", validationErrors);
     }
   }
@@ -88,6 +89,7 @@ public class TournamentValidator {
     }
 
     if (!validationErrors.isEmpty()) {
+      LOG.warn("Validation of tournament for create failed: {}", validationErrors);
       throw new ValidationException("Validation of data for tournament standings update failed", validationErrors);
     }
   }

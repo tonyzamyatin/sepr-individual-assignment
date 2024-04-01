@@ -4,6 +4,9 @@ import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import java.lang.invoke.MethodHandles;
+
+import at.ac.tuwien.sepr.assignment.individual.rest.errors.ErrorRestDto;
+import at.ac.tuwien.sepr.assignment.individual.rest.errors.ListErrorRestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

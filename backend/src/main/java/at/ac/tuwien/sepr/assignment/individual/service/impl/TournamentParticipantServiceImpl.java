@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.service;
+package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
@@ -7,6 +7,9 @@ import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.ParticipantMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentParticipantDao;
+import at.ac.tuwien.sepr.assignment.individual.service.HorseService;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentParticipantService;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;

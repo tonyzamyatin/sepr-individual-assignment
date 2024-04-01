@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.service;
+package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
@@ -13,6 +13,10 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.TournamentMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentDao;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentParticipantService;
+import at.ac.tuwien.sepr.assignment.individual.service.TournamentService;
+import at.ac.tuwien.sepr.assignment.individual.service.validator.TournamentValidator;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,10 +51,7 @@ public class TournamentServiceImpl implements TournamentService {
   public TournamentDetailDto getTournament(long id) throws NotFoundException {
     LOG.trace("getTournament({})", id);
     Tournament tournament = tournamentDao.getById(id);
-    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(id);
-    if (participants.isEmpty()) { // should never happen
-      throw new FatalException("Existing tournament does not have any participants");
-    }
+    List<TournamentParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
     return tournamentMapper.entityToDetailDto(tournament, participants);
   }
 
@@ -92,6 +93,7 @@ public class TournamentServiceImpl implements TournamentService {
     }).toList();
 
     if (!conflictErrors.isEmpty()) {
+      LOG.error("Creation of tournament failed due to data conflicts: {}", conflictErrors);
       throw new ConflictException("Tournament data is in conflict with system data", conflictErrors);
     }
     return tournamentMapper.entityToDetailDto(createdTournament, participants);
@@ -101,10 +103,7 @@ public class TournamentServiceImpl implements TournamentService {
   public TournamentStandingsDto getStandings(long id) throws NotFoundException {
     LOG.trace("getStandings({})", id);
     Tournament tournament = tournamentDao.getById(id);
-    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(id);
-    if (participants.isEmpty()) { // should never happen
-      throw new FatalException("Existing tournament does not have any participants");
-    }
+    List<TournamentParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
     return new TournamentStandingsDto(tournament.getId(), tournament.getName(), participants, buildStandingsTree(participants, 3));
   }
 
@@ -133,9 +132,21 @@ public class TournamentServiceImpl implements TournamentService {
             }).toList();
 
     if (!conflictErrors.isEmpty()) {
-      throw new ConflictException("Tournament standings in conflict with system data", conflictErrors);
+      LOG.error("Update of tournament standings failed due to conflicting data: {}", conflictErrors);
+      throw new ConflictException("Tournament standings data for update in conflict with system data", conflictErrors);
     }
     return new TournamentStandingsDto(tournamentStandings.id(), tournamentStandings.name(), participants, buildStandingsTree(participants, 3));
+  }
+
+  @NotNull
+  private List<TournamentParticipantDetailDto> getTournamentParticipantDetailDtos(long id) {
+    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(id);
+    if (participants.isEmpty()) { // should never happen
+      String errorMessage = "Existing tournament does not have any participants";
+      LOG.error("Unexpected error error during retrieval of tournament standings: {}", errorMessage);
+      throw new FatalException(errorMessage);
+    }
+    return participants;
   }
 
   /**

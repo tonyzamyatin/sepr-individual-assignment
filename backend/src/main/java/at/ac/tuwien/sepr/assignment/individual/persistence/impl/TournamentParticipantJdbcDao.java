@@ -7,6 +7,7 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.persistence.TournamentParticipantDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -50,6 +51,7 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
     LOG.trace("getParticipant({}, {})", tournamentId, horseId);
     List<Participant> participants = jdbcTemplate.query(SQL_SELECT_PARTICIPANT, this::mapRow, tournamentId, horseId);
     if (participants.isEmpty()) {
+      LOG.warn("Participant with tournament ID {} and horse ID {} not found", tournamentId, horseId);
       throw new NotFoundException("Participant with tournament ID " + tournamentId + " and horse ID " + horseId + " does not exist");
     }
     return participants.getFirst();
@@ -71,9 +73,17 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
         .addValue("horseId", participant.horseId())
         .addValue("entryNumber", participant.entryNumber())
         .addValue("roundReached", participant.roundReached());
-    int rowsAffected = jdbcNamed.update(NAMED_SQL_INSERT, params);
-    if (rowsAffected == 0) {
-      throw new FatalException("Error occurred during the insert operation");
+    try {
+      int rowsAffected = jdbcNamed.update(NAMED_SQL_INSERT, params);
+      if (rowsAffected == 0) {
+        String errorMessage = "Insert operation failed, no rows affected.";
+        LOG.error(errorMessage);
+        throw new FatalException(errorMessage);
+      }
+    } catch (DataAccessException e) {
+      String errorMessage = "Unexpected error during insert into the participant table: " + e.getMessage();
+      LOG.error(errorMessage, e);
+      throw new FatalException(errorMessage, e);
     }
 
     return new Participant()
@@ -84,16 +94,23 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   }
 
   @Override
-  public Participant update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException {
-    int updated = jdbcTemplate.update(SQL_UPDATE,
-        participant.entryNumber(),
-        participant.roundReached(),
-        tournamentId,
-        participant.horseId());
-    if (updated == 0) {
-      throw new NotFoundException(
-          "Could not update participant with tournament ID " + tournamentId + " and horse ID " + participant.horseId() + ", because it does not exist");
+  public Participant update(long tournamentId, TournamentParticipantDetailDto participant) {
+    LOG.trace("Updating participant: {}", participant);
+    try {
+      int updated = jdbcTemplate.update(SQL_UPDATE,
+          participant.entryNumber(),
+          participant.roundReached(),
+          tournamentId,
+          participant.horseId());
+      if (updated == 0) {
+        LOG.warn("No participants where updated");
+      }
+    } catch (DataAccessException e) {
+      String errorMessage = "Unexpected error during update of participant table: " + e.getMessage();
+      LOG.error(errorMessage, e);
+      throw new FatalException(errorMessage, e);
     }
+
     return new Participant()
         .setTournamentId(tournamentId)
         .setHorseId(participant.horseId())

@@ -74,7 +74,7 @@ public class TournamentEndpointTest extends TestBase {
 
     var body = mockMvc
         .perform(MockMvcRequestBuilders
-            .post("/tournaments/create")
+            .post("/tournaments")
             .contentType(MediaType.APPLICATION_JSON)
             .content(jsonTournamentDto)
             .accept(MediaType.APPLICATION_JSON))

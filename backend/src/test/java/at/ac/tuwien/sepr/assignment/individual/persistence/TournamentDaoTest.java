@@ -30,8 +30,8 @@ public class TournamentDaoTest extends TestBase {
   TestUtility testUtil;
 
   @Test
-  public void searchByNameIaFindTwoTournaments() {
-    var searchDto = new TournamentSearchDto("ia", null, null, null);
+  public void searchByNameIndianFindOneTournament() {
+    var searchDto = new TournamentSearchDto("Indian", null, null, null);
     var tournaments = tournamentDao.search(searchDto);
     assertNotNull(tournaments);
     assertThat(tournaments)
@@ -41,33 +41,28 @@ public class TournamentDaoTest extends TestBase {
                 .setId(-1L)
                 .setName("BNP Paribas Open, Indian Wells")
                 .setStartDate(LocalDate.of(2024, 3, 6))
-                .setEndDate(LocalDate.of(2024, 3, 17)),
-            (new Tournament())
-                .setId(-2L)
-                .setName("Miami Open presented by Itau")
-                .setStartDate(LocalDate.of(2024, 3, 20))
-                .setEndDate(LocalDate.of(2024, 3, 31))
+                .setEndDate(LocalDate.of(2024, 3, 17))
         );
   }
 
   @Test
-  public void searchByIntervalStart31Mar2024ShouldReturnTwoTournaments() {
-    var searchDto = new TournamentSearchDto(null, LocalDate.of(2024, 3, 31), null, null);
+  public void searchByIntervalStart21Jul2024ShouldReturnTwoTournaments() {
+    var searchDto = new TournamentSearchDto(null, LocalDate.of(2024, 7, 21), null, null);
     var tournaments = tournamentDao.search(searchDto);
     assertNotNull(tournaments);
     assertThat(tournaments)
         .usingRecursiveFieldByFieldElementComparator()
         .containsExactlyInAnyOrder(
             (new Tournament()
-                .setId(-2L)
-                .setName("Miami Open presented by Itau")
-                .setStartDate(LocalDate.of(2024, 3, 20))
-                .setEndDate(LocalDate.of(2024, 3, 31))),
+                .setId(-9L)
+                .setName("Hamburg Open")
+                .setStartDate(LocalDate.of(2024, 7, 15))
+                .setEndDate(LocalDate.of(2024, 7, 21))),
             (new Tournament())
-                .setId(-3L)
-                .setName("Rolex Monte-Carlo Masters")
-                .setStartDate(LocalDate.of(2024, 4, 7))
-                .setEndDate(LocalDate.of(2024, 4, 14))
+                .setId(-10L)
+                .setName("Generali Open")
+                .setStartDate(LocalDate.of(2024, 7, 21))
+                .setEndDate(LocalDate.of(2024, 7, 27))
         );
   }
 
@@ -171,8 +166,8 @@ public class TournamentDaoTest extends TestBase {
 
 
   @Test
-  public void searchByIntervalStart15Apr2024ShouldReturnNoTournaments() {
-    var searchDto = new TournamentSearchDto(null, LocalDate.of(2024, 4, 15), null, null);
+  public void searchByIntervalStart15Apr2025ShouldReturnNoTournaments() {
+    var searchDto = new TournamentSearchDto(null, LocalDate.of(2025, 4, 15), null, null);
     var tournaments = tournamentDao.search(searchDto);
     assertNotNull(tournaments);
     assertThat(tournaments).isEmpty();

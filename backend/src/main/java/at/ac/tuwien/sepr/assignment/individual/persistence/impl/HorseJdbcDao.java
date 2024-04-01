@@ -93,11 +93,14 @@ public class HorseJdbcDao implements HorseDao {
     horses = jdbcTemplate.query(SQL_SELECT_BY_ID, this::mapRow, id);
 
     if (horses.isEmpty()) {
+      LOG.warn("No horse with ID {} found", id);
       throw new NotFoundException("No horse with ID %d found".formatted(id));
     }
     if (horses.size() > 1) {
       // This should never happen!!
-      throw new FatalException("Too many horses with ID %d found".formatted(id));
+      String errorMessage = "Too many horses with ID %d found".formatted(id);
+      LOG.error("Unexpected error during retrieval of horse by id: {}", errorMessage);
+      throw new FatalException(errorMessage);
     }
 
     return horses.getFirst();
@@ -158,12 +161,14 @@ public class HorseJdbcDao implements HorseDao {
           .setBreedId(optionalBreedId)
           ;
     } catch (DataAccessException e) {
-      throw new FatalException("Error occurred during the insert operation: " + e.getMessage(), e);
+      String errorMessage = "Unexpected error error during insert into horse table: " + e.getMessage();
+      LOG.error(errorMessage, e);
+      throw new FatalException(errorMessage, e);
     }
   }
 
   @Override
-  public Horse update(HorseDetailDto horse) throws NotFoundException {
+  public Horse update(HorseDetailDto horse) {
     LOG.trace("update({})", horse);
 
     // Handle optional breedId
@@ -178,7 +183,7 @@ public class HorseJdbcDao implements HorseDao {
         optionalBreedId,
         horse.id());
     if (updated == 0) {
-      throw new NotFoundException("Could not update horse with ID " + horse.id() + ", because it does not exist");
+      LOG.warn("No horses where updated");
     }
 
     return new Horse()
@@ -188,17 +193,16 @@ public class HorseJdbcDao implements HorseDao {
         .setDateOfBirth(horse.dateOfBirth())
         .setHeight(horse.height())
         .setWeight(horse.weight())
-        .setBreedId(optionalBreedId)
-        ;
+        .setBreedId(optionalBreedId);
   }
 
 
   @Override
-  public void delete(long id) throws NotFoundException {
+  public void delete(long id) {
     LOG.trace("delete({})", id);
     int deleted = jdbcTemplate.update(SQL_DELETE, id);
     if (deleted == 0) {
-      throw new NotFoundException("Could not delete horse with ID " + id + ", because it does not exist");
+      LOG.warn("No horses where deleted");
     }
   }
 
@@ -210,7 +214,6 @@ public class HorseJdbcDao implements HorseDao {
         .setDateOfBirth(result.getDate("date_of_birth").toLocalDate())
         .setHeight(result.getFloat("height"))
         .setWeight(result.getFloat("weight"))
-        .setBreedId(result.getObject("breed_id", Long.class))
-        ;
+        .setBreedId(result.getObject("breed_id", Long.class));
   }
 }

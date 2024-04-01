@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.rest;
+package at.ac.tuwien.sepr.assignment.individual.rest.errors;
 
 import java.util.List;
 

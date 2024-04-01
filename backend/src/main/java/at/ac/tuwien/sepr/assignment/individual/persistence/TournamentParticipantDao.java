@@ -50,7 +50,6 @@ public interface TournamentParticipantDao {
    * @param tournamentId the ID of the tournament of participation.
    * @param participant  the participant to be updated containing the ID of the horse.
    * @return the updated created participant
-   * @throws NotFoundException if no participant exists for the given tournament and horse IDs
    */
-  Participant update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException;
+  Participant update(long tournamentId, TournamentParticipantDetailDto participant);
 }

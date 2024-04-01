@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepr.assignment.individual.service;
+package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.BreedDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
@@ -10,6 +10,9 @@ import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.HorseMapper;
 import at.ac.tuwien.sepr.assignment.individual.persistence.HorseDao;
+import at.ac.tuwien.sepr.assignment.individual.service.BreedService;
+import at.ac.tuwien.sepr.assignment.individual.service.HorseService;
+import at.ac.tuwien.sepr.assignment.individual.service.validator.HorseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,7 @@ public class HorseServiceImpl implements HorseService {
 
   @Override
   public Stream<HorseListDto> search(HorseSearchDto searchParameters) {
+    LOG.trace("search({})", searchParameters);
     var horses = dao.search(searchParameters);
     // First get all breed ids…
     var breeds = horses.stream()
@@ -86,7 +90,6 @@ public class HorseServiceImpl implements HorseService {
     return mapper.entityToDetailDto(createdHorse, breeds);
   }
 
-
   @Override
   public HorseDetailDto update(HorseDetailDto horse) throws NotFoundException, ValidationException, ConflictException {
     LOG.trace("update({})", horse);
@@ -102,6 +105,13 @@ public class HorseServiceImpl implements HorseService {
     return mapper.entityToDetailDto(updatedHorse, breeds);
   }
 
+  @Override
+  public void delete(long id) throws NotFoundException, ConflictException {
+    LOG.trace("delete({})", id);
+    validator.validateForDelete(id);
+    dao.delete(id);
+  }
+
   private void checkForDataConsistency(HorseDetailDto horse) throws ConflictException {
     List<String> conflictErrors = new ArrayList<>();
     if (horse.breed() != null) {
@@ -111,18 +121,10 @@ public class HorseServiceImpl implements HorseService {
       }
     }
     if (!conflictErrors.isEmpty()) {
-      throw new ConflictException("Horse data is in conflict with system data", conflictErrors);
+      LOG.error("Update of horse failed due to conflicting data: {}", conflictErrors);
+      throw new ConflictException("Horse data for update is in conflict with system data", conflictErrors);
     }
   }
-
-
-  @Override
-  public void delete(long id) throws NotFoundException, ConflictException {
-    LOG.trace("delete({})", id);
-    validator.validateForDelete(id);
-    dao.delete(id);
-  }
-
 
   private Map<Long, BreedDto> breedMapForSingleHorse(Horse horse) {
     if (horse.getBreedId() == null) {
@@ -130,7 +132,6 @@ public class HorseServiceImpl implements HorseService {
     }
     return breedMapForHorses(Collections.singleton(horse.getBreedId()));
   }
-
 
   private Map<Long, BreedDto> breedMapForHorses(Set<Long> breedIds) {
     // Filter out null values from the set

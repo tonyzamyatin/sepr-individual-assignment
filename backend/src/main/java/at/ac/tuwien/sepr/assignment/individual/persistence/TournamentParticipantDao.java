@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
@@ -15,6 +16,16 @@ public interface TournamentParticipantDao {
    * @return List of the participants participating part in the tournament, empty if no participants are found.
    */
   List<Participant> findParticipantsByTournamentId(long tournamentId);
+
+  /**
+   * Search for participants in the persistent data store based on the given search parameters.
+   * Parameters that are {@code null} are ignored.
+   * If all parameters are {@code null}, all participants are returned.
+   *
+   * @param searchParams the search parameters to search for participants
+   * @return List of participants matching the search parameters, empty if no participants are found.
+   */
+  List<Participant> search(ParticipantSearchDto searchParams);
 
   /**
    * Retrieve the participant with the given horse ID participating in the tournament with the given tournament ID from the persistent data store.
@@ -41,7 +52,7 @@ public interface TournamentParticipantDao {
    * @param participant  the participant to be created containing the id of the horse.
    * @return the newly created participant
    */
-  Participant create(long tournamentId, TournamentParticipantDetailDto participant);
+  Participant create(long tournamentId, ParticipantDetailDto participant);
 
   /**
    * Updates the participant participating in the tournament with ID {@code tournamentId}
@@ -51,5 +62,5 @@ public interface TournamentParticipantDao {
    * @param participant  the participant to be updated containing the ID of the horse.
    * @return the updated created participant
    */
-  Participant update(long tournamentId, TournamentParticipantDetailDto participant);
+  Participant update(long tournamentId, ParticipantDetailDto participant);
 }

@@ -1,8 +1,9 @@
 package at.ac.tuwien.sepr.assignment.individual.service.validator;
 
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsTreeDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsTreeDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +33,23 @@ public class TournamentValidator {
     }
     if (tournament.participants() == null) {
       validationErrors.add("No participant list given");
-    } else if (tournament.participants().size() != 8 || tournament.participants().contains(null)) {
-      validationErrors.add("Given participant list contains does not contain exactly 8 participants.");
+    } else {
+      if (tournament.participants().size() != 8 || tournament.participants().contains(null)) {
+        validationErrors.add("Given participant list contains does not contain exactly 8 participants.");
+      } else {
+        for (ParticipantDetailDto participant : tournament.participants()) {
+          if (participant.entryNumber() == null) {
+            validationErrors.add("Entry number missing");
+          } else if (participant.entryNumber() < 1 || participant.entryNumber() > 8) {
+            validationErrors.add("Entry number must be between 1 and 8");
+          }
+          if (participant.roundReached() == null) {
+            validationErrors.add("Entry number missing");
+          } else if (participant.roundReached() < 0 || participant.roundReached() > 3) {
+            validationErrors.add("Round reached must be between 0 and 3");
+          }
+        }
+      }
     }
 
     if (!validationErrors.isEmpty()) {
@@ -42,7 +58,7 @@ public class TournamentValidator {
     }
   }
 
-  public void validateForStandingsUpdate(TournamentStandingsDto tournamentStandings) throws ValidationException {
+  public void validateForStandingsUpdate(StandingsDetailDto tournamentStandings) throws ValidationException {
     LOG.trace("validateForStandingsUpdate({})", tournamentStandings);
     List<String> validationErrors = new ArrayList<>();
     if (tournamentStandings.name() == null) {
@@ -62,12 +78,12 @@ public class TournamentValidator {
     } else {
       // Validate that all branches in the standings tree split into exactly two subtrees and that the whole tree
       // has 8 leaf nodes with thisParticipant != null and branches == null.
-      TournamentStandingsTreeDto standingsTree = tournamentStandings.tree();
-      Stack<TournamentStandingsTreeDto> branches = new Stack<>();
+      StandingsTreeDto standingsTree = tournamentStandings.tree();
+      Stack<StandingsTreeDto> branches = new Stack<>();
       branches.add(standingsTree);
       int leafNodesCount = 0;
       while (!branches.isEmpty()) {
-        TournamentStandingsTreeDto branch = branches.pop();
+        StandingsTreeDto branch = branches.pop();
         if (branch != null) {
           if (branch.branches() == null || branch.branches().length == 0) {
             leafNodesCount++;

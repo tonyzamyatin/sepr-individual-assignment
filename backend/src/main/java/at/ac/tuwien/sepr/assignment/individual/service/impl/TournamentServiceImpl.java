@@ -1,11 +1,12 @@
 package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantSearchDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsTreeDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsTreeDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
@@ -28,6 +29,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -51,7 +53,7 @@ public class TournamentServiceImpl implements TournamentService {
   public TournamentDetailDto getTournament(long id) throws NotFoundException {
     LOG.trace("getTournament({})", id);
     Tournament tournament = tournamentDao.getById(id);
-    List<TournamentParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
+    List<ParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
     return tournamentMapper.entityToDetailDto(tournament, participants);
   }
 
@@ -78,12 +80,13 @@ public class TournamentServiceImpl implements TournamentService {
     LOG.trace("create({})", tournament);
     validator.validateForCreate(tournament);
     List<String> conflictErrors = new ArrayList<>();
-
-    // Create tournament
-    Tournament createdTournament = tournamentDao.create(tournament);
-
+    // Create tournament with sorted participants
+    List<ParticipantDetailDto> sortedParticipants = tournament.participants().stream()
+        .sorted(Comparator.comparingInt(ParticipantDetailDto::entryNumber))
+        .toList();
+    Tournament createdTournament = tournamentDao.create(tournament.withParticipants(sortedParticipants));
     // Create participants and catch any ConflictExceptions
-    List<TournamentParticipantDetailDto> participants = tournament.participants().stream().map(participantDetailDto -> {
+    List<ParticipantDetailDto> participants = sortedParticipants.stream().map(participantDetailDto -> {
       try {
         return participantService.create(tournament.id(), participantDetailDto);
       } catch (ConflictException e) {
@@ -100,15 +103,15 @@ public class TournamentServiceImpl implements TournamentService {
   }
 
   @Override
-  public TournamentStandingsDto getStandings(long id) throws NotFoundException {
+  public StandingsDetailDto getStandings(long id) throws NotFoundException {
     LOG.trace("getStandings({})", id);
     Tournament tournament = tournamentDao.getById(id);
-    List<TournamentParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
-    return new TournamentStandingsDto(tournament.getId(), tournament.getName(), participants, buildStandingsTree(participants, 3));
+    List<ParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
+    return new StandingsDetailDto(tournament.getId(), tournament.getName(), participants, buildStandingsTree(participants, 3));
   }
 
   @Override
-  public TournamentStandingsDto updateStandings(TournamentStandingsDto tournamentStandings)
+  public StandingsDetailDto updateStandings(StandingsDetailDto tournamentStandings)
       throws ConflictException, ValidationException, NotFoundException {
     LOG.trace("updateStandings({})", tournamentStandings);
     validator.validateForStandingsUpdate(tournamentStandings);
@@ -118,51 +121,126 @@ public class TournamentServiceImpl implements TournamentService {
     getTournament(tournamentStandings.id());
 
     // Encode the standings tree into a map of the participants' horse IDs and the rounds they reached
-    Map<Long, Integer> roundReachedMap = new HashMap<>();
-    encodeStandingsTreeIntoMap(roundReachedMap, tournamentStandings.tree(), 3, 0);
-
+    Map<Long, Integer> roundsReachedMap = new HashMap<>();
+    List<ParticipantDetailDto> participantsSortedByEntryInTree = new ArrayList<>();
+    encodeStandingsTreeIntoMap(tournamentStandings.tree(), roundsReachedMap, participantsSortedByEntryInTree, 3, 0);
     // Update participant data
-    List<TournamentParticipantDetailDto> participants =
-        tournamentStandings.participants().stream()
-            .map(participantDetailDto -> updateRoundReachedOfParticipant(tournamentStandings.id(), participantDetailDto, roundReachedMap))
-            .peek(participant -> {
-              if (participant == null) {
+    List<ParticipantDetailDto> updatedParticipants = IntStream.range(0, participantsSortedByEntryInTree.size())
+            .mapToObj(i -> {
+              var participant = participantsSortedByEntryInTree.get(i);
+              var updatedParticipant = updateRoundReachedOfParticipant(
+                  tournamentStandings.id(),
+                  participant
+                      .withRoundReached(roundsReachedMap.get(participant.horseId()))
+                      .withEntryNumber(i + 1)
+              );
+              if (updatedParticipant == null) {
                 conflictErrors.add("Tournament standings in conflict with system data");
+                return null;
+              } else {
+                return updatedParticipant;
               }
-            }).toList();
+            })
+            .toList();
 
     if (!conflictErrors.isEmpty()) {
       LOG.error("Update of tournament standings failed due to conflicting data: {}", conflictErrors);
       throw new ConflictException("Tournament standings data for update in conflict with system data", conflictErrors);
     }
-    return new TournamentStandingsDto(tournamentStandings.id(), tournamentStandings.name(), participants, buildStandingsTree(participants, 3));
+    LOG.debug("Participants from DTO: {}", tournamentStandings.participants());
+    LOG.debug("Updated participants: {}", updatedParticipants);
+    List<ParticipantDetailDto> sortedParticipants = updatedParticipants.stream()
+        .sorted(Comparator.comparingInt(ParticipantDetailDto::entryNumber))
+        .toList();
+    LOG.debug("Updated participants sorted by entry number: {}", sortedParticipants);
+    return new StandingsDetailDto(tournamentStandings.id(), tournamentStandings.name(), sortedParticipants, buildStandingsTree(sortedParticipants, 3));
+  }
+
+  @Override
+  public StandingsDetailDto generateFirstRound(long id) throws NotFoundException {
+    LOG.trace("generateFirstRound({})", id);
+    Tournament tournament = tournamentDao.getById(id);
+    List<ParticipantDetailDto> participants = getTournamentParticipantDetailDtos(id);
+    List<ParticipantDetailDto> participantsSortedByPoints = participants.stream()
+        .map(participant -> {
+          var searchParams = new ParticipantSearchDto(
+              participant.horseId(),
+              null,
+              tournament.getStartDate().minusMonths(12),
+              tournament.getStartDate().minusDays(1));
+          LOG.debug("Searching for past participations of participant {} with search parameters {}", participant.name(), searchParams);
+          List<ParticipantDetailDto> pastParticipations = participantService.searchParticipants(searchParams);
+          LOG.debug("Found {} past participations", pastParticipations.size());
+          return Map.entry(
+              participant,
+              pastParticipations.stream()
+                  .mapToInt(pastParticipation -> {
+                    if (pastParticipation.roundReached() == 3) {
+                      return 5;
+                    } else if (pastParticipation.roundReached() == 2) {
+                      return 3;
+                    } else if (pastParticipation.roundReached() == 1) {
+                      return 1;
+                    } else {
+                      return 0;
+                    }
+                  })
+                  .sum()
+          );
+        })
+        .peek(entry -> LOG.debug("Participant {} has {} points", entry.getKey().name(), entry.getValue()))
+        .sorted(Comparator.comparingInt(Map.Entry<ParticipantDetailDto, Integer>::getValue).reversed()
+            .thenComparing(e -> e.getKey().name())) // Sort by points descending, then by name ascending in case of a tie
+        .map(Map.Entry::getKey) // Map each entry to its key, which is the participant
+        .toList();
+    LOG.debug("Participants sorted by points: {}", participantsSortedByPoints);
+    // Table cross-wise rearrangement
+    List<ParticipantDetailDto> crossTableSortedParticipants = new ArrayList<>();
+    for (int i = 0; i < participantsSortedByPoints.size() / 2; i++) {
+      crossTableSortedParticipants.add(participantsSortedByPoints.get(i));
+      crossTableSortedParticipants.add(participantsSortedByPoints.get(participantsSortedByPoints.size() - 1 - i));
+    }
+    LOG.debug("Participants sorted cross-table-wise: {}", crossTableSortedParticipants);
+
+    return new StandingsDetailDto(
+        tournament.getId(),
+        tournament.getName(),
+        crossTableSortedParticipants,
+        buildStandingsTree(crossTableSortedParticipants, 3));
   }
 
   @NotNull
-  private List<TournamentParticipantDetailDto> getTournamentParticipantDetailDtos(long id) {
-    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(id);
-    if (participants.isEmpty()) { // should never happen
+  private List<ParticipantDetailDto> getTournamentParticipantDetailDtos(long id) {
+    List<ParticipantDetailDto> sortedParticipants = participantService.findParticipantsByTournamentId(id)
+        .stream().sorted(Comparator.comparingInt(ParticipantDetailDto::entryNumber)).toList();
+    if (sortedParticipants.isEmpty()) { // should never happen
       String errorMessage = "Existing tournament does not have any participants";
       LOG.error("Unexpected error error during retrieval of tournament standings: {}", errorMessage);
       throw new FatalException(errorMessage);
     }
-    return participants;
+    return sortedParticipants;
   }
 
   /**
    * Encode the standings tree into a map of the participants' horse IDs and the rounds they reached. This method works recursively in a top-down approach.
    *
-   * @param roundsReachedMap the map to encode the standings tree into
    * @param standingsTree    the standings tree to encode
+   * @param roundsReachedMap the map to encode the round reached of the participants in the standings tree into
+   * @param participants     the list to save the participants in the standings tree into (in the same entry order as in the tree)
    * @param maxRounds        the maximum number of rounds in a tournament where the first draft is round 0
    * @param depth            the current depth of the tree
    */
-  private void encodeStandingsTreeIntoMap(Map<Long, Integer> roundsReachedMap, TournamentStandingsTreeDto standingsTree, int maxRounds, int depth) {
+  private void encodeStandingsTreeIntoMap(StandingsTreeDto standingsTree, Map<Long, Integer> roundsReachedMap, List<ParticipantDetailDto> participants,
+                                          int maxRounds, int depth) {
     if (maxRounds - depth < 0 || standingsTree.branches() == null || standingsTree.branches().length == 0) {
-      // Add the participant of the leaf node to the map before returning
+      // Add the participant of the leaf node to the participant list
       var participant = standingsTree.thisParticipant();
-      if (participant != null && !roundsReachedMap.containsKey(participant.horseId())) {
-        roundsReachedMap.put(participant.horseId(), maxRounds - depth);
+      if (participant != null) {
+        participants.add(participant);
+        // Add participant of the leaf node to roundsReachedMap with roundReached 0 before returning if it hasn't been already added
+        if (!roundsReachedMap.containsKey(participant.horseId())) {
+          roundsReachedMap.put(participant.horseId(), maxRounds - depth);
+        }
       }
       return;
     }
@@ -172,8 +250,8 @@ public class TournamentServiceImpl implements TournamentService {
       roundsReachedMap.put(participant.horseId(), maxRounds - depth);
     }
     // Recursion over the two sub-branches of this branch
-    encodeStandingsTreeIntoMap(roundsReachedMap, standingsTree.branches()[0], maxRounds, depth + 1);
-    encodeStandingsTreeIntoMap(roundsReachedMap, standingsTree.branches()[1], maxRounds, depth + 1);
+    encodeStandingsTreeIntoMap(standingsTree.branches()[0], roundsReachedMap, participants, maxRounds, depth + 1);
+    encodeStandingsTreeIntoMap(standingsTree.branches()[1], roundsReachedMap, participants, maxRounds, depth + 1);
   }
 
   /**
@@ -183,9 +261,8 @@ public class TournamentServiceImpl implements TournamentService {
    * @param maxRounds                the maximum number of rounds in a tournament where the first draft is round 0.
    * @return the tournament standings tree.
    */
-  private TournamentStandingsTreeDto buildStandingsTree(List<TournamentParticipantDetailDto> participantDetailDtoList, int maxRounds) {
-    List<TournamentStandingsTreeDto> leafs = participantDetailDtoList.stream().map(participant -> new TournamentStandingsTreeDto(null, participant))
-        .sorted(Comparator.comparingInt(leaf -> leaf.thisParticipant().entryNumber())).toList();
+  private StandingsTreeDto buildStandingsTree(List<ParticipantDetailDto> participantDetailDtoList, int maxRounds) {
+    List<StandingsTreeDto> leafs = participantDetailDtoList.stream().map(participant -> new StandingsTreeDto(null, participant)).toList();
     return buildTreeRecursively(leafs, maxRounds, 0);
   }
 
@@ -197,23 +274,23 @@ public class TournamentServiceImpl implements TournamentService {
    * @param depth     the current depth of the tree.
    * @return the tournament standings tree.
    */
-  private TournamentStandingsTreeDto buildTreeRecursively(List<TournamentStandingsTreeDto> leafs, int maxRounds, int depth) {
+  private StandingsTreeDto buildTreeRecursively(List<StandingsTreeDto> leafs, int maxRounds, int depth) {
     if (maxRounds == depth) {
       return leafs.getFirst();
     } else {
-      TournamentStandingsTreeDto upper = buildTreeRecursively(leafs.subList(0, leafs.size() / 2), maxRounds, depth + 1);
-      TournamentStandingsTreeDto lower = buildTreeRecursively(leafs.subList(leafs.size() / 2, leafs.size()), maxRounds, depth + 1);
-      TournamentParticipantDetailDto winner = computeBranchWinner(upper, lower);
-      return new TournamentStandingsTreeDto(
-          new TournamentStandingsTreeDto[] {upper, lower},
+      StandingsTreeDto upper = buildTreeRecursively(leafs.subList(0, leafs.size() / 2), maxRounds, depth + 1);
+      StandingsTreeDto lower = buildTreeRecursively(leafs.subList(leafs.size() / 2, leafs.size()), maxRounds, depth + 1);
+      ParticipantDetailDto winner = computeBranchWinner(upper, lower);
+      return new StandingsTreeDto(
+          new StandingsTreeDto[] {upper, lower},
           winner
       );
     }
   }
 
   @Nullable
-  private TournamentParticipantDetailDto computeBranchWinner(TournamentStandingsTreeDto upper, TournamentStandingsTreeDto lower) {
-    TournamentParticipantDetailDto winner;
+  private ParticipantDetailDto computeBranchWinner(StandingsTreeDto upper, StandingsTreeDto lower) {
+    ParticipantDetailDto winner;
     if (upper.thisParticipant() != null && lower.thisParticipant() != null) {
       int comparisonResult = upper.thisParticipant().compareTo(lower.thisParticipant());
       if (comparisonResult > 0) {
@@ -236,19 +313,17 @@ public class TournamentServiceImpl implements TournamentService {
    *
    * @param tournamentId         the tournament ID of tournament that the participant participates in
    * @param participantDetailDto the participant to update
-   * @param roundReachedMap      a map of participant's horse IDs mapping to the round they reached in the tournament with the given ID
    * @return the updated participant, or {@code null} if the participant is not found in the persistent data store.
    */
-  private TournamentParticipantDetailDto updateRoundReachedOfParticipant(Long tournamentId, TournamentParticipantDetailDto participantDetailDto,
-                                                                         Map<Long, Integer> roundReachedMap) {
+  private ParticipantDetailDto updateRoundReachedOfParticipant(Long tournamentId, ParticipantDetailDto participantDetailDto) {
     try {
       return participantService.update(tournamentId,
-          new TournamentParticipantDetailDto(
+          new ParticipantDetailDto(
               participantDetailDto.horseId(),
               participantDetailDto.name(),
               participantDetailDto.dateOfBirth(),
               participantDetailDto.entryNumber(),
-              roundReachedMap.get(participantDetailDto.horseId())));
+              participantDetailDto.roundReached()));
     } catch (NotFoundException e) {
       return null;
     }

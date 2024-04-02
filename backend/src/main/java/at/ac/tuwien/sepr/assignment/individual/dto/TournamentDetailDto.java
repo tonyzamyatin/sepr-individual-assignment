@@ -1,15 +1,19 @@
 package at.ac.tuwien.sepr.assignment.individual.dto;
 
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.List;
 
 public record TournamentDetailDto(
     Long id,
     String name,
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate startDate,
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate endDate,
-    List<TournamentParticipantDetailDto> participants
+    List<ParticipantDetailDto> participants
 
 ) {
 
@@ -61,7 +65,7 @@ public record TournamentDetailDto(
     );
   }
 
-  public TournamentDetailDto withParticipants(List<TournamentParticipantDetailDto> newParticipants) {
+  public TournamentDetailDto withParticipants(List<ParticipantDetailDto> newParticipants) {
     return new TournamentDetailDto(
         id,
         name,

@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.assignment.individual.mapper;
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Tournament;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,13 +40,13 @@ public class TournamentMapper {
    * @param participants a list of the tournaments participants
    * @return the converted {@link TournamentDetailDto}
    */
-  public TournamentDetailDto entityToDetailDto(Tournament tournament, List<TournamentParticipantDetailDto> participants) {
+  public TournamentDetailDto entityToDetailDto(Tournament tournament, List<ParticipantDetailDto> participants) {
     LOG.trace("entityToDto({})", tournament);
     if (tournament == null) {
       return null;
     }
-    List<TournamentParticipantDetailDto> sortedParticipants = participants.stream()
-        .sorted(Comparator.comparingInt(TournamentParticipantDetailDto::entryNumber))
+    List<ParticipantDetailDto> sortedParticipants = participants.stream()
+        .sorted(Comparator.comparingInt(ParticipantDetailDto::entryNumber))
         .toList();
 
     return new TournamentDetailDto(

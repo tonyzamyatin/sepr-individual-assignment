@@ -3,8 +3,9 @@ package at.ac.tuwien.sepr.assignment.individual.service;
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
 import at.ac.tuwien.sepr.assignment.individual.TestUtility;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
+import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
 import at.ac.tuwien.sepr.assignment.individual.mapper.ParticipantMapper;
 import org.junit.jupiter.api.Test;
@@ -13,8 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -85,7 +88,7 @@ public class TournamentServiceTest extends TestBase {
   @Test
   public void createTournamentWithNineHorsesShouldThrowValidationException() {
     var tournamentWithNineHorses = testUtil.generateValidTournamentDetailDto();
-    tournamentWithNineHorses.participants().add(new TournamentParticipantDetailDto(
+    tournamentWithNineHorses.participants().add(new ParticipantDetailDto(
         null,
         null,
         null,
@@ -116,7 +119,7 @@ public class TournamentServiceTest extends TestBase {
   public void createTournamentWhereOneHorseIsNotInDbShouldThrowConflictException() {
     var tournamentNotFoundHorse = testUtil.generateValidTournamentDetailDto();
     tournamentNotFoundHorse.participants().removeLast();
-    tournamentNotFoundHorse.participants().add(new TournamentParticipantDetailDto(
+    tournamentNotFoundHorse.participants().add(new ParticipantDetailDto(
         -38L,
         "HorseNotFound",
         LocalDate.of(2024, 3, 14),
@@ -179,10 +182,30 @@ public class TournamentServiceTest extends TestBase {
   }
 
   @Test
-  public void updateStandingsValidFullStandingsTreeShouldReturnUpdatedStandings() {
-    long tournamentId = -1;
-    String tournamentName = "BNP Paribas Open, Indian Wells";
-    List<TournamentParticipantDetailDto> participants = participantService.findParticipantsByTournamentId(tournamentId);
-    // TODO: write test
+  public void generateFirstRoundForGeneraliOpenShouldReturnValidStandingsDetailDto() throws NotFoundException {
+    var tournament = tournamentService.getTournament(-10);
+    var participantsSortedByEntryNumber = tournament.participants().stream().sorted(Comparator.comparing(ParticipantDetailDto::entryNumber)).toList();
+    var participantsExpectedCrossTableSort = List.of(
+        participantsSortedByEntryNumber.get(2),
+        participantsSortedByEntryNumber.get(1),
+        participantsSortedByEntryNumber.get(6),
+        participantsSortedByEntryNumber.get(7),
+        participantsSortedByEntryNumber.get(0),
+        participantsSortedByEntryNumber.get(5),
+        participantsSortedByEntryNumber.get(4),
+        participantsSortedByEntryNumber.get(3)
+    );
+    var tournamentWithSortedParticipants = tournament.withParticipants(participantsExpectedCrossTableSort);
+    var expectedStandingsTree = testUtil.generateValidTournamentStandings(tournamentWithSortedParticipants).tree();
+    var standings = assertDoesNotThrow(() -> tournamentService.generateFirstRound(tournament.id()));
+    assertNotNull(standings);
+    assertAll(
+        "Validating generated standings properties",
+        () -> assertEquals(tournament.id(), standings.id()),
+        () -> assertEquals(tournament.name(), standings.name()),
+        () -> assertEquals(participantsExpectedCrossTableSort, standings.participants()),
+        () -> assertThat(standings.tree()).usingRecursiveComparison().isEqualTo(expectedStandingsTree)
+    );
   }
+
 }

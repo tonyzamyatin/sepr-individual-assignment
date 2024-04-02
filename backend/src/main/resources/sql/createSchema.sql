@@ -38,25 +38,3 @@ CREATE TABLE IF NOT EXISTS participant
     FOREIGN KEY (horse_id) REFERENCES horse (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-
-CREATE TABLE IF NOT EXISTS tournament_match
-(
-    match_id        BIGINT AUTO_INCREMENT PRIMARY KEY,
-    tournament_id   BIGINT,
-    horse1_id       BIGINT,
-    horse2_id       BIGINT,
-    round_number    INT,
-    match_number    INT,
-    winner_horse_id BIGINT NULL,                                     -- Can be NULL if the match has not been played yet
-    FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (horse1_id) REFERENCES horse (id) ON UPDATE CASCADE, -- participating horses must not be deleted
-    FOREIGN KEY (horse2_id) REFERENCES horse (id) ON UPDATE CASCADE, -- participating horses must not be deleted
-    CHECK (round_number > 0),
-    CHECK (match_number > 0),
-    CHECK (
-        winner_horse_id IS NULL OR
-        winner_horse_id = horse1_id OR
-        winner_horse_id = horse2_id
-        ),
-    UNIQUE (tournament_id, round_number, match_number)
-);

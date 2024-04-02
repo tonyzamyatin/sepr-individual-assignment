@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {NgForm, NgModel} from "@angular/forms";
-import {TournamentCreateDto} from "../../../dto/tournament";
 import {TournamentService} from "../../../service/tournament.service";
 import {formatIsoDate} from "../../../util/date-helper";
 import {ToastrService} from "ngx-toastr";
@@ -10,6 +9,7 @@ import {map, Observable} from "rxjs";
 import {HorseService} from "../../../service/horse.service";
 import {Location} from "@angular/common";
 import {Router} from "@angular/router";
+import {TournamentDetailDto, TournamentDetailParticipantDto} from "../../../dto/tournament";
 
 @Component({
   selector: 'app-tournament-create',
@@ -17,7 +17,7 @@ import {Router} from "@angular/router";
   styleUrls: ['./tournament-create.component.scss']
 })
 export class TournamentCreateComponent {
-  tournament: TournamentCreateDto = {
+  tournament: TournamentDetailDto = {
     name: "",
     startDate: new Date(), // dummy
     endDate: new Date(), //dummy
@@ -70,13 +70,20 @@ export class TournamentCreateComponent {
     console.log(form.valid, this.tournament);
     if (form.invalid)
       return;
-    const participants= <HorseSelection[]>this.participants
+    const participants = <HorseSelection[]>this.participants
       .filter(x => x != null);
     if (participants.length != 8) {
       this.notification.error("A tournament must have exactly 8 participants", "Not Enough Participants");
       return;
     }
-    this.tournament.participants = participants;
+    this.tournament.participants =participants
+      .map((horseSelection, i) => ({
+        horseId: horseSelection.id,
+        name: horseSelection.name,
+        dateOfBirth: horseSelection.dateOfBirth,
+        entryNumber: i,
+        roundReached: 0
+      } as TournamentDetailParticipantDto));
     this.service.create(this.tournament)
       .subscribe({
         next: data => {

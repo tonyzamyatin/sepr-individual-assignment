@@ -4,8 +4,8 @@ package at.ac.tuwien.sepr.assignment.individual.rest;
 import at.ac.tuwien.sepr.assignment.individual.TestBase;
 import at.ac.tuwien.sepr.assignment.individual.TestUtility;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.service.TournamentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -40,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TournamentEndpointTest extends TestBase {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   @Autowired
   TestUtility testUtil;
   @Autowired
@@ -97,16 +96,14 @@ public class TournamentEndpointTest extends TestBase {
   @Test
   public void updateStandingsValidFullStandingsTreeShouldReturnUpdatedStandings() throws Exception {
     // Generate a valid tournament and create it in the test DB
-    var validTournamentInitial = testUtil.generateValidTournamentDetailDto();
-    var createdTournament = tournamentService.create(validTournamentInitial);
+    var validTournamentInitial = tournamentService.create(testUtil.generateValidTournamentDetailDto());
     // Modify the tournament first participants to have reached the first round
-    List<TournamentParticipantDetailDto> modifiedParticipants = new java.util.ArrayList<>(validTournamentInitial.participants().stream().toList());
+    List<ParticipantDetailDto> modifiedParticipants = new java.util.ArrayList<>(validTournamentInitial.participants().stream().toList());
     modifiedParticipants.set(0, modifiedParticipants.getFirst().withRoundReached(1));
     var modifiedTournament = validTournamentInitial.withParticipants(modifiedParticipants);
     // Generate a valid tournament standings DTO using the modified tournament
     var validTournamentStandingsForUpdate = testUtil.generateValidTournamentStandings(modifiedTournament);
     var validTournamentStandingsForUpdateJSON = objectMapper.writeValueAsString(validTournamentStandingsForUpdate);
-    LOG.info("Updating tournament standings with: {}", validTournamentStandingsForUpdateJSON);
 
     var body = mockMvc
         .perform(MockMvcRequestBuilders
@@ -117,7 +114,7 @@ public class TournamentEndpointTest extends TestBase {
         .andExpect(status().isOk())
         .andReturn().getResponse().getContentAsString();
 
-    var tournamentResult = assertDoesNotThrow(() -> objectMapper.readValue(body, TournamentStandingsDto.class));
+    var tournamentResult = assertDoesNotThrow(() -> objectMapper.readValue(body, StandingsDetailDto.class));
     assertNotNull(tournamentResult);
     assertThat(tournamentResult).usingRecursiveComparison().isEqualTo(validTournamentStandingsForUpdate);
   }

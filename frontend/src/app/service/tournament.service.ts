@@ -4,7 +4,7 @@ import {environment} from '../../environments/environment';
 import {map, Observable, tap, throwError} from 'rxjs';
 import {formatIsoDate} from '../util/date-helper';
 import {
-  TournamentDetailDto, TournamentCreateDto, TournamentDetailParticipantDto,
+  TournamentDetailDto, TournamentDetailParticipantDto,
   TournamentListDto,
   TournamentSearchParams,
   TournamentStandingsDto, TournamentStandingsTreeDto
@@ -50,7 +50,7 @@ export class TournamentService {
       })));
   }
 
-  create(tournament: TournamentCreateDto): Observable<TournamentDetailDto> {
+  create(tournament: TournamentDetailDto): Observable<TournamentDetailDto> {
     return this.http.post<TournamentDetailDto>(
       `${baseUri}`,
       tournament
@@ -79,6 +79,23 @@ export class TournamentService {
     return this.http.put<TournamentStandingsDto>(
       `${baseUri}/standings`,
       standings
+    ).pipe(
+      map(data => {
+        // Convert dateOfBirth for each participant in the list
+        data.participants.forEach(participant => {
+          participant.dateOfBirth = new Date(participant.dateOfBirth);
+        });
+
+        // Convert dateOfBirth for each participant in the tree
+        this.convertTreeDates(data.tree);
+        return data;
+      })
+    );
+  }
+
+  generateFirstRound(id: number): Observable<TournamentStandingsDto> {
+    return this.http.get<TournamentStandingsDto>(
+      `${baseUri}/standings/${id}/generate-first-round`,
     ).pipe(
       map(data => {
         // Convert dateOfBirth for each participant in the list

@@ -2,9 +2,9 @@ package at.ac.tuwien.sepr.assignment.individual;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsTreeDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsTreeDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.service.HorseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class TestUtility {
    */
   public TournamentDetailDto generateValidTournamentDetailDto() {
     Long tournamentId = -11L;
-    List<TournamentParticipantDetailDto> testParticipantDto = new ArrayList<>();
+    List<ParticipantDetailDto> testParticipantDto = new ArrayList<>();
     for (int i = 1; i <= 8; i++) {
       HorseDetailDto horse = null;
       try {
@@ -40,7 +40,7 @@ public class TestUtility {
         throw new RuntimeException(e);
       }
       testParticipantDto.add(
-          new TournamentParticipantDetailDto(
+          new ParticipantDetailDto(
               horse.id(),
               horse.name(),
               horse.dateOfBirth(),
@@ -64,40 +64,36 @@ public class TestUtility {
    * @param tournamentDetails the tournament details to generate the standings for.
    * @return a valid tournament standings DTO with the same id, participants and tree as {@code tournamentDetails}.
    */
-  public TournamentStandingsDto generateValidTournamentStandings(TournamentDetailDto tournamentDetails) {
-    // Sort the participants based on the round reached in descending order
-    List<TournamentParticipantDetailDto> sortedParticipants = tournamentDetails.participants().stream()
-        .sorted(Comparator.comparing(TournamentParticipantDetailDto::roundReached).reversed())
-        .collect(Collectors.toList());
+  public StandingsDetailDto generateValidTournamentStandings(TournamentDetailDto tournamentDetails) {
 
     // Create the leaf branches
-    List<TournamentStandingsTreeDto> leafBranches = sortedParticipants.stream()
-        .map(participant -> new TournamentStandingsTreeDto(null, participant))
+    List<StandingsTreeDto> leafBranches = tournamentDetails.participants().stream()
+        .map(participant -> new StandingsTreeDto(null, participant))
         .collect(Collectors.toList());
 
     // Build the higher levels of the tree
-    List<TournamentStandingsTreeDto> currentBranches = leafBranches;
+    List<StandingsTreeDto> currentBranches = leafBranches;
     while (currentBranches.size() > 1) {
       currentBranches = buildBranches(currentBranches);
     }
 
-    return new TournamentStandingsDto(
+    return new StandingsDetailDto(
         tournamentDetails.id(),
         tournamentDetails.name(),
-        sortedParticipants,
+        tournamentDetails.participants(),
         currentBranches.getFirst()
     );
   }
 
-  private List<TournamentStandingsTreeDto> buildBranches(List<TournamentStandingsTreeDto> inputBranches) {
-    List<TournamentStandingsTreeDto> outputBranches = new ArrayList<>();
+  private List<StandingsTreeDto> buildBranches(List<StandingsTreeDto> inputBranches) {
+    List<StandingsTreeDto> outputBranches = new ArrayList<>();
     for (int i = 0; i < inputBranches.size(); i += 2) {
-      TournamentStandingsTreeDto branch1 = inputBranches.get(i);
-      TournamentStandingsTreeDto branch2 = inputBranches.get(i + 1);
+      StandingsTreeDto branch1 = inputBranches.get(i);
+      StandingsTreeDto branch2 = inputBranches.get(i + 1);
 
       // The participant who reached the higher round should be the thisParticipant of the new branch
       // If both participants reached the same round or one of them is null, thisParticipant is set to null
-      TournamentParticipantDetailDto thisParticipant = null;
+      ParticipantDetailDto thisParticipant = null;
       if (branch1.thisParticipant() != null && branch2.thisParticipant() != null) {
         if (branch1.thisParticipant().roundReached() > branch2.thisParticipant().roundReached()) {
           thisParticipant = branch1.thisParticipant();
@@ -106,7 +102,7 @@ public class TestUtility {
         }
       }
 
-      outputBranches.add(new TournamentStandingsTreeDto(new TournamentStandingsTreeDto[] {branch1, branch2}, thisParticipant));
+      outputBranches.add(new StandingsTreeDto(new StandingsTreeDto[] {branch1, branch2}, thisParticipant));
     }
     return outputBranches;
   }

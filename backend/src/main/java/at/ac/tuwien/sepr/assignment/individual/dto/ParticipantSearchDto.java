@@ -1,18 +1,14 @@
 package at.ac.tuwien.sepr.assignment.individual.dto;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
-/**
- * DTO class for lists of tournaments in search view.
- */
-public record TournamentListDto(
-    Long id,
-    String name,
+public record ParticipantSearchDto(
+    Long horseId,
+    Long tournamentId,
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate startDate,
+    LocalDate intervalStart,
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    LocalDate endDate
-) {
-}
+    LocalDate intervalEnd
+) { }

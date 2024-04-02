@@ -3,7 +3,7 @@ package at.ac.tuwien.sepr.assignment.individual.rest;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentListDto;
 import at.ac.tuwien.sepr.assignment.individual.dto.TournamentSearchDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentStandingsDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.StandingsDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 import at.ac.tuwien.sepr.assignment.individual.exception.ValidationException;
@@ -50,16 +50,22 @@ public class TournamentEndpoint {
   }
 
   @GetMapping("standings/{id}")
-  public TournamentStandingsDto getStandings(@PathVariable("id") long id) throws NotFoundException {
+  public StandingsDetailDto getStandings(@PathVariable("id") long id) throws NotFoundException {
     LOG.info("GET " + BASE_PATH + "/standings/" + id);
     return service.getStandings(id);
   }
 
   @PutMapping("standings")
-  public TournamentStandingsDto updateStandings(@RequestBody TournamentStandingsDto tournamentStandings)
+  public StandingsDetailDto updateStandings(@RequestBody StandingsDetailDto tournamentStandings)
       throws ConflictException, ValidationException, NotFoundException {
     LOG.info("PUT " + BASE_PATH + "/standings");
     LOG.debug("Body of request:\n{}", tournamentStandings);
     return service.updateStandings(tournamentStandings);
+  }
+
+  @GetMapping("standings/{id}/generate-first-round")
+  public StandingsDetailDto generateFirstRound(@PathVariable("id") long id) throws NotFoundException {
+    LOG.info("GET " + BASE_PATH + "/standings/" + id + "/generate-first-round");
+    return service.generateFirstRound(id);
   }
 }

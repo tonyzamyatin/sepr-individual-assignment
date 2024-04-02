@@ -57,9 +57,18 @@ export class TournamentStandingsComponent implements OnInit {
     }
   }
 
-  public generateFirstRound() {
-    if (!this.standings)
-      return;
-    // TODO implement
+  public generateFirstRoundMatches() {
+    const routeParams = this.route.snapshot.paramMap;
+    const id = Number(routeParams.get('id'));
+    this.service.generateFirstRound(id)
+      .subscribe({
+        next: data => {
+          this.standings = data;
+        },
+        error: error => {
+          console.error('Error generating first round', error);
+          this.notification.error(error.message.message, 'Could Not Generate First Round');
+        }
+      })
   }
 }

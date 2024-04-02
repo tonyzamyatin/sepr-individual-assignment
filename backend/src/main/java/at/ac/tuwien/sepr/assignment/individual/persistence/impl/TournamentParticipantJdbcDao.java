@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.persistence.impl;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -25,6 +26,13 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   private static final String SQL_SELECT_PARTICIPANT = "SELECT 1 FROM " + TABLE_NAME + " WHERE tournament_id = ? AND horse_id = ?";
   private static final String SQL_PARTICIPANT_BY_TOURNAMENT_ID = "SELECT * FROM " + TABLE_NAME + " WHERE tournament_id = ?";
   private static final String SQL_COUNT_PARTICIPANT_BY_HORSE_ID = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE horse_id = ?";
+  private static final String SQL_SELECT_PARTICIPANT_BY_HORSE_IDS_AND_TOURNAMENT_INTERVAL = "SELECT  "
+      + "    p.tournament_id as \"tournament_id\", p.horse_id as \"horse_id\", p.entry_number as \"entry_number\", p.round_reached as \"round_reached\""
+      + " FROM " + TABLE_NAME + " p JOIN tournament t ON (p.tournament_id = t.id)"
+      + " WHERE (:tournamentId IS NULL OR p.tournament_id = :tournamentId)"
+      + "  AND (:horseId IS NULL OR p.horse_id = :horseId)"
+      + "  AND (:intervalStart IS NULL OR :intervalStart <= t.end_date)"
+      + "  AND (:intervalEnd IS NULL OR :intervalEnd >= t.start_date)";
   private static final String NAMED_SQL_INSERT = "INSERT INTO " + TABLE_NAME
       + " (tournament_id, horse_id, entry_number, round_reached)"
       + " VALUES(:tournamentId, :horseId, :entryNumber, :roundReached)";
@@ -47,6 +55,17 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   }
 
   @Override
+  public List<Participant> search(ParticipantSearchDto searchParams) {
+    LOG.trace("search({})", searchParams);
+    var params = new MapSqlParameterSource()
+        .addValue("horseId", searchParams.horseId())
+        .addValue("tournamentId", searchParams.tournamentId())
+        .addValue("intervalStart", searchParams.intervalStart())
+        .addValue("intervalEnd", searchParams.intervalEnd());
+    return jdbcNamed.query(SQL_SELECT_PARTICIPANT_BY_HORSE_IDS_AND_TOURNAMENT_INTERVAL, params, this::mapRow);
+  }
+
+  @Override
   public Participant getParticipant(long tournamentId, long horseId) throws NotFoundException {
     LOG.trace("getParticipant({}, {})", tournamentId, horseId);
     List<Participant> participants = jdbcTemplate.query(SQL_SELECT_PARTICIPANT, this::mapRow, tournamentId, horseId);
@@ -66,7 +85,7 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   }
 
   @Override
-  public Participant create(long tournamentId, TournamentParticipantDetailDto participant) {
+  public Participant create(long tournamentId, ParticipantDetailDto participant) {
     LOG.trace("Creating participant: {}", participant);
     var params = new MapSqlParameterSource()
         .addValue("tournamentId", tournamentId)
@@ -94,7 +113,7 @@ public class TournamentParticipantJdbcDao implements TournamentParticipantDao {
   }
 
   @Override
-  public Participant update(long tournamentId, TournamentParticipantDetailDto participant) {
+  public Participant update(long tournamentId, ParticipantDetailDto participant) {
     LOG.trace("Updating participant: {}", participant);
     try {
       int updated = jdbcTemplate.update(SQL_UPDATE,

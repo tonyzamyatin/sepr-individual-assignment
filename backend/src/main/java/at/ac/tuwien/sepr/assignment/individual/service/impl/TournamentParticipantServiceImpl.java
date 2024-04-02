@@ -1,7 +1,8 @@
 package at.ac.tuwien.sepr.assignment.individual.service.impl;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -35,7 +36,6 @@ public class TournamentParticipantServiceImpl implements TournamentParticipantSe
     this.mapper = mapper;
   }
 
-
   @Override
   public boolean isHorseParticipantInAnyTournament(long horseId) {
     LOG.trace("isHorseParticipantInAnyTournament({})", horseId);
@@ -43,20 +43,26 @@ public class TournamentParticipantServiceImpl implements TournamentParticipantSe
   }
 
   @Override
-  public List<TournamentParticipantDetailDto> findParticipantsByTournamentId(long tournamentId) {
+  public List<ParticipantDetailDto> findParticipantsByTournamentId(long tournamentId) {
     LOG.trace("findParticipantsByTournamentId({})", tournamentId);
     return participantDao.findParticipantsByTournamentId(tournamentId).stream().map(mapper::entityToDetailDto).toList();
   }
 
   @Override
-  public TournamentParticipantDetailDto getParticipant(long tournamentId, long horseId) throws NotFoundException {
+  public List<ParticipantDetailDto> searchParticipants(ParticipantSearchDto searchParams) {
+    LOG.trace("searchParticipants({})", searchParams);
+    return participantDao.search(searchParams).stream().map(mapper::entityToDetailDto).toList();
+  }
+
+  @Override
+  public ParticipantDetailDto getParticipant(long tournamentId, long horseId) throws NotFoundException {
     LOG.trace("getParticipant({}, {})", tournamentId, horseId);
     Participant participant = participantDao.getParticipant(tournamentId, horseId);
     return mapper.entityToDetailDto(participant);
   }
 
   @Override
-  public TournamentParticipantDetailDto create(long tournamentId, TournamentParticipantDetailDto participant) throws ConflictException {
+  public ParticipantDetailDto create(long tournamentId, ParticipantDetailDto participant) throws ConflictException {
     LOG.trace("create({}, {})", tournamentId, participant);
     List<String> conflictErrors = new ArrayList<>();
 
@@ -85,7 +91,7 @@ public class TournamentParticipantServiceImpl implements TournamentParticipantSe
   }
 
   @Override
-  public TournamentParticipantDetailDto update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException {
+  public ParticipantDetailDto update(long tournamentId, ParticipantDetailDto participant) throws NotFoundException {
     LOG.trace("update({}, {})", tournamentId, participant);
     Participant updatedEntity = participantDao.update(tournamentId, participant);
     return mapper.entityToDetailDto(updatedEntity);

@@ -12,7 +12,7 @@ import {AutocompleteComponent} from './component/autocomplete/autocomplete.compo
 import {HeaderComponent} from './component/header/header.component';
 import {HorseCreateEditComponent} from './component/horse/horse-create-edit/horse-create-edit.component';
 import {HorseComponent} from './component/horse/horse.component';
-import {ConfirmDeleteDialogComponent} from './component/confirm-delete-dialog/confirm-delete-dialog.component';
+import {ConfirmActionDialogComponent} from './component/confirm-action-dialog/confirm-action-dialog.component';
 import {TournamentCreateComponent} from './component/tournament/tournament-create/tournament-create.component';
 import {TournamentStandingsComponent} from './component/tournament/tournament-standings/tournament-standings.component';
 import {TournamentStandingsBranchComponent} from './component/tournament/tournament-standings/tournament-standings-branch/tournament-standings-branch.component';
@@ -25,7 +25,7 @@ import {TournamentStandingsBranchComponent} from './component/tournament/tournam
     HorseComponent,
     HorseCreateEditComponent,
     AutocompleteComponent,
-    ConfirmDeleteDialogComponent,
+    ConfirmActionDialogComponent,
     TournamentCreateComponent,
     TournamentStandingsComponent,
     TournamentStandingsBranchComponent,

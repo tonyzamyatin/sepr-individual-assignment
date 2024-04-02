@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.service;
 
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantSearchDto;
 import at.ac.tuwien.sepr.assignment.individual.exception.ConflictException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
 
@@ -24,7 +25,17 @@ public interface TournamentParticipantService {
    * @param tournamentId the ID of the tournament participation
    * @return List of the participants participating in the tournament, empty if no participants are found.
    */
-  List<TournamentParticipantDetailDto> findParticipantsByTournamentId(long tournamentId);
+  List<ParticipantDetailDto> findParticipantsByTournamentId(long tournamentId);
+
+  /**
+   * Search for participants in the persistent data store based on the given search parameters.
+   * Parameters that are {@code null} are ignored.
+   * If all parameters are {@code null}, all participants are returned.
+   *
+   * @param searchParams the search parameters to search for participants
+   * @return List of participants matching the search parameters, empty if no participants are found.
+   */
+  List<ParticipantDetailDto> searchParticipants(ParticipantSearchDto searchParams);
 
   /**
    * Get the participant with the given horse ID participating in the tournament with the given tournament ID.
@@ -34,7 +45,7 @@ public interface TournamentParticipantService {
    * @return the participants detail data
    * @throws NotFoundException if no participant with the given combination of IDs exists in the persistent data store.
    */
-  TournamentParticipantDetailDto getParticipant(long tournamentId, long horseId) throws NotFoundException;
+  ParticipantDetailDto getParticipant(long tournamentId, long horseId) throws NotFoundException;
 
   /**
    * Create a new participant participating in the tournament with the given ID. The tournament entity must already exist in the system.
@@ -45,7 +56,7 @@ public interface TournamentParticipantService {
    * @throws ConflictException if the provided data for participant creation is in conflict with system data
    *                           (e.g. horse does not exist, etc.)
    */
-  TournamentParticipantDetailDto create(long tournamentId, TournamentParticipantDetailDto participant) throws ConflictException;
+  ParticipantDetailDto create(long tournamentId, ParticipantDetailDto participant) throws ConflictException;
 
   /**
    * Update the participant with the data given in {@code participant} which has the horse ID given in {@code participant} and participates
@@ -55,6 +66,6 @@ public interface TournamentParticipantService {
    * @param participant  the participant to update
    * @return the updated participant.
    */
-  TournamentParticipantDetailDto update(long tournamentId, TournamentParticipantDetailDto participant) throws NotFoundException;
+  ParticipantDetailDto update(long tournamentId, ParticipantDetailDto participant) throws NotFoundException;
 
 }

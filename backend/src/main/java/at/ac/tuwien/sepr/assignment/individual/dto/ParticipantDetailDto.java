@@ -1,13 +1,13 @@
 package at.ac.tuwien.sepr.assignment.individual.dto;
 import java.time.LocalDate;
 
-public record TournamentParticipantDetailDto(
+public record ParticipantDetailDto(
     Long horseId,
     String name,
     LocalDate dateOfBirth,
     Integer entryNumber,
     Integer roundReached
-) implements Comparable<TournamentParticipantDetailDto> {
+) implements Comparable<ParticipantDetailDto> {
 
   /**
    * Compares this {@code TournamentParticipantDto} with the specified {@code TournamentParticipantDto} for order.
@@ -25,7 +25,7 @@ public record TournamentParticipantDetailDto(
    * @throws NullPointerException if the specified object is null
    */
   @Override
-  public int compareTo(TournamentParticipantDetailDto o) {
+  public int compareTo(ParticipantDetailDto o) {
     if (this.roundReached == null) {
       return (o.roundReached() == null) ? 0 : -1;
     }
@@ -35,7 +35,11 @@ public record TournamentParticipantDetailDto(
     return this.roundReached.compareTo(o.roundReached());
   }
 
-  public TournamentParticipantDetailDto withRoundReached(Integer roundReached) {
-    return new TournamentParticipantDetailDto(this.horseId, this.name, this.dateOfBirth, this.entryNumber, roundReached);
+  public ParticipantDetailDto withRoundReached(Integer roundReached) {
+    return new ParticipantDetailDto(this.horseId, this.name, this.dateOfBirth, this.entryNumber, roundReached);
+  }
+
+  public ParticipantDetailDto withEntryNumber(Integer entryNumber) {
+    return new ParticipantDetailDto(this.horseId, this.name, this.dateOfBirth, entryNumber, this.roundReached);
   }
 }

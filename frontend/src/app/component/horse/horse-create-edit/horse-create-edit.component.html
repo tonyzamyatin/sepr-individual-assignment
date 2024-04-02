@@ -1,12 +1,13 @@
-<app-confirm-delete-dialog
-  entityType="Horse"
-  entityName="{{ horse.name }}"
+<app-confirm-action-dialog
+  action="delete"
+  modalTitle="Delete Horse"
+  modalMessage="Do you really want to delete horse {{ horse.name }} ?"
   class="modal fade"
   id="confirm-delete-dialog"
   tabindex="-1"
   aria-labelledby="DeleteModal"
   (confirm)="confirmDelete()"
-></app-confirm-delete-dialog>
+></app-confirm-action-dialog>
 
 <h1 class="display-1">{{heading}}</h1>
 

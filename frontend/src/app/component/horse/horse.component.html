@@ -11,15 +11,16 @@
 </div>
 
 
-<app-confirm-delete-dialog
-  entityType="Horse"
-  entityName="{{ horseForDeletion ? horseForDeletion.name : '' }}"
+<app-confirm-action-dialog
+  action="delete"
+  modalTitle="Delete Horse"
+  modalMessage="Do you really want to delete horse {{ horseForDeletion ? horseForDeletion.name : '' }} ?"
   class="modal fade"
   id="confirm-delete-dialog"
   tabindex="-1"
   aria-labelledby="DeleteModal"
   (confirm)="onDeleteConfirmed()"
-></app-confirm-delete-dialog>
+></app-confirm-action-dialog>
 
 <!-- END SANITY CHECK BANNER -->
 

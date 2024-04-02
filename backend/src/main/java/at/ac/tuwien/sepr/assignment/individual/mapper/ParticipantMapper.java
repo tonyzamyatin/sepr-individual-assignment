@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepr.assignment.individual.mapper;
 
 import at.ac.tuwien.sepr.assignment.individual.dto.HorseDetailDto;
-import at.ac.tuwien.sepr.assignment.individual.dto.TournamentParticipantDetailDto;
+import at.ac.tuwien.sepr.assignment.individual.dto.ParticipantDetailDto;
 import at.ac.tuwien.sepr.assignment.individual.entity.Participant;
 import at.ac.tuwien.sepr.assignment.individual.exception.FatalException;
 import at.ac.tuwien.sepr.assignment.individual.exception.NotFoundException;
@@ -25,18 +25,18 @@ public class ParticipantMapper {
 
 
   /**
-   * Converts a participant entity to a {@link TournamentParticipantDetailDto}.
+   * Converts a participant entity to a {@link ParticipantDetailDto}.
    *
    * @param participant the participant to convert
-   * @return the converted {@link TournamentParticipantDetailDto}
+   * @return the converted {@link ParticipantDetailDto}
    */
-  public TournamentParticipantDetailDto entityToDetailDto(Participant participant) {
+  public ParticipantDetailDto entityToDetailDto(Participant participant) {
     LOG.trace("entityToDto({})", participant);
     if (participant == null) {
       return null;
     }
     var horseDetails = mapParticipantToHorseDetail(participant);
-    return new TournamentParticipantDetailDto(
+    return new ParticipantDetailDto(
         participant.getHorseId(),
         horseDetails.name(),
         horseDetails.dateOfBirth(),

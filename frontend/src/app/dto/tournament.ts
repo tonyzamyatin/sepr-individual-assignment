@@ -14,13 +14,6 @@ export interface TournamentListDto {
   endDate: Date;
 }
 
-export interface TournamentCreateDto {
-  name: string;
-  startDate: Date;
-  endDate: Date;
-  participants: HorseSelection[];
-}
-
 export interface TournamentDetailDto {
   id?: number;
   name: string;
@@ -33,8 +26,8 @@ export interface TournamentDetailParticipantDto {
   horseId: number;
   name: string;
   dateOfBirth: Date;
-  entryNumber?: number;
-  roundReached?: number;
+  entryNumber: number;
+  roundReached: number;
 }
 
 export interface TournamentStandingsTreeDto {

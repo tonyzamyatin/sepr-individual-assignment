@@ -1,11 +1,11 @@
 <div class="modal-dialog">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title">Delete {{ entityType | titlecase }}</h5>
+      <h5 class="modal-title">{{modalTitle | titlecase }}</h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-      Do you really want to delete {{ entityType | lowercase }} “{{ entityName }}“?
+      {{modalMessage}}
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary"
@@ -15,7 +15,7 @@
       <button type="button" class="btn btn-danger"
               data-bs-dismiss="modal"
               (click)="confirm.emit()">
-        Yes, delete
+        Yes, {{action | lowercase}}
       </button>
     </div>
   </div>

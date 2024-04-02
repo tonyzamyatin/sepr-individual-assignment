@@ -186,14 +186,14 @@ public class TournamentServiceTest extends TestBase {
     var tournament = tournamentService.getTournament(-10);
     var participantsSortedByEntryNumber = tournament.participants().stream().sorted(Comparator.comparing(ParticipantDetailDto::entryNumber)).toList();
     var participantsExpectedCrossTableSort = List.of(
-        participantsSortedByEntryNumber.get(2),
-        participantsSortedByEntryNumber.get(1),
-        participantsSortedByEntryNumber.get(6),
-        participantsSortedByEntryNumber.get(7),
-        participantsSortedByEntryNumber.get(0),
-        participantsSortedByEntryNumber.get(5),
-        participantsSortedByEntryNumber.get(4),
-        participantsSortedByEntryNumber.get(3)
+        participantsSortedByEntryNumber.get(2).withEntryNumber(1).withRoundReached(0),
+        participantsSortedByEntryNumber.get(1).withEntryNumber(2).withRoundReached(0),
+        participantsSortedByEntryNumber.get(6).withEntryNumber(3).withRoundReached(0),
+        participantsSortedByEntryNumber.get(7).withEntryNumber(4).withRoundReached(0),
+        participantsSortedByEntryNumber.get(0).withEntryNumber(5).withRoundReached(0),
+        participantsSortedByEntryNumber.get(5).withEntryNumber(6).withRoundReached(0),
+        participantsSortedByEntryNumber.get(4).withEntryNumber(7).withRoundReached(0),
+        participantsSortedByEntryNumber.get(3).withEntryNumber(8).withRoundReached(0)
     );
     var tournamentWithSortedParticipants = tournament.withParticipants(participantsExpectedCrossTableSort);
     var expectedStandingsTree = testUtil.generateValidTournamentStandings(tournamentWithSortedParticipants).tree();

@@ -126,22 +126,22 @@ public class TournamentServiceImpl implements TournamentService {
     encodeStandingsTreeIntoMap(tournamentStandings.tree(), roundsReachedMap, participantsSortedByEntryInTree, 3, 0);
     // Update participant data
     List<ParticipantDetailDto> updatedParticipants = IntStream.range(0, participantsSortedByEntryInTree.size())
-            .mapToObj(i -> {
-              var participant = participantsSortedByEntryInTree.get(i);
-              var updatedParticipant = updateRoundReachedOfParticipant(
-                  tournamentStandings.id(),
-                  participant
-                      .withRoundReached(roundsReachedMap.get(participant.horseId()))
-                      .withEntryNumber(i + 1)
-              );
-              if (updatedParticipant == null) {
-                conflictErrors.add("Tournament standings in conflict with system data");
-                return null;
-              } else {
-                return updatedParticipant;
-              }
-            })
-            .toList();
+        .mapToObj(i -> {
+          var participant = participantsSortedByEntryInTree.get(i);
+          var updatedParticipant = updateRoundReachedOfParticipant(
+              tournamentStandings.id(),
+              participant
+                  .withRoundReached(roundsReachedMap.get(participant.horseId()))
+                  .withEntryNumber(i + 1)
+          );
+          if (updatedParticipant == null) {
+            conflictErrors.add("Tournament standings in conflict with system data");
+            return null;
+          } else {
+            return updatedParticipant;
+          }
+        })
+        .toList();
 
     if (!conflictErrors.isEmpty()) {
       LOG.error("Update of tournament standings failed due to conflicting data: {}", conflictErrors);
@@ -194,19 +194,25 @@ public class TournamentServiceImpl implements TournamentService {
         .map(Map.Entry::getKey) // Map each entry to its key, which is the participant
         .toList();
     LOG.debug("Participants sorted by points: {}", participantsSortedByPoints);
-    // Table cross-wise rearrangement
     List<ParticipantDetailDto> crossTableSortedParticipants = new ArrayList<>();
     for (int i = 0; i < participantsSortedByPoints.size() / 2; i++) {
       crossTableSortedParticipants.add(participantsSortedByPoints.get(i));
       crossTableSortedParticipants.add(participantsSortedByPoints.get(participantsSortedByPoints.size() - 1 - i));
     }
-    LOG.debug("Participants sorted cross-table-wise: {}", crossTableSortedParticipants);
 
+    List<ParticipantDetailDto> updatedParticipants = IntStream.range(0, participants.size())
+        .mapToObj(i -> {
+          return crossTableSortedParticipants.get(i)
+              .withEntryNumber(i + 1)
+              .withRoundReached(0);
+        })
+        .toList();
+    LOG.debug("Participants sorted cross-table-wise: {}", crossTableSortedParticipants);
     return new StandingsDetailDto(
         tournament.getId(),
         tournament.getName(),
-        crossTableSortedParticipants,
-        buildStandingsTree(crossTableSortedParticipants, 3));
+        updatedParticipants,
+        buildStandingsTree(updatedParticipants, 3));
   }
 
   @NotNull

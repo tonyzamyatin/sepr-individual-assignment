@@ -1,19 +1,35 @@
-# Wendys Tournament Management
+# Frontend Application (Angular)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli).
+This directory contains the frontend client application for the SE PR Einzelbeispiel.
 
-## Development server
+## Technologies Used
+- **JavaScript Runtime**: Node.js 20.11.1
+- **Frontend Framework**: Angular 17
+- **Testing Framework**: Jasmine, Karma
+- **Build & Dependency Management**: NPM 10.2.4
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Getting Started
+### Prerequisites
+- **Node.js 20.x**
+- **NPM 10.x**
 
-## Code scaffolding
+### Setup Instructions
+1. **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+2. **Run the application**:
+    ```bash
+    ng serve --open
+    ```
 
-## Build
+3. **Access the application**:
+   - Web client: [http://localhost:4200](http://localhost:4200)
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+## Testing
+To run the tests, use:
+```bash
+npm test
+```
+```

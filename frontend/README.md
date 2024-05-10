@@ -5,7 +5,6 @@ This directory contains the frontend client application for the SE PR Einzelbeis
 ## Technologies Used
 - **JavaScript Runtime**: Node.js 20.11.1
 - **Frontend Framework**: Angular 17
-- **Testing Framework**: Jasmine, Karma
 - **Build & Dependency Management**: NPM 10.2.4
 
 ## Getting Started
@@ -26,10 +25,3 @@ This directory contains the frontend client application for the SE PR Einzelbeis
 
 3. **Access the application**:
    - Web client: [http://localhost:4200](http://localhost:4200)
-
-## Testing
-To run the tests, use:
-```bash
-npm test
-```
-```

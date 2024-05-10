@@ -1,45 +1,82 @@
-# SE PR Projekttemplate
+# SE PR Individual Assignment (summer semester 2024)
+This repository contains the solution for the individual assignment in Software Engineering Project (SE PR) course.
 
-Bitte fügen Sie diese Datei, inklusive der beiliegenden `.gitlab-ci.yml` und den beiden Verzeichnissen `frontend` und `backend` zum Wurzelverzeichnis ihres Git-Repositories hinzu.
-Im folgenden befindet sich ein Template für die Stundenliste; bitte verwenden Sie es so, dass im GitLab-Projekt ihre Stundenliste als Tabelle sichtbar ist.
+## Project Overview
+This project demonstrates an end-to-end web application featuring a backend server and a frontend client. It's designed to meet the requirements set forth in the SE PR course, covering essential software engineering principles.
 
-Vergessen Sie nicht im Projekt ihren Namen und Matrikelnummer zu ersetzen.
+### Technologies Used
+- **Programming Language**: Java OpenJDK 21
+- **Backend Framework**: Spring Boot 3.2
+- **JavaScript Runtime**: Node.js 20.11.1
+- **Frontend Framework**: Angular 17
+- **Relational Database**: H2 2.2.x
+- **Testing Framework**: JUnit 5.x, AssertJ
+- **Build & Dependency Management**:
+  - Backend: Maven 3
+  - Frontend: NPM 10.2.4
+- **Version Control**: Git 2.x
 
-## Stundenliste
+## Project Structure
+- **`backend/`**: Contains the server-side application
+- **`frontend/`**: Contains the client-side application
+- **`docs/`**: Additional project documentation
 
-**Name**: Anton Zamyatin\
-**Matrikelnummer**: 12223389
+### Prerequisites
+To run or develop this project, you'll need to have the following installed:
+- **Java JDK 21**
+- **Node.js 20.x**
+- **Maven 3**
+- **NPM 10.x**
+- **Git 2.x**
 
+### Getting Started
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/your-repo.git
+    cd your-repo
+    ```
+2. **Set up the backend**:
+    ```bash
+    cd backend
+    mvn clean install
+    ```
+3. **Set up the frontend**:
+    ```bash
+    cd ../frontend
+    npm install
+    ```
 
-|    Datum   | Startzeit |   Dauer   | Story-ID |                  Tätigkeit                   |
-|------------|-----------|-----------|----------|----------------------------------------------|
-| 04.03.2024 |   18:00   |  3h 00min |          |             Projekt aufgesetzt               |
-| 08.03.2024 |   12:30   |  1h 00min |          |    Bugfix bei Projektaufsetzung behoben      |
-| 08.03.2024 |   13:30   |  0h 30min |          |     User- und Tech-Stories durchgelesen      |
-| 08.03.2024 |   20:00   |  3h 00min |     1    | Template nachvollzoge und dann Backend implementiert      |
-| 09.03.2024 |   11:18   |  3h 30min |     1    | Persistence, Service und Endpoint getestest  |
-| 09.03.2024 |   14:30   |  0h 20min |     1    | Manueller Test und Bug Fix |
-| 10.03.2024 |   20:00   |  1h 30min |     1    | Rassen-Parameter opional gemacht im ganzen Programm |
-| 11.03.2024 |    9:15   |  3h 00min |   2, 3   | Frontend implementiert                      |
-| 12.03.2024 |    9:15   |  2h 30min |5, 6, 7, 8|    Definition des relationalen Schemas       |
-| 12.03.2024 |    13:00   |  1h 45min | 6 |    Definition der Entities, DAO Interfaces und DTOs       |
-| 13.03.2024 |    8:15   |  3h 15min | 6 |     Implementatierung der DAO, Service, Valitator, Mapper, und Endpoint Methoden      |
-| 14.03.2024 |    18:00   |  1h 00min | 6 |     Backend getestet und Endpoint verbunden      |
-| 15.03.2024 |    8:45   |  1h 00min | 1, 6 |     Validierung hinzugefügt und manuell Pferde und Tourniererstellung getestet      |
-| 16.03.2024 |    10:21   |  4h 00min | 3 |   Backend vollständig implementiert, alle Schichten getestet und debugggt     |
-| 16.03.2024 |    16:50   |  0h 30min | 5 |    Backend vollständig implementiert |
-| 16.03.2024 |    17:25   |  1h 15min | 5 |   DAO Schicht extensiv getestet und Bugfix |
-| 18.03.2024 |    17:30   |  1h 30min | 3 |    Frontend implementiert, manuell getestet und Bugfix |
-| 18.03.2024 |    19:50   |  1h 00min | 5 |    Frontend implementiert und manuell getestet |
-| 21.03.2024 |    10:00   |  2h 30min | 28 |    Participants-Spalte in Tournament-Tabelle in eigene Tabelle umgewandelt (für 3. NF)  |
-| 23.03.2024 |    10:00   |  1h 00min | 28 |   Changes vom 21.03. debuggt   |
-| 25.03.2024 |    15:45   |  3h 30min | 7 |   Backend und Frontend implementiert   |
-| 26.03.2024 |    12:35   |  3h 45min | 22, 25 |   Backend für bessere Testabilität und höheren Klassenzusammenhalt umgeschrieben   |
-| 27.03.2024 |    11:35   |  1h 30min | 7 |   Debuggen von updateStandings() im TournamentEndpoint   |
-| 31.03.2024 |    9:35   |  4h 15min | 7 |   Debuggen, Testen und Fix von updateStandings() im TournamentEndpoint   |
-| 01.04.2024 |    22:00   |  2h 30min | 9, 23, 26, 27 |   Logging vereinheitlicht, URLs und URIs umbenannt, weitere Entities in Tournament eingefügt   |
-| 02.04.2024 |    10:15   |  1h 30min | 8 |   Backend und Frontend implementiert   |
-| 02.04.2024 |    11:45   |  4h 30min | 8 |   Backend getestet und debugged   |
+### Running the Application
+#### Backend
+```bash
+cd backend
+mvn spring-boot:run
+```
 
+#### Frontend
+```bash
+cd backend
+mvn test
+```
 
-**Gesamtsumme der Zeit**: 59h
+### Testing
+#### Backend:
+```bash
+cd backend
+mvn test
+```
+#### Frontend:
+```bash
+cd frontend
+npm test
+```
+  
+### Documentation
+- Backend-specific documentation is in the `backend/` directory.
+- Frontend-specific documentation is in the `frontend/` directory.
+
+### License
+This project is licensed under the MIT License - see the `LICENSE.md` file for details.
+
+### Acknowledgements
+Thanks to the SE PR course team for their guidance and support.

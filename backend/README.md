@@ -25,10 +25,6 @@ This directory contains the backend server application for the SE PR Einzelbeisp
     mvn spring-boot:run
     ```
 
-3. **Access the application**:
-   - API documentation (Swagger UI): [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-   - Health Check Endpoint: [http://localhost:8080/health](http://localhost:8080/health)
-
 ## Testing
 To run the tests, use:
 ```bash

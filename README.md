@@ -19,7 +19,6 @@ This project demonstrates an end-to-end web application featuring a backend serv
 ## Project Structure
 - **`backend/`**: Contains the server-side application
 - **`frontend/`**: Contains the client-side application
-- **`docs/`**: Additional project documentation
 
 ### Prerequisites
 To run or develop this project, you'll need to have the following installed:
@@ -46,11 +45,13 @@ To run or develop this project, you'll need to have the following installed:
     npm install
     ```
 
-### Running the Application
+### Building and Running the Application
 #### Backend
+Compile backend, add test data to the database and start the program
 ```bash
 cd backend
-mvn spring-boot:run
+mvn clean package
+java -Dspring.profiles.active=datagen -jar target/e01234567-0.0.1-SNAPSHOT.jar
 ```
 
 #### Frontend
@@ -64,11 +65,6 @@ mvn test
 ```bash
 cd backend
 mvn test
-```
-#### Frontend:
-```bash
-cd frontend
-npm test
 ```
   
 ### Documentation

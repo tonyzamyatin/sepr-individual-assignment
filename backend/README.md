@@ -44,7 +44,7 @@ mvn test
 - `PUT /api/horses/{id}`: Update horse details
 - `DELETE /api/horses/{id}`: Delete a horse
 
-####Tournaments
+#### Tournaments
 - `GET /api/tournaments`: List all tournaments
 - `POST /api/tournaments`: Create a new tournament
 - `PUT /api/tournaments/{id}`: Update tournament details
